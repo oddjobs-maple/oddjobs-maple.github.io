@@ -1,0 +1,356 @@
+:root {
+    --black: #111315;
+    --white: #cbcdcf;
+    --green: #309e5e;
+}
+
+::selection {
+    background: var(--green);
+    color: var(--black);
+}
+
+html,
+body,
+div,
+nav,
+header,
+main,
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+html {
+    width: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+
+    background-color: var(--black);
+    color: var(--white);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif, sans-serif,
+        sans;
+    line-height: 1.4;
+    font-size: 1rem;
+    -webkit-text-size-adjust: 100%;
+}
+
+b,
+strong {
+    font-weight: bolder;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0 0 0.25rem 0;
+    width: auto;
+    max-width: 60rem;
+}
+
+h2 {
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #cbcdcf60;
+}
+
+header {
+    margin-bottom: 2rem;
+    color: var(--green);
+}
+
+p {
+    max-width: 60rem;
+    margin: 1rem 0 1rem 0;
+    border: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+p + h1,
+p + h2,
+p + h3,
+p + h4,
+p + h5,
+p + h6,
+ul + h1,
+ul + h2,
+ul + h3,
+ul + h4,
+ul + h5,
+ul + h6,
+ol + h1,
+ol + h2,
+ol + h3,
+ol + h4,
+ol + h5,
+ol + h6,
+figure + h1,
+figure + h2,
+figure + h3,
+figure + h4,
+figure + h5,
+figure + h6 {
+    margin: 1.5rem 0 0.25rem 0;
+}
+
+a {
+    color: #5ee496;
+}
+
+a:hover,
+a:visited,
+a:active {
+    color: #3fa187;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+ul,
+ol {
+    list-style-position: outside;
+    list-style-type: '\1f34f\a0';
+
+    max-width: 60rem;
+    margin: 1rem 0 1rem 2rem;
+    border: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+li {
+    white-space: normal;
+}
+
+abbr[title] {
+    border-bottom: none;
+    text-decoration: underline dotted var(--white);
+}
+
+figure {
+    margin: 0.5rem 0 0.5rem 1.5rem;
+    padding: 0;
+    border: 0;
+}
+
+code,
+pre {
+    font-family: monospace, monospace, mono;
+}
+
+code {
+    font-size: 85%;
+    padding: 0.1rem 0.2rem 0.1rem 0.2rem;
+    border-radius: 0.25rem;
+    color: white;
+    background-color: #55555580;
+}
+
+pre {
+    font-size: 100%;
+    padding: 0.75rem;
+    scroll-padding: 0.75rem;
+    border-radius: 0.5rem;
+    overflow: auto;
+}
+
+#nav-content-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
+
+#main-nav {
+    flex-basis: 16rem;
+    flex-grow: 1;
+    max-width: 16rem;
+
+    background-color: #27292b;
+    box-shadow: 0 0 1rem inset #000000a0;
+}
+
+#main-nav-pullout {
+    display: none;
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    z-index: 64;
+    float: none;
+
+    background-color: #27292b;
+    font-size: 1rem;
+    -webkit-text-size-adjust: 100%;
+}
+
+#main-nav a {
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.nav-h {
+    display: inline-block;
+    width: 100%;
+    padding: 0.5rem 0 1.5rem 0;
+
+    font-weight: bolder;
+    text-align: center;
+    color: var(--green);
+}
+
+.nav-h:hover,
+.nav-h:active,
+.nav-h:focus {
+    text-shadow: #309e5ea0 0 0 1rem;
+}
+
+.nav-h > img {
+    max-height: 4rem;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    filter: drop-shadow(0 0 1rem #000000a0);
+}
+
+.nav-h:hover > img {
+    filter: drop-shadow(0 0 1rem #309e5ea0);
+}
+
+.nav-list {
+    margin: 0;
+    list-style: none;
+}
+
+.nav-list > li {
+    min-width: max-content;
+}
+
+ul.nav-list > li.active {
+    background-color: var(--black);
+    box-shadow: -0.5rem 0 1rem #000000a0;
+}
+
+.nav-list > li:hover,
+.nav-list > li:active,
+.nav-list > li:focus {
+    background-color: #309e5e80;
+}
+
+.nav-list > li > a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 0.25rem 1rem 0.25rem 0.5rem;
+
+    color: var(--white);
+}
+
+#content {
+    padding: 1rem;
+    flex-grow: 4;
+    min-width: 0;
+}
+
+/* Collapse side menu on small screen widths */
+@media(max-width: 40rem) {
+    #main-nav {
+        padding: 0;
+        flex-basis: 1rem;
+    }
+
+    #main-nav > .nav-h,
+    #main-nav > .nav-list {
+        border: 0;
+        clip-path: polygon(0 0, 0 0, 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+    }
+
+    #main-nav:hover > .nav-h,
+    #main-nav:active > .nav-h,
+    #main-nav:focus > .nav-h,
+    #main-nav:hover > .nav-list,
+    #main-nav:active > .nav-list,
+    #main-nav:focus > .nav-list {
+        clip-path: none;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        position: static;
+        white-space: normal;
+        width: auto;
+    }
+
+    #main-nav:hover > .nav-list > li > a,
+    #main-nav:active > .nav-list > li > a,
+    #main-nav:focus > .nav-list > li > a {
+        width: 100%;
+        height: 100%;
+        padding: 0.25rem 1rem 0.25rem 0.5rem;
+    }
+
+    #main-nav:hover > .nav-h,
+    #main-nav:active > .nav-h,
+    #main-nav:focus > .nav-h {
+        padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+    }
+
+    #main-nav-pullout {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    #main-nav-pullout > span {
+        padding: 0 1px 0 1px;
+    }
+
+    #main-nav:hover > #main-nav-pullout,
+    #main-nav:active > #main-nav-pullout,
+    #main-nav:focus > #main-nav-pullout {
+        display: none;
+    }
+
+    #main-nav-pullout:hover,
+    #main-nav-pullout:active,
+    #main-nav-pullout:focus {
+        display: none;
+    }
+
+    #content {
+        padding: 0.5rem;
+    }
+}
+
+.subtitle {
+    margin-left: 1.5rem;
+    text-decoration-color: #cbcdcf20;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0.125rem;
+}
