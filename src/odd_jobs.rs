@@ -261,7 +261,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             if attack > 0 {
                 write!(
                     out,
-                    r##"<img src="./img/skills/{}.png"
+                    r##"<img loading="lazy" src="./img/skills/{}.png"
                         alt="Icon for {}" title="Icon for {}" /> "##,
                     attack, attack_name, attack_name,
                 )
@@ -285,7 +285,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 if skill > 0 {
                     write!(
                         out,
-                        r##"<img src="./img/skills/{}.png"
+                        r##"<img loading="lazy" src="./img/skills/{}.png"
                             alt="Icon for {}" title="Icon for {}" /> "##,
                         skill, sk_name, sk_name,
                     )
