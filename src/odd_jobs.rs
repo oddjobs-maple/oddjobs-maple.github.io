@@ -1,3 +1,4 @@
+use crate::util::slugify;
 use serde::Deserialize;
 use std::{
     fs::File,
@@ -63,7 +64,7 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             <a href="./odd-jobs.html">Odd Jobs</a>
           </li>
           <li>
-            <a href="https://codeberg.org/deer/oddjob_guides">Guides</a>
+            <a href="./guides.html">Guides</a>
           </li>
           <li>
             <a href="./source.html">Source</a>
@@ -143,7 +144,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         .unwrap();
 
         out.write_all(
-            br##"<a href="#toc-list" class="back-to-top"
+            br##"<a href="#toc-list" class="go-back"
                  >&#x2191;&nbsp;Back to top&nbsp;&#x2191;</a>"##,
         )
         .unwrap();
@@ -302,20 +303,6 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
     }
 
     out.write_all(POSTAMBLE).unwrap();
-}
-
-fn slugify(s: &str) -> String {
-    let mut slug = String::with_capacity(s.len());
-
-    for c in s.chars() {
-        if c.is_whitespace() || c == '-' {
-            slug.push('-');
-        } else if c.is_ascii_alphanumeric() {
-            slug.push(c.to_ascii_lowercase());
-        }
-    }
-
-    slug
 }
 
 fn job_name(id: u32) -> Option<&'static str> {

@@ -55,7 +55,7 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 0 0 0.25rem 0;
+    margin: 0.25rem 0 0.25rem 0;
     width: auto;
     max-width: 60rem;
 }
@@ -65,8 +65,61 @@ h1 {
 }
 
 h2 {
+    font-size: 1.75em;
+
     padding-bottom: 0.25rem;
     border-bottom: 1px solid #cbcdcf60;
+}
+
+h2:hover::after {
+    color: var(--faint);
+    content: ' ##';
+}
+
+h3,
+h4,
+h5,
+h6 {
+    text-decoration-color: var(--faint);
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0.125rem;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+h3:hover::after {
+    color: var(--faint);
+    content: ' ###';
+}
+
+h4 {
+    font-size: 1.3333em;
+}
+
+h4:hover::after {
+    color: var(--faint);
+    content: ' ####';
+}
+
+h5 {
+    font-size: 1.25em;
+}
+
+h5:hover::after {
+    color: var(--faint);
+    content: ' #####';
+}
+
+h6 {
+    font-size: 1.2em;
+}
+
+h6:hover::after {
+    color: var(--faint);
+    content: ' ######';
 }
 
 header {
@@ -74,14 +127,24 @@ header {
     color: var(--green);
 }
 
-p {
+p,
+blockquote {
     max-width: 60rem;
-    margin: 1rem 0 1rem 0;
-    border: 0;
     padding: 0;
     overflow-wrap: anywhere;
     white-space: normal;
     text-overflow: ellipsis;
+}
+
+p {
+    margin: 1rem 0 1rem 0;
+    border: 0;
+}
+
+blockquote {
+    margin: 1rem 0 1rem 1.5rem;
+    padding: 0 0 0 0.6667rem;
+    border-left: 0.3333rem solid var(--faint);
 }
 
 p + h1,
@@ -107,8 +170,21 @@ figure + h2,
 figure + h3,
 figure + h4,
 figure + h5,
-figure + h6 {
-    margin: 1.5rem 0 0.25rem 0;
+figure + h6,
+blockquote + h1,
+blockquote + h2,
+blockquote + h3,
+blockquote + h4,
+blockquote + h5,
+blockquote + h6,
+table + h1,
+table + h2,
+table + h3,
+table + h4,
+table + h5,
+table + h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
 a {
@@ -128,14 +204,26 @@ a:hover {
 ul,
 ol {
     list-style-position: outside;
-    list-style-type: '\1f34f\a0';
 
     max-width: 60rem;
     margin: 1rem 0 1rem 2rem;
     border: 0;
     padding: 0;
+
     overflow-wrap: anywhere;
     white-space: normal;
+}
+
+ul {
+    list-style-type: '\1f34f\a0';
+}
+
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 li {
@@ -172,6 +260,83 @@ pre {
     scroll-padding: 0.75rem;
     border-radius: 0.5rem;
     overflow: auto;
+}
+
+footer {
+    margin-top: 0.5rem;
+}
+
+cite {
+    font-style: italic;
+}
+
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+    border-collapse: collapse;
+}
+
+.table-wrapper {
+    margin: 1rem 0 1rem 0;
+    width: 100%;
+    max-width: 60rem;
+    overflow: auto;
+}
+
+table {
+    height: 0;
+}
+
+thead > tr,
+table > tbody > tr:nth-of-type(even) {
+    background-color: #00000060;
+}
+
+table > thead > tr > th:nth-of-type(n+2),
+table > tbody > tr > td:nth-of-type(n+2) {
+    border-left: 0.25rem double var(--faint);
+}
+
+tr {
+    margin: 0;
+    padding: 0;
+}
+
+td,
+th {
+    margin: 0;
+    padding: 0.5rem;
+    border-width: 0.0625rem;
+    border-style: solid;
+    border-color: var(--faint);
+}
+
+th {
+    font-weight: bolder;
+}
+
+td {
+    font-weight: normal;
+}
+
+td ul,
+td ol,
+th ul,
+th ol {
+    list-style-position: inside;
+}
+
+details {
+    box-sizing: border-box;
+    max-width: 60rem;
+    border: 0.125rem solid var(--faint);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+
+    background-color: #00000060;
 }
 
 #nav-content-wrapper {
@@ -361,21 +526,40 @@ ul.nav-list > li.active {
     text-decoration-thickness: 0.125rem;
 }
 
-.back-to-top {
+.go-back {
     text-decoration: none;
     font-size: 85%;
+    background-color: var(--grey);
     border: 1px solid var(--faint);
     border-radius: 0.5rem;
+
+
+    margin-bottom: 0.5rem;
     padding: 1px 0.25rem 1px 0.25rem;
-    background-color: var(--grey);
 }
 
-.back-to-top,
-.back-to-top:visited,
-.back-to-top:active {
+.go-back,
+.go-back:visited,
+.go-back:active {
     color: #5ee496;
 }
 
-.back-to-top:hover {
+.go-back:hover {
     color: #3fa187;
+}
+
+.align-none {
+    text-align: start;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
 }

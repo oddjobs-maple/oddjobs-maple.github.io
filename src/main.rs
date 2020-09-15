@@ -1,5 +1,10 @@
+#![forbid(unsafe_code)]
+#![deny(clippy::all)]
+#![deny(deprecated)]
+
 mod guide;
 mod odd_jobs;
+mod util;
 
 use std::{env, io, process};
 
@@ -31,10 +36,12 @@ fn main() {
 
     if input_filename.ends_with(".json") {
         odd_jobs::render(input_filename, &mut stdout);
-    } else if input_filename.ends_with(".md") {
+    } else if input_filename.ends_with(".md")
+        || input_filename.ends_with(".markdown")
+    {
         guide::render(input_filename, &mut stdout);
     } else {
-        eprintln!("Expected input filename to end in \".json\" or \".md\"");
+        eprintln!("Expected input filename to end in \".json\" or \".md\"/\".markdown\"");
 
         process::exit(1)
     }
