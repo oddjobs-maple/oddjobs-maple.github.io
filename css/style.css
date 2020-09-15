@@ -2,6 +2,8 @@
     --black: #111315;
     --white: #cbcdcf;
     --green: #309e5e;
+    --faint: #cbcdcf20;
+    --grey: #202224;
 }
 
 ::selection {
@@ -56,6 +58,10 @@ h6 {
     margin: 0 0 0.25rem 0;
     width: auto;
     max-width: 60rem;
+}
+
+h1 {
+    font-size: 2em;
 }
 
 h2 {
@@ -349,8 +355,27 @@ ul.nav-list > li.active {
 
 .subtitle {
     margin-left: 1.5rem;
-    text-decoration-color: #cbcdcf20;
+    text-decoration-color: var(--faint);
     text-decoration-line: underline;
     text-decoration-style: solid;
     text-decoration-thickness: 0.125rem;
+}
+
+.back-to-top {
+    text-decoration: none;
+    font-size: 85%;
+    border: 1px solid var(--faint);
+    border-radius: 0.5rem;
+    padding: 1px 0.25rem 1px 0.25rem;
+    background-color: var(--grey);
+}
+
+.back-to-top,
+.back-to-top:visited,
+.back-to-top:active {
+    color: #5ee496;
+}
+
+.back-to-top:hover {
+    color: #3fa187;
 }
