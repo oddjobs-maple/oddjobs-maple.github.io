@@ -251,16 +251,23 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
 
         out.write_all(b"<p>Attacks:</p><ul>").unwrap();
         for attack in oddjob.attacks {
-            write!(
-                out,
-                "<li>{}</li>",
-                skill_name(attack).unwrap_or_else(|| {
-                    eprintln!("Invalid skill ID: {}", attack);
+            let attack_name = skill_name(attack).unwrap_or_else(|| {
+                eprintln!("Invalid skill ID: {}", attack);
 
-                    process::exit(1)
-                }),
-            )
-            .unwrap();
+                process::exit(1)
+            });
+
+            out.write_all(b"<li>").unwrap();
+            if attack > 0 {
+                write!(
+                    out,
+                    r##"<img src="./img/skills/{}.png"
+                        alt="Icon for {}" title="Icon for {}" /> "##,
+                    attack, attack_name, attack_name,
+                )
+                .unwrap();
+            }
+            write!(out, "{}</li>", attack_name).unwrap();
         }
         out.write_all(b"</ul>").unwrap();
 
@@ -268,16 +275,23 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             out.write_all(b"<p>Notable skills:</p><ul>").unwrap();
 
             for skill in oddjob.notable_skills {
-                write!(
-                    out,
-                    "<li>{}</li>",
-                    skill_name(skill).unwrap_or_else(|| {
-                        eprintln!("Invalid skill ID: {}", skill);
+                let sk_name = skill_name(skill).unwrap_or_else(|| {
+                    eprintln!("Invalid skill ID: {}", skill);
 
-                        process::exit(1)
-                    }),
-                )
-                .unwrap();
+                    process::exit(1)
+                });
+
+                out.write_all(b"<li>").unwrap();
+                if skill > 0 {
+                    write!(
+                        out,
+                        r##"<img src="./img/skills/{}.png"
+                            alt="Icon for {}" title="Icon for {}" /> "##,
+                        skill, sk_name, sk_name,
+                    )
+                    .unwrap();
+                }
+                write!(out, "{}</li>", sk_name).unwrap();
             }
 
             out.write_all(b"</ul>").unwrap();

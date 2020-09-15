@@ -339,6 +339,10 @@ details {
     background-color: #00000060;
 }
 
+li > img {
+    vertical-align: middle;
+}
+
 #nav-content-wrapper {
     width: 100%;
     height: 100%;
