@@ -52,7 +52,8 @@ static PREAMBLE1: &[u8] = br##"</title>
       <div id="content">
         <header>
           <!-- The HTML below this comment is automatically generated from a
-          JSON file by guide.rs.  See: <https://codeberg.org/deer/pages> -->
+          Markdown file by guide.rs.  See: <https://codeberg.org/deer/pages>
+          -->
 "##;
 
 static POSTAMBLE: &[u8] = br##"
@@ -107,7 +108,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
     let parser = Parser::new_ext(&input_str, Options::ENABLE_TABLES);
 
     let mut seen_h1 = false;
-    let mut in_heading = false;
+    let mut in_heading = 0;
     let mut table_alignments = Vec::new();
     let mut in_thead = false;
     let mut table_cell_ix = 0;
@@ -126,8 +127,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                         seen_h1 = true;
                     }
 
-                    write!(out, r##"<h{} id=""##, level).unwrap();
-                    in_heading = true;
+                    in_heading = level as u8;
                 }
                 Tag::BlockQuote => out.write_all(b"<blockquote>").unwrap(),
                 Tag::CodeBlock(_) => out.write_all(b"<pre>").unwrap(),
@@ -185,6 +185,11 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 Tag::Paragraph => out.write_all(b"</p>").unwrap(),
                 Tag::Heading(level) => {
                     write!(out, "</h{}>", level).unwrap();
+
+                    if in_heading != 1 {
+                        out.write_all(b"</a>").unwrap();
+                    }
+
                     if level == 1 {
                         out.write_all(
                             br##"<a href="../../guides.html"
@@ -202,7 +207,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                         )
                         .unwrap();
                     }
-                    in_heading = false;
+
+                    in_heading = 0;
                 }
                 Tag::BlockQuote => out.write_all(b"</blockquote>").unwrap(),
                 Tag::CodeBlock(_) => out.write_all(b"</pre>").unwrap(),
@@ -230,8 +236,20 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 }
             },
             Event::Text(s) => {
-                if in_heading {
-                    write!(out, r##"{}">"##, slugify(&s)).unwrap();
+                if in_heading != 0 {
+                    let slug = slugify(&s);
+
+                    if in_heading != 1 {
+                        write!(
+                            out,
+                            r##"<a href="#{}" class="h-anchor">"##,
+                            slug,
+                        )
+                        .unwrap();
+                    }
+
+                    write!(out, r##"<h{} id="{}">"##, in_heading, slug)
+                        .unwrap();
                 }
                 if !in_img {
                     out.write_all(html_esc(&s).as_bytes()).unwrap();

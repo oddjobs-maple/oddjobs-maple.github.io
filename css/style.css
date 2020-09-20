@@ -182,7 +182,43 @@ table + h2,
 table + h3,
 table + h4,
 table + h5,
-table + h6 {
+table + h6,
+p + a h1,
+p + a h2,
+p + a h3,
+p + a h4,
+p + a h5,
+p + a h6,
+ul + a h1,
+ul + a h2,
+ul + a h3,
+ul + a h4,
+ul + a h5,
+ul + a h6,
+ol + a h1,
+ol + a h2,
+ol + a h3,
+ol + a h4,
+ol + a h5,
+ol + a h6,
+figure + a h1,
+figure + a h2,
+figure + a h3,
+figure + a h4,
+figure + a h5,
+figure + a h6,
+blockquote + a h1,
+blockquote + a h2,
+blockquote + a h3,
+blockquote + a h4,
+blockquote + a h5,
+blockquote + a h6,
+table + a h1,
+table + a h2,
+table + a h3,
+table + a h4,
+table + a h5,
+table + a h6 {
     margin-top: 1.5rem;
     margin-bottom: 0.25rem;
 }
@@ -199,6 +235,11 @@ a:active {
 
 a:hover {
     text-decoration: none;
+}
+
+a.h-anchor {
+    color: inherit;
+    text-decoration: inherit;
 }
 
 ul,

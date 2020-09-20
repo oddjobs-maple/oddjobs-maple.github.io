@@ -135,11 +135,12 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
     out.write_all(b"</ul>").unwrap();
 
     for oddjob in oddjobs {
+        let slug = slugify(&oddjob.name);
+
         write!(
             out,
-            r##"<h2 id="{}">{}</h2>"##,
-            slugify(&oddjob.name),
-            oddjob.name,
+            r##"<a href="#{}" class="h-anchor"><h2 id="{}">{}</h2></a>"##,
+            slug, slug, oddjob.name,
         )
         .unwrap();
 
@@ -326,7 +327,13 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         }
 
         if !oddjob.notes.is_empty() {
-            out.write_all(b"<h3>Notes</h3>").unwrap();
+            write!(
+                out,
+                r##"<a href="#notes-{}" class="h-anchor"><h3
+                    id="notes-{}">Notes</h3></a>"##,
+                slug, slug,
+            )
+            .unwrap();
 
             for note in oddjob.notes {
                 write!(out, "<p>{}</p>", note).unwrap();
