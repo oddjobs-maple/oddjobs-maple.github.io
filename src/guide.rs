@@ -174,7 +174,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 Tag::Image(_, url, title) => {
                     write!(
                         out,
-                        r##"<figure><img src="{}" alt="{}" title="{}" />"##,
+                        r##"<figure><img loading="lazy" src="{}" alt="{}"
+                            title="{}" />"##,
                         url, title, title,
                     )
                     .unwrap();
