@@ -15,3 +15,7 @@ do
     ./target/release/oddjobs_renderer "$2"/"$s"/README.md > ./guides/"$s"/index.html
     cp "$2"/"$s"/*.png ./guides/"$s"/
 done
+
+cd ./dmg-calc/
+tsc
+cd ..

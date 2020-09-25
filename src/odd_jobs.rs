@@ -67,7 +67,10 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             <a href="./guides.html">Guides</a>
           </li>
           <li>
-            <a href="./source.html">Source</a>
+            <a href="./dmg-calc/index.html">Damage Calc</a>
+          </li>
+          <li>
+            <a href="./source.html" data-jslicense="1">Source</a>
           </li>
         </ul>
       </nav>
