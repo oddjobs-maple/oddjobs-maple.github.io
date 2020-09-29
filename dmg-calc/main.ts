@@ -59,9 +59,13 @@ function main(): void {
     const expectedPerHitOutput = document.getElementById(
         "expected-per-hit",
     ) as HTMLSpanElement;
+    const sdPerHitOutput = document.getElementById(
+        "sd-per-hit",
+    ) as HTMLSpanElement;
     const expectedDpsOutput = document.getElementById(
         "expected-dps",
     ) as HTMLSpanElement;
+    const sdDpsOutput = document.getElementById("sd-dps") as HTMLSpanElement;
 
     function readInputData(): InputData {
         let str = Math.max(parseInt(strInput.value, 10), 4);
@@ -179,6 +183,33 @@ function main(): void {
 
         expectedPerHitOutput.textContent = expectedPerHit.toFixed(3);
 
+        const mainVariancePerHitBad = clampedVariance(
+            minDmgPhysBadAdjusted,
+            maxDmgPhysBadAdjusted,
+            expectedPerHit,
+        );
+        const mainVariancePerHitGood = clampedVariance(
+            minDmgPhysGoodAdjusted,
+            maxDmgPhysGoodAdjusted,
+            expectedPerHit,
+        );
+        let sdPerHit = undefined;
+        if (
+            mainVariancePerHitBad !== undefined &&
+            mainVariancePerHitGood !== undefined
+        ) {
+            sdPerHitOutput.classList.remove("error");
+
+            sdPerHit = Math.sqrt(
+                (mainVariancePerHitBad + mainVariancePerHitGood) / 2,
+            );
+            sdPerHitOutput.textContent = sdPerHit.toFixed(3);
+        } else {
+            sdPerHitOutput.classList.add("error");
+
+            sdPerHitOutput.textContent = "[undefined]";
+        }
+
         const period = attackPeriod(inputData.wepType, inputData.speed);
         if (period !== undefined) {
             expectedDpsOutput.classList.remove("error");
@@ -187,10 +218,32 @@ function main(): void {
             expectedDpsOutput.textContent = (
                 attackHz * expectedPerHit
             ).toFixed(3);
+
+            if (sdPerHit !== undefined) {
+                sdDpsOutput.classList.remove("error");
+
+                // This is mathematically valid because the damage/outcome of
+                // each hit is independent of the damage of any other hit, thus
+                // implying uncorrelatedness.  Furthermore, this implies that
+                // the variance of the sum of hits is the sum of the variance
+                // of said hits.
+                sdDpsOutput.textContent = (Math.sqrt(attackHz) * sdPerHit)
+                    /* = sqrt(attackHz) * sqrt(variancePerHit)
+                       = sqrt(attackHz * variancePerHit). */
+                    .toFixed(3);
+            } else {
+                sdDpsOutput.classList.add("error");
+
+                sdDpsOutput.textContent = "[undefined]";
+            }
         } else {
             expectedDpsOutput.classList.add("error");
 
             expectedDpsOutput.textContent = "[unknown attack speed value]";
+
+            sdDpsOutput.classList.add("error");
+
+            sdDpsOutput.textContent = "[undefined]";
         }
     }
 
@@ -212,6 +265,44 @@ function main(): void {
     }
 
     recalculate();
+}
+
+/**
+ * Gets the variance for a uniform distribution over the range `[a, b]` that is
+ * **_actually not uniform_**, because the outcomes are clamped to a minimum
+ * of 1.  The `mu` parameter is the expectation of the distribution, which can
+ * be obtained from the `clampedExpectation` function.
+ *
+ * This function assumes that `b >= a`, so if `b < a`, you will get
+ * `undefined`.
+ *
+ * In LaTeX:
+ *
+ * ```latex
+ * \sigma^2 = \begin{cases}
+ *   0 & \text{when } a = b \lor b \leq 1 \\
+ *   \frac{(b - \mu)^3 - (\text{max}\left\{a, 1\right\} - \mu)^3}{3(b - a)} +
+ *     (1 - \mu)^2\,\text{max}\!\left\{\frac{1 - a}{b - a}, 0\right\} &
+ *     \text{when } b > \text{max}\!\left\{a, 1\right\}
+ * \end{cases}
+ * ```
+ */
+function clampedVariance(
+    a: number,
+    b: number,
+    mu: number,
+): number | undefined {
+    if (a === b || b <= 1) {
+        return 0;
+    }
+    if (a > b) {
+        return;
+    }
+
+    return (
+        ((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * (b - a)) +
+        (1 - mu) ** 2 * Math.max((1 - a) / (b - a), 0)
+    );
 }
 
 /**
