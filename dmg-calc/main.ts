@@ -44,6 +44,13 @@ function main(): void {
         "mastery",
     ) as HTMLInputElement;
 
+    const critProbInput = document.getElementById(
+        "crit-prob",
+    ) as HTMLInputElement;
+    const critDmgInput = document.getElementById(
+        "crit-dmg",
+    ) as HTMLInputElement;
+
     const classInput = document.getElementById("class") as HTMLSelectElement;
 
     const weaponTypeInput = document.getElementById(
@@ -56,16 +63,23 @@ function main(): void {
     ) as HTMLInputElement;
 
     const rangeOutput = document.getElementById("range") as HTMLSpanElement;
+    const critRangeOutput = document.getElementById(
+        "crit-range",
+    ) as HTMLSpanElement;
     const expectedPerHitOutput = document.getElementById(
         "expected-per-hit",
     ) as HTMLSpanElement;
     const sdPerHitOutput = document.getElementById(
         "sd-per-hit",
     ) as HTMLSpanElement;
+    const cvPerHitOutput = document.getElementById(
+        "cv-per-hit",
+    ) as HTMLSpanElement;
     const expectedDpsOutput = document.getElementById(
         "expected-dps",
     ) as HTMLSpanElement;
     const sdDpsOutput = document.getElementById("sd-dps") as HTMLSpanElement;
+    const cvDpsOutput = document.getElementById("cv-dps") as HTMLSpanElement;
 
     function readInputData(): InputData {
         let str = Math.max(parseInt(strInput.value, 10), 4);
@@ -105,6 +119,23 @@ function main(): void {
         mastery -= mastery % 5;
         masteryInput.value = "" + mastery;
 
+        let critProb = Math.min(
+            Math.max(parseInt(critProbInput.value, 10), 0),
+            100,
+        );
+        if (!Number.isFinite(critProb)) {
+            critProb = 0;
+        }
+        critProbInput.value = "" + critProb;
+        let critDmg = Math.min(
+            Math.max(parseInt(critDmgInput.value, 10), 100),
+            300,
+        );
+        if (!Number.isFinite(critDmg)) {
+            critDmg = 100;
+        }
+        critDmgInput.value = "" + critDmg;
+
         let clazz = Math.min(Math.max(parseInt(classInput.value, 10), 0), 500);
         if (!Number.isFinite(clazz) || clazz % 100 !== 0) {
             clazz = 0;
@@ -132,6 +163,8 @@ function main(): void {
             new Stats(str, dex, int, luk),
             totalWatk,
             mastery / 100,
+            critProb / 100,
+            critDmg / 100,
             clazz,
             wepType,
             speed,
@@ -141,6 +174,7 @@ function main(): void {
 
     function recalculate(): void {
         const inputData = readInputData();
+        const critQ = 1 - inputData.critProb;
 
         const [minDmgPhysBad, maxDmgPhysGood] = [
             minDmgPhys(inputData, false),
@@ -166,44 +200,113 @@ function main(): void {
             inputData.enemyWdef,
         );
 
-        const range = [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted].map(x =>
+        const [dmgMultiNoCrit, dmgMultiCrit] = [
+            dmgMulti(inputData, false),
+            dmgMulti(inputData, true),
+        ];
+        const [
+            minDmgPhysBadNoCrit,
+            maxDmgPhysGoodNoCrit,
+            minDmgPhysGoodNoCrit,
+            maxDmgPhysBadNoCrit,
+        ] = [
+            minDmgPhysBadAdjusted,
+            maxDmgPhysGoodAdjusted,
+            minDmgPhysGoodAdjusted,
+            maxDmgPhysBadAdjusted,
+        ].map(x => x * dmgMultiNoCrit);
+        const [
+            minDmgPhysBadCrit,
+            maxDmgPhysGoodCrit,
+            minDmgPhysGoodCrit,
+            maxDmgPhysBadCrit,
+        ] = [
+            minDmgPhysBadAdjusted,
+            maxDmgPhysGoodAdjusted,
+            minDmgPhysGoodAdjusted,
+            maxDmgPhysBadAdjusted,
+        ].map(x => x * dmgMultiCrit);
+
+        const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x =>
+            Math.max(Math.trunc(x), 1),
+        );
+        const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x =>
             Math.max(Math.trunc(x), 1),
         );
         rangeOutput.textContent = `${range[0]} ~ ${range[1]}`;
+        critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
 
-        const expectedPerHitBad = clampedExpectation(
-            minDmgPhysBadAdjusted,
-            maxDmgPhysBadAdjusted,
-        );
-        const expectedPerHitGood = clampedExpectation(
-            minDmgPhysGoodAdjusted,
-            maxDmgPhysGoodAdjusted,
-        );
+        const [expectedPerHitBadNoCrit, expectedPerHitBadCrit] = [
+            clampedExpectation(minDmgPhysBadNoCrit, maxDmgPhysBadNoCrit),
+            clampedExpectation(minDmgPhysBadCrit, maxDmgPhysBadCrit),
+        ];
+        const [expectedPerHitGoodNoCrit, expectedPerHitGoodCrit] = [
+            clampedExpectation(minDmgPhysGoodNoCrit, maxDmgPhysGoodNoCrit),
+            clampedExpectation(minDmgPhysGoodCrit, maxDmgPhysGoodCrit),
+        ];
+        const expectedPerHitBad =
+            critQ * expectedPerHitBadNoCrit +
+            inputData.critProb * expectedPerHitBadCrit;
+        const expectedPerHitGood =
+            critQ * expectedPerHitGoodNoCrit +
+            inputData.critProb * expectedPerHitGoodCrit;
         const expectedPerHit = (expectedPerHitBad + expectedPerHitGood) / 2;
 
         expectedPerHitOutput.textContent = expectedPerHit.toFixed(3);
 
-        const mainVariancePerHitBad = clampedVariance(
-            minDmgPhysBadAdjusted,
-            maxDmgPhysBadAdjusted,
+        // The "mainVariance" in the following variable names is intended to
+        // indicate that this is a variance against the expectation across
+        // _all_ cases (`expectedPerHit`), not against the expected value of
+        // the particular case in question.
+        const mainVariancePerHitBadNoCrit = clampedVariance(
+            minDmgPhysBadNoCrit,
+            maxDmgPhysBadNoCrit,
             expectedPerHit,
         );
-        const mainVariancePerHitGood = clampedVariance(
-            minDmgPhysGoodAdjusted,
-            maxDmgPhysGoodAdjusted,
+        const mainVariancePerHitGoodNoCrit = clampedVariance(
+            minDmgPhysGoodNoCrit,
+            maxDmgPhysGoodNoCrit,
             expectedPerHit,
         );
-        let sdPerHit = undefined;
-        if (
-            mainVariancePerHitBad !== undefined &&
-            mainVariancePerHitGood !== undefined
-        ) {
+        const mainVariancePerHitBadCrit = clampedVariance(
+            minDmgPhysBadCrit,
+            maxDmgPhysBadCrit,
+            expectedPerHit,
+        );
+        const mainVariancePerHitGoodCrit = clampedVariance(
+            minDmgPhysGoodCrit,
+            maxDmgPhysGoodCrit,
+            expectedPerHit,
+        );
+        const variancePerHit = (() => {
+            if (
+                mainVariancePerHitBadNoCrit !== undefined &&
+                mainVariancePerHitGoodNoCrit !== undefined &&
+                mainVariancePerHitBadCrit !== undefined &&
+                mainVariancePerHitGoodCrit !== undefined
+            ) {
+                const mainVariancePerHitBad =
+                    critQ * mainVariancePerHitBadNoCrit +
+                    inputData.critProb * mainVariancePerHitBadCrit;
+                const mainVariancePerHitGood =
+                    critQ * mainVariancePerHitGoodNoCrit +
+                    inputData.critProb * mainVariancePerHitGoodCrit;
+
+                return (mainVariancePerHitBad + mainVariancePerHitGood) / 2;
+            }
+
+            return;
+        })();
+
+        let sdPerHit: number | undefined = undefined;
+        if (variancePerHit !== undefined) {
             sdPerHitOutput.classList.remove("error");
 
-            sdPerHit = Math.sqrt(
-                (mainVariancePerHitBad + mainVariancePerHitGood) / 2,
-            );
+            sdPerHit = Math.sqrt(variancePerHit);
             sdPerHitOutput.textContent = sdPerHit.toFixed(3);
+            cvPerHitOutput.textContent = (sdPerHit / expectedPerHit).toFixed(
+                5,
+            );
         } else {
             sdPerHitOutput.classList.add("error");
 
@@ -215,9 +318,8 @@ function main(): void {
             expectedDpsOutput.classList.remove("error");
 
             const attackHz = 1000 / period;
-            expectedDpsOutput.textContent = (
-                attackHz * expectedPerHit
-            ).toFixed(3);
+            const expectedDps = attackHz * expectedPerHit;
+            expectedDpsOutput.textContent = expectedDps.toFixed(3);
 
             if (sdPerHit !== undefined) {
                 sdDpsOutput.classList.remove("error");
@@ -227,10 +329,12 @@ function main(): void {
                 // implying uncorrelatedness.  Furthermore, this implies that
                 // the variance of the sum of hits is the sum of the variance
                 // of said hits.
-                sdDpsOutput.textContent = (Math.sqrt(attackHz) * sdPerHit)
-                    /* = sqrt(attackHz) * sqrt(variancePerHit)
-                       = sqrt(attackHz * variancePerHit). */
-                    .toFixed(3);
+                const sdDps =
+                    Math.sqrt(attackHz) *
+                    sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
+                                 = sqrt(attackHz * variancePerHit). */
+                sdDpsOutput.textContent = sdDps.toFixed(3);
+                cvDpsOutput.textContent = (sdDps / expectedDps).toFixed(5);
             } else {
                 sdDpsOutput.classList.add("error");
 
@@ -254,14 +358,14 @@ function main(): void {
         lukInput,
         totalWatkInput,
         masteryInput,
+        critProbInput,
+        critDmgInput,
         classInput,
         weaponTypeInput,
         speedInput,
         enemyWdefInput,
     ]) {
-        input.addEventListener("change", () => {
-            recalculate();
-        });
+        input.addEventListener("change", recalculate);
     }
 
     recalculate();
@@ -339,6 +443,10 @@ function clampedExpectation(min: number, max: number): number {
     const uniformWeight = 1 - clampedWeight;
 
     return clampedWeight + uniformWeight * uniformExpected;
+}
+
+function dmgMulti(inputData: InputData, crit: boolean): number {
+    return 1 + (crit ? inputData.critDmg : 0);
 }
 
 function maxDmgPhys(inputData: InputData, goodAnim: boolean): number {

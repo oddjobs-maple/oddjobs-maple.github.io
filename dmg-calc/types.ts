@@ -74,6 +74,8 @@ export class InputData {
         public stats: Stats,
         public totalWatk: number,
         public mastery: number,
+        public critProb: number,
+        public critDmg: number,
         public clazz: Class,
         public wepType: WeaponType,
         public speed: Speed,

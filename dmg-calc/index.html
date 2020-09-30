@@ -143,6 +143,72 @@
           </p>
 
           <p>
+            Damage multipliers from skills, critical hits, and elemental
+            effects work in tandem. All of these influences combine into a
+            single multiplier that we will here refer to as &ldquo;the damage
+            multiplier&rdquo;. This is the number by which you multiply your
+            basic attack damage (for physical attacks, this is your basic
+            attack &mdash; i.e. not using a skill &mdash; with no crits nor
+            elemental effects nor reduction due to WDEF). These sources of
+            damage multiplier (skills, crits, elemental effects) are
+            <strong>additive</strong> in the sense that these multipliers are
+            summed together, and then that sum makes up <em>the</em> damage
+            multiplier.
+            <strong
+              >Note that basic attacks have a &ldquo;skill&rdquo; multiplier of
+              1</strong
+            >, i.e. as if you were using an attacking skill that said
+            &ldquo;100% damage&rdquo; in the description. For example, say you
+            use the Arrow Blow skill as an archer who has maxed both Arrow Blow
+            (described in-game as &ldquo;Damage 260%&rdquo;) and Critical Shot
+            (described in-game as &ldquo;40% success rate, critical damage
+            200%&rdquo;). Let&rsquo;s assume that this particular use of Arrow
+            Blow is a crit, and thus we get the benefit of the &ldquo;critical
+            damage 200%&rdquo;. The damage multiplier is the sum of the
+            multipliers from Arrow Blow and Critical Shot:
+            2.6&nbsp;+&nbsp;2&nbsp;=&nbsp;4.6. Thus, we expect this attack to
+            (again, assuming the monster has 0 WDEF) do 4.6 times as much as a
+            non-critical basic attack would. Note that magic attacks work
+            somewhat differently, and (as far as I know) do not use this
+            additive notion of &ldquo;damage multiplier&rdquo;.
+          </p>
+
+          <p>
+            The in-game description of the Sharp Eyes skill is somewhat
+            misleading. At max level, the skill grants &ldquo;[Critical] Damage
+            + 40%&rdquo;. However, this should probably read
+            &ldquo;+140%&rdquo;, because the actual value that is added to the
+            damage multiplier is 1.4. For those who already have a
+            critical-hit-granting skill (archers, assassins/hermits/nightlords,
+            and situationally marauders/buccaneers), interpreting Sharp Eyes is
+            pretty straightforward: it just adds something to your
+            already-existing critical chance and to your already-existing
+            critical multiplier. For example, an archer with maxed Critical
+            Shot and maxed Sharp Eyes has a
+            0.4&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.55 probability of critting, and
+            a critical multiplier of 2&nbsp;+&nbsp;1.4&nbsp;=&nbsp;3.4. For
+            physical attackers who do
+            <em>not</em> already have a critical-hit-granting skill, being
+            buffed with maxed Sharp Eyes means an overall
+            0&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.15 probability of critting, and a
+            critical multiplier of 1.4; <strong>not</strong> a critical
+            multiplier of 0.4. Note that the value referred to here as the
+            &ldquo;critical multiplier&rdquo; is <strong>additive</strong> and
+            <em>only</em> serves to cumulate into the overall &ldquo;damage
+            multiplier&rdquo;. For more on this, see the previous paragraph.
+            For magical attacks, the probability of critting with maxed Sharp
+            Eyes is also 0.15, but an attack that crits does
+            <strong>not</strong> add 1.4 to the damage multiplier of a
+            non-crit, as you would expect (magical attacks do not use the same
+            notion of &ldquo;damage multiplier&rdquo;). Instead, it simply
+            multiplies the overall damage of the magical attack by a factor of
+            1.4. Nevertheless, if you want to use the calculator for magical
+            attacks combined with Sharp Eyes, you should set the values in the
+            inputs below as if you were setting them for a physical attacker
+            who has no critical-hit-granting skill of their own.
+          </p>
+
+          <p>
             It is possible for enemies to have negative WDEF values, due to
             effects like Threaten.
           </p>
@@ -155,6 +221,47 @@
               rel="noopener noreferrer"
               href="https://en.wikipedia.org/wiki/Expected_value"
               >the probability-theoretic sense</a
+            >. The &ldquo;&sigma;&rdquo; symbol refers to
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Standard_deviation"
+              >the standard deviation</a
+            >, which is conveniently in the same units/dimensions as the values
+            themselves. We often talk about the so-called
+            &ldquo;stability&rdquo; of damage, which is essentially a way of
+            talking about the
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Statistical_dispersion"
+              >dispersion</a
+            >
+            of the damage instances, and the standard deviation is one way of
+            quantifying dispersion. However, care must be taken when comparing
+            two separate standard deviations, because standard deviation is an
+            <em>absolute</em> measure of dispersion. As a result, two
+            characters who appear to have roughly the <em>same</em> damage
+            stability, but the magnitude of whose damage outputs &mdash; say,
+            damage per hit, for example &mdash; are significantly different,
+            will have damage-per-hit distributions with significantly
+            <em>different</em> standard deviations. This is because the
+            standard deviation is expressed in the same dimensions as the
+            values themselves, so it scales up linearly as the values of the
+            distribution are scaled up. To help get a <em>relative</em> (and
+            thus more comparable) measure of damage stability,
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Coefficient_of_variation"
+              >the coefficient of variation</a
+            >
+            (CV) is used. The CV is
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Dimensionless_quantity"
+              >a dimensionless quantity</a
             >.
           </p>
 
@@ -210,6 +317,32 @@
                 value="10"
               />%
             </label>
+
+            <fieldset id="crit">
+              <label for="crit-prob">
+                Critical chance
+                <input
+                  type="number"
+                  id="crit-prob"
+                  name="crit-prob"
+                  min="0"
+                  max="100"
+                  value="0"
+                />%
+              </label>
+
+              <label for="crit-dmg">
+                Critical damage
+                <input
+                  type="number"
+                  id="crit-dmg"
+                  name="crit-dmg"
+                  min="100"
+                  max="300"
+                  value="100"
+                />%
+              </label>
+            </fieldset>
 
             <label for="class">
               Class
@@ -289,16 +422,20 @@
           </div>
 
           <div id="calculator-output">
-            <b>Range:</b> <span id="range">??? ~ ???</span>
+            <b>Range, <em>crit range</em>:</b>
+            <span id="range">??? ~ ???</span>,
+            <em id="crit-range">??? ~ ???</em>
             <br />
-            <b>Expected damage per hit:</b>
+            <b>Expected dmg per hit:</b>
             <span id="expected-per-hit">???</span>
             <br />
-            <b>&sigma;<sub>per hit</sub>:</b> <span id="sd-per-hit">???</span>
+            <b>&sigma;<sub>per hit</sub>, CV<sub>per hit</sub>:</b>
+            <span id="sd-per-hit">???</span>, <span id="cv-per-hit">???</span>
             <br />
             <b>Expected DPS:</b> <span id="expected-dps">???</span>
             <br />
-            <b>&sigma;<sub>DPS</sub>:</b> <span id="sd-dps">???</span>
+            <b>&sigma;<sub>DPS</sub>, CV<sub>DPS</sub>:</b>
+            <span id="sd-dps">???</span>, <span id="cv-dps">???</span>
           </div>
 
           <a href="#legal" class="h-anchor"><h2 id="legal">Legal</h2></a>

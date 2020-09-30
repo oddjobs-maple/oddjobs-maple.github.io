@@ -48,10 +48,12 @@ export var WeaponType;
     WeaponType[WeaponType["Gun"] = 49] = "Gun";
 })(WeaponType || (WeaponType = {}));
 export class InputData {
-    constructor(stats, totalWatk, mastery, clazz, wepType, speed, enemyWdef) {
+    constructor(stats, totalWatk, mastery, critProb, critDmg, clazz, wepType, speed, enemyWdef) {
         this.stats = stats;
         this.totalWatk = totalWatk;
         this.mastery = mastery;
+        this.critProb = critProb;
+        this.critDmg = critDmg;
         this.clazz = clazz;
         this.wepType = wepType;
         this.speed = speed;
