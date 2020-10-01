@@ -128,7 +128,7 @@ function main(): void {
         }
         critProbInput.value = "" + critProb;
         let critDmg = Math.min(
-            Math.max(parseInt(critDmgInput.value, 10), 100),
+            Math.max(parseInt(critDmgInput.value, 10), 0),
             300,
         );
         if (!Number.isFinite(critDmg)) {
@@ -332,7 +332,8 @@ function main(): void {
                 const sdDps =
                     Math.sqrt(attackHz) *
                     sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
-                                 = sqrt(attackHz * variancePerHit). */
+                                 = sqrt(attackHz * variancePerHit)
+                                 = sqrt(varianceDps). */
                 sdDpsOutput.textContent = sdDps.toFixed(3);
                 cvDpsOutput.textContent = (sdDps / expectedDps).toFixed(5);
             } else {
@@ -403,9 +404,11 @@ function clampedVariance(
         return;
     }
 
+    const bMinusA = b - a;
+
     return (
-        ((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * (b - a)) +
-        (1 - mu) ** 2 * Math.max((1 - a) / (b - a), 0)
+        ((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * bMinusA) +
+        (1 - mu) ** 2 * Math.max((1 - a) / bMinusA, 0)
     );
 }
 

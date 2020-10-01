@@ -85,7 +85,7 @@ function main() {
             critProb = 0;
         }
         critProbInput.value = "" + critProb;
-        let critDmg = Math.min(Math.max(parseInt(critDmgInput.value, 10), 100), 300);
+        let critDmg = Math.min(Math.max(parseInt(critDmgInput.value, 10), 0), 300);
         if (!Number.isFinite(critDmg)) {
             critDmg = 100;
         }
@@ -206,7 +206,8 @@ function main() {
                 // of said hits.
                 const sdDps = Math.sqrt(attackHz) *
                     sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
-                             = sqrt(attackHz * variancePerHit). */
+                             = sqrt(attackHz * variancePerHit)
+                             = sqrt(varianceDps). */
                 sdDpsOutput.textContent = sdDps.toFixed(3);
                 cvDpsOutput.textContent = (sdDps / expectedDps).toFixed(5);
             }
@@ -267,8 +268,9 @@ function clampedVariance(a, b, mu) {
     if (a > b) {
         return;
     }
-    return (((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * (b - a)) +
-        (1 - mu) ** 2 * Math.max((1 - a) / (b - a), 0));
+    const bMinusA = b - a;
+    return (((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * bMinusA) +
+        (1 - mu) ** 2 * Math.max((1 - a) / bMinusA, 0));
 }
 /**
  * Gets the expected value for a uniform distribution over the range
