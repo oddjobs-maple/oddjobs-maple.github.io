@@ -103,7 +103,8 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
           </p>
 
           <!-- The HTML below this comment is automatically generated from a
-          JSON file by odd_jobs.rs.  See: <https://codeberg.org/deer/pages> -->
+          JSON file by odd_jobs.rs.  See: <https://codeberg.org/oddjobs/pages>
+          -->
 "##;
 
 static POSTAMBLE: &[u8] = br##"

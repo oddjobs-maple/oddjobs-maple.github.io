@@ -1,7 +1,7 @@
 # Oddjobs
 
 The website of the guild for MapleStory odd-jobbers.
-<https://pages.codeberg.org/deer/>
+<https://pages.codeberg.org/oddjobs/>
 
 ## Legal
 

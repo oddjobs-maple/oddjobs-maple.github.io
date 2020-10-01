@@ -55,7 +55,7 @@ static PREAMBLE1: &[u8] = br##"</title>
       <div id="content">
         <header>
           <!-- The HTML below this comment is automatically generated from a
-          Markdown file by guide.rs.  See: <https://codeberg.org/deer/pages>
+          Markdown file by guide.rs.  See: <https://codeberg.org/oddjobs/pages>
           -->
 "##;
 
