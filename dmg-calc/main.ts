@@ -39,9 +39,19 @@ function main(): void {
     const totalWatkInput = document.getElementById(
         "total-watk",
     ) as HTMLInputElement;
+    const totalMatkInput = document.getElementById(
+        "total-matk",
+    ) as HTMLInputElement;
 
     const masteryInput = document.getElementById(
         "mastery",
+    ) as HTMLInputElement;
+
+    const skillDmgMultiInput = document.getElementById(
+        "skill-dmg-multi",
+    ) as HTMLInputElement;
+    const skillBasicAtkInput = document.getElementById(
+        "skill-basic-atk",
     ) as HTMLInputElement;
 
     const critProbInput = document.getElementById(
@@ -80,6 +90,31 @@ function main(): void {
     ) as HTMLSpanElement;
     const sdDpsOutput = document.getElementById("sd-dps") as HTMLSpanElement;
     const cvDpsOutput = document.getElementById("cv-dps") as HTMLSpanElement;
+
+    const rangeMagicOutput = document.getElementById(
+        "range-magic",
+    ) as HTMLSpanElement;
+    const critRangeMagicOutput = document.getElementById(
+        "crit-range-magic",
+    ) as HTMLSpanElement;
+    const expectedPerHitMagicOutput = document.getElementById(
+        "expected-per-hit-magic",
+    ) as HTMLSpanElement;
+    const sdPerHitMagicOutput = document.getElementById(
+        "sd-per-hit-magic",
+    ) as HTMLSpanElement;
+    const cvPerHitMagicOutput = document.getElementById(
+        "cv-per-hit-magic",
+    ) as HTMLSpanElement;
+    const expectedDpsMagicOutput = document.getElementById(
+        "expected-dps-magic",
+    ) as HTMLSpanElement;
+    const sdDpsMagicOutput = document.getElementById(
+        "sd-dps-magic",
+    ) as HTMLSpanElement;
+    const cvDpsMagicOutput = document.getElementById(
+        "cv-dps-magic",
+    ) as HTMLSpanElement;
 
     function readInputData(): InputData {
         let str = Math.max(parseInt(strInput.value, 10), 4);
@@ -176,6 +211,10 @@ function main(): void {
         const inputData = readInputData();
         const critQ = 1 - inputData.critProb;
 
+        recalculatePhys(inputData, critQ);
+    }
+
+    function recalculatePhys(inputData: InputData, critQ: number): void {
         const [minDmgPhysBad, maxDmgPhysGood] = [
             minDmgPhys(inputData, false),
             maxDmgPhys(inputData, true),

@@ -89,7 +89,8 @@
             We assume that the player can attack as quickly as possible (i.e.
             holding down the attack button), and does so uninterrupted: they
             are never struck, never have to move, never use potions, &amp;c.,
-            and also never miss.
+            and also never miss. We also assume that they are fighting exactly
+            one foe at all times, and that that one foe has infinite HP.
           </p>
 
           <p>
@@ -103,6 +104,13 @@
             respectively, for spears), there is a &frac12; probability that the
             animation is &ldquo;good&rdquo;, and a &frac12; probability that
             the animation is &ldquo;bad&rdquo;.
+          </p>
+
+          <p>
+            We assume that attacks with more than one line of damage calculate
+            each line identically, even if the actual <em>outcomes</em> for the
+            various lines may differ due to random chance. This assumption is
+            broken by skills like Barrage.
           </p>
 
           <a href="#you-should-know" class="h-anchor"
@@ -131,23 +139,52 @@
             <strong>and</strong> equipment <strong>and</strong> buffs.
             Likewise, total WATK is the sum of all WATK from your equipment
             (including both your weapon, and your other equips), plus WATK from
-            skills, plus WATK from buffs.
+            skills, plus WATK from buffs. Total MATK is defined similarly to
+            total WATK, but it should be noted that it also includes the MATK
+            that is due to your total INT score. This &ldquo;total MATK&rdquo;
+            is displayed in-game as &ldquo;MAGIC&rdquo; inside of the
+            &ldquo;DETAIL&rdquo; tab of the &ldquo;CHARACTER STATS&rdquo;
+            window (in the keybinding GUI, this window is listed as
+            &ldquo;ABILITY&rdquo;).
           </p>
 
           <p>
             The mastery is given here as a percentage. Your mastery can never
             be less than 10%, but it can be higher, if you have one or more
-            mastery skills. Most mastery skills increase your mastery up to a
-            total of 60%, but some fourth-job skills can take you up to as high
-            as 90%.
+            relevant mastery skills (&ldquo;relevant&rdquo; because mastery
+            skills typically only apply to certain classes of weapons, e.g.
+            only axes). Most mastery skills increase your mastery up to a total
+            of 60%, but some fourth-job skills can take you up to as high as
+            90%. Mastery for magical attacks works on a per-spell basis (based
+            on which spell it is and what level it&rsquo;s at), and should be
+            listed in-game within the spell&rsquo;s description.
+          </p>
+
+          <p>
+            The &ldquo;Damage multi&rdquo; field under &ldquo;Skill&rdquo;
+            refers to the damage percentage listed in the description of a
+            physical attack; for example, the Power Strike skill has a
+            &ldquo;Damage multi&rdquo; of 260% at max level. The &ldquo;Basic
+            attack&rdquo; only applies to magical attacks, and is generally
+            listed in the skill description as &ldquo;basic attack&rdquo;; for
+            example, the Magic Claw skill has a &ldquo;Basic attack&rdquo; of
+            40 at max level. &ldquo;Lines&rdquo; refers to how many lines of
+            damage the attacking skill does; for example, this value is 1 for
+            Power Strike and 2 for Magic Claw. It is assumed that attacks with
+            more than one line of damage calculate each line identically, even
+            if the actual <em>outcomes</em> for the various lines may differ
+            due to random chance. This assumption is broken by skills like
+            Barrage.
           </p>
 
           <p>
             Damage multipliers from skills, critical hits, and elemental
             effects work in tandem. All of these influences combine into a
-            single multiplier that we will here refer to as &ldquo;the damage
-            multiplier&rdquo;. This is the number by which you multiply your
-            basic attack damage (for physical attacks, this is your basic
+            single multiplier that we will here refer to as &ldquo;<strong
+              >the</strong
+            >
+            damage multiplier&rdquo;. This is the number by which you multiply
+            your basic attack damage (for physical attacks, this is your basic
             attack &mdash; i.e. not using a skill &mdash; with no crits nor
             elemental effects nor reduction due to WDEF). These sources of
             damage multiplier (skills, crits, elemental effects) are
@@ -294,16 +331,31 @@
               </label>
             </fieldset>
 
-            <label for="total-watk">
-              Total WATK
-              <input
-                type="number"
-                id="total-watk"
-                name="total-watk"
-                min="0"
-                value="0"
-              />
-            </label>
+            <fieldset id="attack-stats">
+              <legend>Attack stats</legend>
+
+              <label for="total-watk">
+                Total WATK
+                <input
+                  type="number"
+                  id="total-watk"
+                  name="total-watk"
+                  min="0"
+                  value="0"
+                />
+              </label>
+
+              <label for="total-matk">
+                Total MATK
+                <input
+                  type="number"
+                  id="total-matk"
+                  name="total-matk"
+                  min="0"
+                  value="0"
+                />
+              </label>
+            </fieldset>
 
             <label for="mastery">
               Mastery
@@ -318,7 +370,35 @@
               />%
             </label>
 
+            <fieldset id="skill">
+              <legend>Skill</legend>
+
+              <label for="skill-dmg-multi">
+                Damage multi
+                <input
+                  type="number"
+                  id="skill-dmg-multi"
+                  name="skill-dmg-multi"
+                  min="0"
+                  value="100"
+                />%
+              </label>
+
+              <label for="skill-basic-atk">
+                Basic attack
+                <input
+                  type="number"
+                  id="skill-basic-atk"
+                  name="skill-basic-atk"
+                  min="0"
+                  value="10"
+                />
+              </label>
+            </fieldset>
+
             <fieldset id="crit">
+              <legend>Critical hits</legend>
+
               <label for="crit-prob">
                 Critical chance
                 <input
@@ -436,6 +516,28 @@
             <br />
             <b>&sigma;<sub>DPS</sub>, CV<sub>DPS</sub>:</b>
             <span id="sd-dps">???</span>, <span id="cv-dps">???</span>
+
+            <hr />
+
+            <h3>Magic</h3>
+
+            <b>Range, <em>crit range</em>:</b>
+            <span id="range-magic">??? ~ ???</span>,
+            <em id="crit-range-magic">??? ~ ???</em>
+            <br />
+            <b>Expected dmg per hit:</b>
+            <span id="expected-per-hit-magic">???</span>
+            <br />
+            <b>&sigma;<sub>per hit</sub>, CV<sub>per hit</sub>:</b>
+            <span id="sd-per-hit-magic">???</span>,
+            <span id="cv-per-hit-magic">???</span>
+            <br />
+            <b>Expected DPS:</b>
+            <span id="expected-dps-magic">???</span>
+            <br />
+            <b>&sigma;<sub>DPS</sub>, CV<sub>DPS</sub>:</b>
+            <span id="sd-dps-magic">???</span>,
+            <span id="cv-dps-magic">???</span>
           </div>
 
           <a href="#legal" class="h-anchor"><h2 id="legal">Legal</h2></a>
