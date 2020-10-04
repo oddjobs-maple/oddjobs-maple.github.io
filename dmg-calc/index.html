@@ -94,8 +94,8 @@
           </p>
 
           <p>
-            For now, only basic attacking is implemented (no skills, and no
-            special attacks like bow-whacking).
+            We assume that the player character and their foe are of the same
+            level.
           </p>
 
           <p>
@@ -110,7 +110,7 @@
             We assume that attacks with more than one line of damage calculate
             each line identically, even if the actual <em>outcomes</em> for the
             various lines may differ due to random chance. This assumption is
-            broken by skills like Barrage.
+            violated by skills like Barrage.
           </p>
 
           <a href="#you-should-know" class="h-anchor"
@@ -173,7 +173,7 @@
             Power Strike and 2 for Magic Claw. It is assumed that attacks with
             more than one line of damage calculate each line identically, even
             if the actual <em>outcomes</em> for the various lines may differ
-            due to random chance. This assumption is broken by skills like
+            due to random chance. This assumption is violated by skills like
             Barrage.
           </p>
 
@@ -475,6 +475,46 @@
                 </select>
               </label>
 
+              <label for="spell">
+                Spell
+                <select name="spell" id="spell">
+                  <option value="0">[other]</option>
+
+                  <optgroup label="F/P Mage">
+                    <option value="2111002">Explosion</option>
+                    <option value="2111003">Poison Mist</option>
+                    <option value="2111006">Element Composition</option>
+                  </optgroup>
+
+                  <optgroup label="F/P Archmage">
+                    <option value="2121007">Meteor Shower</option>
+                  </optgroup>
+
+                  <optgroup label="I/L Mage">
+                    <option value="2211002">Ice Strike</option>
+                    <option value="2211003">Thunder Spear</option>
+                    <option value="2211006">Element Composition</option>
+                  </optgroup>
+
+                  <optgroup label="I/L Archmage">
+                    <option value="2221006">Chain Lightning</option>
+                    <option value="2221007">Blizzard</option>
+                  </optgroup>
+
+                  <optgroup label="Cleric">
+                    <option value="2301002">Heal</option>
+                  </optgroup>
+
+                  <optgroup label="Priest">
+                    <option value="2311004">Shining Ray</option>
+                  </optgroup>
+
+                  <optgroup label="Bishop">
+                    <option value="2321008">Genesis</option>
+                  </optgroup>
+                </select>
+              </label>
+
               <label for="speed">
                 Speed
                 <select name="speed" id="speed">
@@ -488,17 +528,43 @@
                   <option value="9">9 (Slower)</option>
                 </select>
               </label>
+
+              <label for="spell-booster">
+                Spell booster
+                <input
+                  type="number"
+                  id="spell-booster"
+                  name="spell-booster"
+                  min="-2"
+                  max="0"
+                  value="0"
+                />
+              </label>
             </fieldset>
 
-            <label for="enemy-wdef">
-              Enemy&rsquo;s WDEF
-              <input
-                type="number"
-                id="enemy-wdef"
-                name="enemy-wdef"
-                value="0"
-              />
-            </label>
+            <fieldset>
+              <legend>Enemy</legend>
+
+              <label for="enemy-wdef">
+                WDEF
+                <input
+                  type="number"
+                  id="enemy-wdef"
+                  name="enemy-wdef"
+                  value="0"
+                />
+              </label>
+
+              <label for="enemy-mdef">
+                MDEF
+                <input
+                  type="number"
+                  id="enemy-mdef"
+                  name="enemy-mdef"
+                  value="0"
+                />
+              </label>
+            </fieldset>
           </div>
 
           <div id="calculator-output">

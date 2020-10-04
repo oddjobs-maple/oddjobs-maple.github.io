@@ -20,8 +20,8 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { InputData, Stats, WeaponType } from "./types.js";
-import { attackPeriod, primaryStat, secondaryStat } from "./data.js";
+import { InputData, Spell, Stats, WeaponType } from "./types.js";
+import { attackPeriod, magicAttackPeriod, primaryStat, secondaryStat, } from "./data.js";
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
         main();
@@ -33,13 +33,19 @@ function main() {
     const intInput = document.getElementById("int");
     const lukInput = document.getElementById("luk");
     const totalWatkInput = document.getElementById("total-watk");
+    const totalMatkInput = document.getElementById("total-matk");
     const masteryInput = document.getElementById("mastery");
+    const skillDmgMultiInput = document.getElementById("skill-dmg-multi");
+    const skillBasicAtkInput = document.getElementById("skill-basic-atk");
     const critProbInput = document.getElementById("crit-prob");
     const critDmgInput = document.getElementById("crit-dmg");
     const classInput = document.getElementById("class");
     const weaponTypeInput = document.getElementById("weapon-type");
+    const spellInput = document.getElementById("spell");
     const speedInput = document.getElementById("speed");
+    const spellBoosterInput = document.getElementById("spell-booster");
     const enemyWdefInput = document.getElementById("enemy-wdef");
+    const enemyMdefInput = document.getElementById("enemy-mdef");
     const rangeOutput = document.getElementById("range");
     const critRangeOutput = document.getElementById("crit-range");
     const expectedPerHitOutput = document.getElementById("expected-per-hit");
@@ -48,6 +54,14 @@ function main() {
     const expectedDpsOutput = document.getElementById("expected-dps");
     const sdDpsOutput = document.getElementById("sd-dps");
     const cvDpsOutput = document.getElementById("cv-dps");
+    const rangeMagicOutput = document.getElementById("range-magic");
+    const critRangeMagicOutput = document.getElementById("crit-range-magic");
+    const expectedPerHitMagicOutput = document.getElementById("expected-per-hit-magic");
+    const sdPerHitMagicOutput = document.getElementById("sd-per-hit-magic");
+    const cvPerHitMagicOutput = document.getElementById("cv-per-hit-magic");
+    const expectedDpsMagicOutput = document.getElementById("expected-dps-magic");
+    const sdDpsMagicOutput = document.getElementById("sd-dps-magic");
+    const cvDpsMagicOutput = document.getElementById("cv-dps-magic");
     function readInputData() {
         let str = Math.max(parseInt(strInput.value, 10), 4);
         if (!Number.isFinite(str)) {
@@ -74,12 +88,27 @@ function main() {
             totalWatk = 0;
         }
         totalWatkInput.value = "" + totalWatk;
+        let totalMatk = Math.max(parseInt(totalMatkInput.value, 10), 0);
+        if (!Number.isFinite(totalMatk)) {
+            totalMatk = 0;
+        }
+        totalMatkInput.value = "" + totalMatk;
         let mastery = Math.min(Math.max(parseInt(masteryInput.value, 10), 10), 90);
         if (!Number.isFinite(mastery)) {
             mastery = 10;
         }
         mastery -= mastery % 5;
         masteryInput.value = "" + mastery;
+        let skillDmgMulti = Math.max(parseInt(skillDmgMultiInput.value, 10), 0);
+        if (!Number.isFinite(skillDmgMulti)) {
+            skillDmgMulti = 100;
+        }
+        skillDmgMultiInput.value = "" + skillDmgMulti;
+        let skillBasicAtk = Math.max(parseInt(skillBasicAtkInput.value, 10), 0);
+        if (!Number.isFinite(skillBasicAtk)) {
+            skillBasicAtk = 10;
+        }
+        skillBasicAtkInput.value = "" + skillBasicAtk;
         let critProb = Math.min(Math.max(parseInt(critProbInput.value, 10), 0), 100);
         if (!Number.isFinite(critProb)) {
             critProb = 0;
@@ -100,21 +129,40 @@ function main() {
             wepType = 30;
         }
         weaponTypeInput.value = "" + wepType;
+        let spell = parseInt(spellInput.value, 10);
+        if (!Number.isFinite(spell) || !(spell in Spell)) {
+            spell = 0;
+        }
+        spellInput.value = "" + spell;
         let speed = Math.min(Math.max(parseInt(speedInput.value, 10), 2), 9);
         if (!Number.isFinite(speed)) {
             speed = 6;
         }
         speedInput.value = "" + speed;
+        let spellBooster = Math.min(Math.max(parseInt(spellBoosterInput.value, 10), -2), 0);
+        if (!Number.isFinite(spellBooster)) {
+            spellBooster = 0;
+        }
+        spellBoosterInput.value = "" + spellBooster;
         let enemyWdef = parseInt(enemyWdefInput.value, 10);
         if (!Number.isFinite(enemyWdef)) {
             enemyWdef = 0;
         }
         enemyWdefInput.value = "" + enemyWdef;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, mastery / 100, critProb / 100, critDmg / 100, clazz, wepType, speed, enemyWdef);
+        let enemyMdef = parseInt(enemyMdefInput.value, 10);
+        if (!Number.isFinite(enemyMdef)) {
+            enemyMdef = 0;
+        }
+        enemyMdefInput.value = "" + enemyMdef;
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, critProb / 100, critDmg / 100, clazz, wepType, spell, speed, spellBooster, enemyWdef, enemyMdef);
     }
     function recalculate() {
         const inputData = readInputData();
         const critQ = 1 - inputData.critProb;
+        recalculatePhys(inputData, critQ);
+        recalculateMagic(inputData, critQ);
+    }
+    function recalculatePhys(inputData, critQ) {
         const [minDmgPhysBad, maxDmgPhysGood] = [
             minDmgPhys(inputData, false),
             maxDmgPhys(inputData, true),
@@ -223,19 +271,98 @@ function main() {
             sdDpsOutput.textContent = "[undefined]";
         }
     }
+    function recalculateMagic(inputData, critQ) {
+        const [minDmg, maxDmg] = [
+            minDmgMagic(inputData),
+            maxDmgMagic(inputData),
+        ];
+        const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForDef([minDmg, maxDmg], inputData.enemyMdef);
+        const [minDmgCrit, maxDmgCrit] = [minDmgNoCrit, maxDmgNoCrit].map(x => x * inputData.critDmg);
+        const range = [minDmgNoCrit, maxDmgNoCrit].map(x => Math.max(Math.trunc(x), 1));
+        const critRange = [minDmgCrit, maxDmgCrit].map(x => Math.max(Math.trunc(x), 1));
+        rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}`;
+        critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
+        const [expectedPerHitNoCrit, expectedPerHitCrit] = [
+            clampedExpectation(minDmgNoCrit, maxDmgNoCrit),
+            clampedExpectation(minDmgCrit, maxDmgCrit),
+        ];
+        const expectedPerHit = critQ * expectedPerHitNoCrit +
+            inputData.critProb * expectedPerHitCrit;
+        expectedPerHitMagicOutput.textContent = expectedPerHit.toFixed(3);
+        // The "mainVariance" in the following variable names is intended to
+        // indicate that this is a variance against the expectation across
+        // _all_ cases (`expectedPerHit`), not against the expected value of
+        // the particular case in question.
+        const mainVariancePerHitNoCrit = clampedVariance(minDmgNoCrit, maxDmgNoCrit, expectedPerHit);
+        const mainVariancePerHitCrit = clampedVariance(minDmgCrit, maxDmgCrit, expectedPerHit);
+        const variancePerHit = mainVariancePerHitNoCrit !== undefined &&
+            mainVariancePerHitCrit !== undefined
+            ? critQ * mainVariancePerHitNoCrit +
+                inputData.critProb * mainVariancePerHitCrit
+            : undefined;
+        let sdPerHit = undefined;
+        if (variancePerHit !== undefined) {
+            sdPerHitMagicOutput.classList.remove("error");
+            sdPerHit = Math.sqrt(variancePerHit);
+            sdPerHitMagicOutput.textContent = sdPerHit.toFixed(3);
+            cvPerHitMagicOutput.textContent = (sdPerHit / expectedPerHit).toFixed(5);
+        }
+        else {
+            sdPerHitMagicOutput.classList.add("error");
+            sdPerHitMagicOutput.textContent = "[undefined]";
+        }
+        const period = magicAttackPeriod(inputData.spellBooster, inputData.spell, inputData.speed);
+        if (period !== undefined) {
+            expectedDpsMagicOutput.classList.remove("error");
+            const attackHz = 1000 / period;
+            const expectedDps = attackHz * expectedPerHit;
+            expectedDpsMagicOutput.textContent = expectedDps.toFixed(3);
+            if (sdPerHit !== undefined) {
+                sdDpsMagicOutput.classList.remove("error");
+                // This is mathematically valid because the damage/outcome of
+                // each hit is independent of the damage of any other hit, thus
+                // implying uncorrelatedness.  Furthermore, this implies that
+                // the variance of the sum of hits is the sum of the variance
+                // of said hits.
+                const sdDps = Math.sqrt(attackHz) *
+                    sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
+                             = sqrt(attackHz * variancePerHit)
+                             = sqrt(varianceDps). */
+                sdDpsMagicOutput.textContent = sdDps.toFixed(3);
+                cvDpsMagicOutput.textContent = (sdDps / expectedDps).toFixed(5);
+            }
+            else {
+                sdDpsMagicOutput.classList.add("error");
+                sdDpsMagicOutput.textContent = "[undefined]";
+            }
+        }
+        else {
+            expectedDpsMagicOutput.classList.add("error");
+            expectedDpsMagicOutput.textContent =
+                "[unknown attack speed value]";
+            sdDpsMagicOutput.classList.add("error");
+            sdDpsMagicOutput.textContent = "[undefined]";
+        }
+    }
     for (const input of [
         strInput,
         dexInput,
         intInput,
         lukInput,
         totalWatkInput,
+        totalMatkInput,
         masteryInput,
+        skillDmgMultiInput,
+        skillBasicAtkInput,
         critProbInput,
         critDmgInput,
         classInput,
         weaponTypeInput,
+        spellInput,
         speedInput,
+        spellBoosterInput,
         enemyWdefInput,
+        enemyMdefInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -302,7 +429,19 @@ function clampedExpectation(min, max) {
     return clampedWeight + uniformWeight * uniformExpected;
 }
 function dmgMulti(inputData, crit) {
-    return 1 + (crit ? inputData.critDmg : 0);
+    return inputData.skillDmgMulti + (crit ? inputData.critDmg : 0);
+}
+function maxDmgMagic(inputData) {
+    return (((inputData.totalMatk ** 2 / 1000 + inputData.totalMatk) / 30 +
+        inputData.stats.int / 200) *
+        inputData.skillBasicAtk);
+}
+function minDmgMagic(inputData) {
+    return (((inputData.totalMatk ** 2 / 1000 +
+        inputData.totalMatk * inputData.mastery * 0.9) /
+        30 +
+        inputData.stats.int / 200) *
+        inputData.skillBasicAtk);
 }
 function maxDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) +
@@ -318,7 +457,7 @@ function minDmgPhys(inputData, goodAnim) {
         inputData.totalWatk) /
         100);
 }
-function adjustRangeForDef(range, wdef) {
+function adjustRangeForDef(range, def) {
     const [min, max] = range;
-    return [min - wdef * 0.6, max - wdef * 0.5];
+    return [min - def * 0.6, max - def * 0.5];
 }

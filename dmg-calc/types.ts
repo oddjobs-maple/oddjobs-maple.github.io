@@ -49,6 +49,22 @@ export enum WeaponType {
     Gun = 49,
 }
 
+export enum Spell {
+    Other = 0,
+    Explosion = 2111002,
+    PoisonMist = 2111003,
+    ElementCompositionFP = 2111006,
+    MeteorShower = 2121007,
+    IceStrike = 2211002,
+    ThunderSpear = 2211003,
+    ElementCompositionIL = 2211006,
+    ChainLightning = 2221006,
+    Blizzard = 2221007,
+    Heal = 2301002,
+    ShiningRay = 2311004,
+    Genesis = 2321008,
+}
+
 export const enum Class {
     Beginner = 0,
     Warrior = 100,
@@ -73,12 +89,18 @@ export class InputData {
     public constructor(
         public stats: Stats,
         public totalWatk: number,
+        public totalMatk: number,
         public mastery: number,
+        public skillDmgMulti: number,
+        public skillBasicAtk: number,
         public critProb: number,
         public critDmg: number,
         public clazz: Class,
         public wepType: WeaponType,
+        public spell: Spell,
         public speed: Speed,
+        public spellBooster: number,
         public enemyWdef: number,
+        public enemyMdef: number,
     ) {}
 }

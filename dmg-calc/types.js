@@ -47,16 +47,38 @@ export var WeaponType;
     WeaponType[WeaponType["Knuckler"] = 48] = "Knuckler";
     WeaponType[WeaponType["Gun"] = 49] = "Gun";
 })(WeaponType || (WeaponType = {}));
+export var Spell;
+(function (Spell) {
+    Spell[Spell["Other"] = 0] = "Other";
+    Spell[Spell["Explosion"] = 2111002] = "Explosion";
+    Spell[Spell["PoisonMist"] = 2111003] = "PoisonMist";
+    Spell[Spell["ElementCompositionFP"] = 2111006] = "ElementCompositionFP";
+    Spell[Spell["MeteorShower"] = 2121007] = "MeteorShower";
+    Spell[Spell["IceStrike"] = 2211002] = "IceStrike";
+    Spell[Spell["ThunderSpear"] = 2211003] = "ThunderSpear";
+    Spell[Spell["ElementCompositionIL"] = 2211006] = "ElementCompositionIL";
+    Spell[Spell["ChainLightning"] = 2221006] = "ChainLightning";
+    Spell[Spell["Blizzard"] = 2221007] = "Blizzard";
+    Spell[Spell["Heal"] = 2301002] = "Heal";
+    Spell[Spell["ShiningRay"] = 2311004] = "ShiningRay";
+    Spell[Spell["Genesis"] = 2321008] = "Genesis";
+})(Spell || (Spell = {}));
 export class InputData {
-    constructor(stats, totalWatk, mastery, critProb, critDmg, clazz, wepType, speed, enemyWdef) {
+    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, critProb, critDmg, clazz, wepType, spell, speed, spellBooster, enemyWdef, enemyMdef) {
         this.stats = stats;
         this.totalWatk = totalWatk;
+        this.totalMatk = totalMatk;
         this.mastery = mastery;
+        this.skillDmgMulti = skillDmgMulti;
+        this.skillBasicAtk = skillBasicAtk;
         this.critProb = critProb;
         this.critDmg = critDmg;
         this.clazz = clazz;
         this.wepType = wepType;
+        this.spell = spell;
         this.speed = speed;
+        this.spellBooster = spellBooster;
         this.enemyWdef = enemyWdef;
+        this.enemyMdef = enemyMdef;
     }
 }
