@@ -286,6 +286,7 @@ figure {
     margin: 0.5rem 0 0.5rem 1.5rem;
     padding: 0;
     border: 0;
+    overflow: auto;
 }
 
 code,
@@ -428,12 +429,26 @@ select {
 }
 
 #main-nav {
+    display: block;
+
     flex-basis: 16rem;
     flex-grow: 1;
     max-width: 16rem;
 
     background-color: #27292b;
     box-shadow: 0 0 1rem inset #000000a0;
+}
+
+#main-nav-inner {
+    position: -webkit-sticky;
+    position: sticky;
+
+    top: 0;
+    left: 0;
+
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 #main-nav-pullout {
@@ -448,6 +463,7 @@ select {
     background-color: #27292b;
     font-size: 1rem;
     -webkit-text-size-adjust: 100%;
+    text-align: center;
 }
 
 #main-nav a {
@@ -529,8 +545,8 @@ ul.nav-list > li.active {
         flex-basis: 1rem;
     }
 
-    #main-nav > .nav-h,
-    #main-nav > .nav-list {
+    #main-nav .nav-h,
+    #main-nav .nav-list {
         border: 0;
         clip-path: polygon(0 0, 0 0, 0 0);
         height: 1px;
@@ -542,12 +558,12 @@ ul.nav-list > li.active {
         width: 1px;
     }
 
-    #main-nav:hover > .nav-h,
-    #main-nav:active > .nav-h,
-    #main-nav:focus > .nav-h,
-    #main-nav:hover > .nav-list,
-    #main-nav:active > .nav-list,
-    #main-nav:focus > .nav-list {
+    #main-nav:hover .nav-h,
+    #main-nav:active .nav-h,
+    #main-nav:focus .nav-h,
+    #main-nav:hover .nav-list,
+    #main-nav:active .nav-list,
+    #main-nav:focus .nav-list {
         clip-path: none;
         height: auto;
         margin: 0;
@@ -557,18 +573,19 @@ ul.nav-list > li.active {
         width: auto;
     }
 
-    #main-nav:hover > .nav-list > li > a,
-    #main-nav:active > .nav-list > li > a,
-    #main-nav:focus > .nav-list > li > a {
+    #main-nav:hover .nav-list > li > a,
+    #main-nav:active .nav-list > li > a,
+    #main-nav:focus .nav-list > li > a {
         width: 100%;
         height: 100%;
         padding: 0.25rem 1rem 0.25rem 0.5rem;
     }
 
-    #main-nav:hover > .nav-h,
-    #main-nav:active > .nav-h,
-    #main-nav:focus > .nav-h {
-        padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+    #main-nav:hover .nav-h,
+    #main-nav:active .nav-h,
+    #main-nav:focus .nav-h {
+        width: 100%;
+        padding: 0.5rem 0 0.5rem 0; /* 0.5rem 0.5rem 1.5rem 0.5rem */
     }
 
     #main-nav-pullout {
@@ -578,15 +595,20 @@ ul.nav-list > li.active {
         align-items: center;
         align-content: center;
         justify-content: center;
+
+        min-height: 100vh;
+
+        box-shadow: 0 0 1rem inset #000000a0;
     }
 
     #main-nav-pullout > span {
         padding: 0 1px 0 1px;
+        color: white;
     }
 
-    #main-nav:hover > #main-nav-pullout,
-    #main-nav:active > #main-nav-pullout,
-    #main-nav:focus > #main-nav-pullout {
+    #main-nav:hover #main-nav-pullout,
+    #main-nav:active #main-nav-pullout,
+    #main-nav:focus #main-nav-pullout {
         display: none;
     }
 
