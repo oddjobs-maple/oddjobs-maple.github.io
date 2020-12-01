@@ -166,7 +166,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
 
     out.write_all(PREAMBLE).unwrap();
 
-    out.write_all(br##"<ul id="toc-list">"##).unwrap();
+    out.write_all(br##"<ul id="toc-list" class="plain-ul">"##)
+        .unwrap();
     for oddjob in &oddjobs {
         write!(
             out,
@@ -204,8 +205,10 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             write!(out, "&ldquo;{}&rdquo;</p>", last_alias).unwrap();
         }
 
-        out.write_all(b"<p>Possible job progressions:</p><ul>")
-            .unwrap();
+        out.write_all(
+            br##"<p>Possible job progressions:</p><ul class="plain-ul">"##,
+        )
+        .unwrap();
         for prog in oddjob.progressions {
             if let Some((last_job, jobs)) = prog.split_last() {
                 out.write_all(b"<li>").unwrap();
@@ -280,7 +283,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         out.write_all(b"</p>").unwrap();
 
         if !oddjob.stat_constraints.is_empty() {
-            write!(out, "<p>Stat constraints:</p><ul>").unwrap();
+            write!(out, r##"<p>Stat constraints:</p><ul class="plain-ul">"##)
+                .unwrap();
 
             for stat_constraint in oddjob.stat_constraints {
                 write!(
@@ -299,7 +303,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             out.write_all(b"&#x1f34f;").unwrap();
         }
 
-        out.write_all(b"</p><p>Attacks:</p><ul>").unwrap();
+        out.write_all(br##"</p><p>Attacks:</p><ul class="plain-ul">"##)
+            .unwrap();
         for attack in oddjob.attacks {
             let attack_name = skill_name(attack).unwrap_or_else(|| {
                 eprintln!("Invalid skill ID: {}", attack);
@@ -326,7 +331,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         out.write_all(b"</ul>").unwrap();
 
         if !oddjob.notable_skills.is_empty() {
-            out.write_all(b"<p>Notable skills:</p><ul>").unwrap();
+            out.write_all(br##"<p>Notable skills:</p><ul class="plain-ul">"##)
+                .unwrap();
 
             for skill in oddjob.notable_skills {
                 let sk_name = skill_name(skill).unwrap_or_else(|| {
@@ -351,7 +357,10 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         }
 
         if !oddjob.notable_equips.is_empty() {
-            out.write_all(b"<p>Notable equipment:</p><ul>").unwrap();
+            out.write_all(
+                br##"<p>Notable equipment:</p><ul class="plain-ul">"##,
+            )
+            .unwrap();
 
             for equip in oddjob.notable_equips {
                 let equip_name = item_name(equip).unwrap_or_else(|| {

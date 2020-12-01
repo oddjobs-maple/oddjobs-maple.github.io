@@ -747,3 +747,7 @@ ul.nav-list > li.active {
     white-space: nowrap;
     width: 1px;
 }
+
+.plain-ul {
+    list-style-type: disc;
+}
