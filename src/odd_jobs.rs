@@ -21,6 +21,7 @@ struct Oddjob {
     primary_stats: Vec<String>,
     secondary_stats: Vec<String>,
     stat_constraints: Vec<String>,
+    power_level: u32,
     attacks: Vec<u32>,
     notable_skills: Vec<u32>,
     notable_equips: Vec<u32>,
@@ -103,6 +104,43 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             question, they are not listed under &ldquo;Notable
             equipment&rdquo;.
           </p>
+
+          <p>
+            Here, each odd job has a &ldquo;Power level&rdquo; associated with
+            it. This is just a impressionistic rule of thumb that helps to
+            estimate, at a glance, how the various odd jobs stack up when
+            compared to one another. Obviously, how powerful a given odd-jobbed
+            character is will depend on many factors, like what particular job
+            advancements are taken, what equipment the character has access to,
+            what level they are, what server they are playing on, &amp;c. There
+            are three possible power levels, which are as follows:
+          </p>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col" class="align-right">Power level</th>
+                  <th scope="col" class="align-none">Interpretation</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td class="align-right">&#x1f34f;</td>
+                  <td class="align-none">This odd job is deeply challenged, and will require a considerable amount of dedication to play beyond a certain level.</td>
+                </tr>
+                <tr>
+                  <td class="align-right">&#x1f34f;&#x1f34f;</td>
+                  <td class="align-none">This odd job has enough tricks up its sleeve that it is generally significantly more powerful than a permabeginner of the same level; however, it is still pessimal in comparison to any mainstream (non-odd) job.</td>
+                </tr>
+                <tr>
+                  <td class="align-right">&#x1f34f;&#x1f34f;&#x1f34f;</td>
+                  <td class="align-none">This odd job is one of the most powerful odd jobs. It is, at its most well-equipped, capable of performing roughly as well as a bad/poor example of a mainstream (non-odd) job. At certain levels, it may even be briefly as powerful as a mainstream job.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- The HTML below this comment is automatically generated from a
           JSON file by odd_jobs.rs.  See: <https://codeberg.org/oddjobs/pages>
@@ -256,7 +294,12 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             out.write_all(b"</ul>").unwrap();
         }
 
-        out.write_all(b"<p>Attacks:</p><ul>").unwrap();
+        out.write_all(b"<p>Power level: ").unwrap();
+        for _ in 0..oddjob.power_level {
+            out.write_all(b"&#x1f34f;").unwrap();
+        }
+
+        out.write_all(b"</p><p>Attacks:</p><ul>").unwrap();
         for attack in oddjob.attacks {
             let attack_name = skill_name(attack).unwrap_or_else(|| {
                 eprintln!("Invalid skill ID: {}", attack);
