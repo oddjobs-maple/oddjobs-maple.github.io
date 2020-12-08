@@ -8,7 +8,7 @@ strip ./target/release/oddjobs_renderer
 
 ./target/release/oddjobs_renderer "$1" > ./odd-jobs.html
 
-declare -a guide_slugs=("woodsman" "str-cleric")
+declare -a guide_slugs=("woodsman" "str-cleric" "magelet")
 
 for s in "${guide_slugs[@]}"
 do
