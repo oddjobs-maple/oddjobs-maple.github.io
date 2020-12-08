@@ -6,7 +6,7 @@ mod guide;
 mod odd_jobs;
 mod util;
 
-use std::{env, io, process};
+use std::{env, io, path::Path, process};
 
 fn main() {
     let mut input_filename = String::new();
@@ -40,8 +40,10 @@ fn main() {
         || input_filename.ends_with(".markdown")
     {
         guide::render(input_filename, &mut stdout);
+    } else if Path::new(&input_filename).is_dir() {
+        guide::render_index(input_filename, &mut stdout);
     } else {
-        eprintln!("Expected input filename to end in \".json\" or \".md\"/\".markdown\"");
+        eprintln!("Expected input filename to end in \".json\" or \".md\"/\".markdown\", or for the input filename to point to a directory");
 
         process::exit(1)
     }

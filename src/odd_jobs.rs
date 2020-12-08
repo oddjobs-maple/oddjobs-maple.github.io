@@ -66,7 +66,7 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="./odd-jobs.html">Odd Jobs</a>
             </li>
             <li>
-              <a href="./guides.html">Guides</a>
+              <a href="./guides/index.html">Guides</a>
             </li>
             <li>
               <a href="./dmg-calc/index.html">Damage Calc</a>
