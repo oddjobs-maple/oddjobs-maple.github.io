@@ -228,11 +228,9 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 }
                 Event::Text(s) => {
                     out.write_all(s.as_bytes()).unwrap();
-                    title_slug = slugify(&s);
-
-                    break;
+                    title_slug.push_str(&slugify(&s));
                 }
-                _ => (),
+                _ => break,
             }
         }
 
