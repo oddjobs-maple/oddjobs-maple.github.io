@@ -248,9 +248,11 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
     let mut in_thead = false;
     let mut table_cell_ix = 0;
     let mut in_img = false;
+    let (mut wanting_p, mut wanting_close_p) = (false, true);
+    let mut wanting_a: Option<pulldown_cmark::CowStr> = None;
     for event in parser {
         if let Event::Text(_) = event {
-        } else {
+        } else if !text.is_empty() {
             if in_heading != 0 {
                 let slug = slugify(&text);
 
@@ -268,9 +270,27 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             text.truncate(0);
         }
 
+        if wanting_p {
+            match event {
+                Event::Start(Tag::Link(_, _, _)) => (),
+                _ => {
+                    if let Event::Start(Tag::Image(_, _, _)) = event {
+                        wanting_close_p = false;
+                    } else {
+                        out.write_all(b"<p>").unwrap();
+                    }
+                    wanting_p = false;
+
+                    if let Some(url) = wanting_a.take() {
+                        write!(out, r##"<a href="{}">"##, url).unwrap();
+                    }
+                }
+            }
+        }
+
         match event {
             Event::Start(tag) => match tag {
-                Tag::Paragraph => out.write_all(b"<p>").unwrap(),
+                Tag::Paragraph => wanting_p = true,
                 Tag::Heading(level) => {
                     if level == 1 {
                         if seen_h1 {
@@ -323,7 +343,11 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 Tag::Strong => out.write_all(b"<strong>").unwrap(),
                 Tag::Strikethrough => out.write_all(b"<del>").unwrap(),
                 Tag::Link(_, url, _) => {
-                    write!(out, r##"<a href="{}">"##, url).unwrap();
+                    if wanting_p {
+                        wanting_a = Some(url);
+                    } else {
+                        write!(out, r##"<a href="{}">"##, url).unwrap();
+                    }
                 }
                 Tag::Image(_, url, title) => {
                     write!(
@@ -337,7 +361,13 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                 }
             },
             Event::End(tag) => match tag {
-                Tag::Paragraph => out.write_all(b"</p>").unwrap(),
+                Tag::Paragraph => {
+                    if wanting_close_p {
+                        out.write_all(b"</p>").unwrap();
+                    }
+                    wanting_p = false;
+                    wanting_close_p = true;
+                }
                 Tag::Heading(level) => {
                     write!(out, "</h{}>", level).unwrap();
 
@@ -380,11 +410,16 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     in_thead = false;
                 }
                 Tag::TableRow => out.write_all(b"</tr>").unwrap(),
-                Tag::TableCell => out.write_all(b"</td>").unwrap(),
+                Tag::TableCell => out
+                    .write_all(if in_thead { b"</th>" } else { b"</td>" })
+                    .unwrap(),
                 Tag::Emphasis => out.write_all(b"</em>").unwrap(),
                 Tag::Strong => out.write_all(b"</strong>").unwrap(),
                 Tag::Strikethrough => out.write_all(b"</del>").unwrap(),
-                Tag::Link(_, _, _) => out.write_all(b"</a>").unwrap(),
+                Tag::Link(_, _, _) => {
+                    out.write_all(b"</a>").unwrap();
+                    wanting_a = None;
+                }
                 Tag::Image(_, _, _) => {
                     out.write_all(b"</figure>").unwrap();
                     in_img = false;
