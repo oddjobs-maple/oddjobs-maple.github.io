@@ -31,6 +31,7 @@ export class Stats {
 }
 
 export enum WeaponType {
+    None = 0,
     OneHandedSword = 30,
     OneHandedAxe = 31,
     OneHandedMace = 32,
@@ -49,6 +50,12 @@ export enum WeaponType {
     Gun = 49,
 }
 
+export enum Attack {
+    Other = 0,
+    LuckySeven = 4001344,
+    TripleThrow = 4121007,
+}
+
 export enum Spell {
     Other = 0,
     Explosion = 2111002,
@@ -65,13 +72,14 @@ export enum Spell {
     Genesis = 2321008,
 }
 
-export const enum Class {
+export enum Class {
     Beginner = 0,
     Warrior = 100,
     Magician = 200,
     Archer = 300,
     Rogue = 400,
     Pirate = 500,
+    Pirate2nd = 510,
 }
 
 export const enum Speed {
@@ -96,11 +104,15 @@ export class InputData {
         public critProb: number,
         public critDmg: number,
         public clazz: Class,
+        public level: number,
         public wepType: WeaponType,
+        public attack: Attack,
         public spell: Spell,
         public speed: Speed,
         public spellBooster: number,
+        public eleAmp: number,
         public enemyWdef: number,
         public enemyMdef: number,
+        public eleSus: number,
     ) {}
 }

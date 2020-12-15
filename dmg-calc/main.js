@@ -20,8 +20,8 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { InputData, Spell, Stats, WeaponType } from "./types.js";
-import { attackPeriod, magicAttackPeriod, primaryStat, secondaryStat, } from "./data.js";
+import { Attack, Class, InputData, Spell, Stats, WeaponType, } from "./types.js";
+import { ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, className, isHolySpell, magicAttackPeriod, primaryStat, secondaryStat, weaponTypeName, } from "./data.js";
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
         main();
@@ -40,12 +40,16 @@ function main() {
     const critProbInput = document.getElementById("crit-prob");
     const critDmgInput = document.getElementById("crit-dmg");
     const classInput = document.getElementById("class");
+    const levelInput = document.getElementById("level");
     const weaponTypeInput = document.getElementById("weapon-type");
+    const attackInput = document.getElementById("attack");
     const spellInput = document.getElementById("spell");
     const speedInput = document.getElementById("speed");
     const spellBoosterInput = document.getElementById("spell-booster");
+    const eleAmpInput = document.getElementById("ele-amp");
     const enemyWdefInput = document.getElementById("enemy-wdef");
     const enemyMdefInput = document.getElementById("enemy-mdef");
+    const eleSusInput = document.getElementById("ele-sus");
     const rangeOutput = document.getElementById("range");
     const critRangeOutput = document.getElementById("crit-range");
     const expectedPerHitOutput = document.getElementById("expected-per-hit");
@@ -62,6 +66,7 @@ function main() {
     const expectedDpsMagicOutput = document.getElementById("expected-dps-magic");
     const sdDpsMagicOutput = document.getElementById("sd-dps-magic");
     const cvDpsMagicOutput = document.getElementById("cv-dps-magic");
+    const warningsDiv = document.getElementById("warnings-div");
     function readInputData() {
         let str = Math.max(parseInt(strInput.value, 10), 4);
         if (!Number.isFinite(str)) {
@@ -114,21 +119,31 @@ function main() {
             critProb = 0;
         }
         critProbInput.value = "" + critProb;
-        let critDmg = Math.min(Math.max(parseInt(critDmgInput.value, 10), 0), 300);
+        let critDmg = Math.max(parseInt(critDmgInput.value, 10), 0);
         if (!Number.isFinite(critDmg)) {
             critDmg = 100;
         }
         critDmgInput.value = "" + critDmg;
-        let clazz = Math.min(Math.max(parseInt(classInput.value, 10), 0), 500);
-        if (!Number.isFinite(clazz) || clazz % 100 !== 0) {
+        let clazz = parseInt(classInput.value, 10);
+        if (!Number.isFinite(clazz) || !(clazz in Class)) {
             clazz = 0;
         }
         classInput.value = "" + clazz;
+        let level = Math.min(Math.max(parseInt(levelInput.value, 10), 1), 200);
+        if (!Number.isFinite(level)) {
+            level = 30;
+        }
+        levelInput.value = "" + level;
         let wepType = parseInt(weaponTypeInput.value, 10);
         if (!Number.isFinite(wepType) || !(wepType in WeaponType)) {
             wepType = 30;
         }
         weaponTypeInput.value = "" + wepType;
+        let attack = parseInt(attackInput.value, 10);
+        if (!Number.isFinite(attack) || !(attack in Attack)) {
+            attack = 0;
+        }
+        attackInput.value = "" + attack;
         let spell = parseInt(spellInput.value, 10);
         if (!Number.isFinite(spell) || !(spell in Spell)) {
             spell = 0;
@@ -144,6 +159,11 @@ function main() {
             spellBooster = 0;
         }
         spellBoosterInput.value = "" + spellBooster;
+        let eleAmp = Math.max(parseInt(eleAmpInput.value, 10), 100);
+        if (!Number.isFinite(eleAmp)) {
+            eleAmp = 100;
+        }
+        eleAmpInput.value = "" + eleAmp;
         let enemyWdef = parseInt(enemyWdefInput.value, 10);
         if (!Number.isFinite(enemyWdef)) {
             enemyWdef = 0;
@@ -154,22 +174,61 @@ function main() {
             enemyMdef = 0;
         }
         enemyMdefInput.value = "" + enemyMdef;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, critProb / 100, critDmg / 100, clazz, wepType, spell, speed, spellBooster, enemyWdef, enemyMdef);
+        let eleSus = Math.min(Math.max(parseFloat(eleSusInput.value), 0), 1.5);
+        if (!Number.isFinite(eleSus) ||
+            !(eleSus === 0 || eleSus === 0.5 || eleSus === 1 || eleSus === 1.5)) {
+            eleSus = 1;
+        }
+        eleSusInput.value = "" + eleSus;
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus);
     }
     function recalculate() {
         const inputData = readInputData();
         const critQ = 1 - inputData.critProb;
         recalculatePhys(inputData, critQ);
         recalculateMagic(inputData, critQ);
+        recalculateWarnings(inputData);
     }
     function recalculatePhys(inputData, critQ) {
         const [minDmgPhysBad, maxDmgPhysGood] = [
-            minDmgPhys(inputData, false),
-            maxDmgPhys(inputData, true),
+            (() => {
+                switch (inputData.attack) {
+                    case Attack.LuckySeven:
+                    case Attack.TripleThrow:
+                        return minDmgLuckySeven(inputData);
+                    default:
+                        return minDmgPhys(inputData, false);
+                }
+            })(),
+            (() => {
+                switch (inputData.attack) {
+                    case Attack.LuckySeven:
+                    case Attack.TripleThrow:
+                        return maxDmgLuckySeven(inputData);
+                    default:
+                        return maxDmgPhys(inputData, true);
+                }
+            })(),
         ];
         const [minDmgPhysGood, maxDmgPhysBad] = [
-            minDmgPhys(inputData, true),
-            maxDmgPhys(inputData, false),
+            (() => {
+                switch (inputData.attack) {
+                    case Attack.LuckySeven:
+                    case Attack.TripleThrow:
+                        return minDmgPhysBad;
+                    default:
+                        return minDmgPhys(inputData, true);
+                }
+            })(),
+            (() => {
+                switch (inputData.attack) {
+                    case Attack.LuckySeven:
+                    case Attack.TripleThrow:
+                        return maxDmgPhysGood;
+                    default:
+                        return maxDmgPhys(inputData, false);
+                }
+            })(),
         ];
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted,] = adjustRangeForDef([minDmgPhysBad, maxDmgPhysGood], inputData.enemyWdef);
         const [minDmgPhysGoodAdjusted, maxDmgPhysBadAdjusted,] = adjustRangeForDef([minDmgPhysGood, maxDmgPhysBad], inputData.enemyWdef);
@@ -273,8 +332,8 @@ function main() {
     }
     function recalculateMagic(inputData, critQ) {
         const [minDmg, maxDmg] = [
-            minDmgMagic(inputData),
-            maxDmgMagic(inputData),
+            minDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
+            maxDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
         ];
         const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForDef([minDmg, maxDmg], inputData.enemyMdef);
         const [minDmgCrit, maxDmgCrit] = [minDmgNoCrit, maxDmgNoCrit].map(x => x * inputData.critDmg);
@@ -344,6 +403,263 @@ function main() {
             sdDpsMagicOutput.textContent = "[undefined]";
         }
     }
+    function recalculateWarnings(inputData) {
+        const warnings = [];
+        /*======== Emit warnings ========*/
+        if (inputData.totalWatk === 0 &&
+            inputData.wepType !== WeaponType.None) {
+            warnings.push("Your total WATK is zero, but you have a weapon equipped.");
+        }
+        if (inputData.totalMatk < inputData.stats.int) {
+            warnings.push("Your total MATK is less than your total INT.");
+        }
+        switch (inputData.wepType) {
+            case WeaponType.OneHandedSword:
+            case WeaponType.OneHandedAxe:
+            case WeaponType.OneHandedMace:
+            case WeaponType.TwoHandedSword:
+            case WeaponType.TwoHandedAxe:
+            case WeaponType.TwoHandedMace:
+            case WeaponType.Spear:
+            case WeaponType.Polearm: {
+                if (inputData.mastery > 0.1 &&
+                    inputData.clazz !== Class.Warrior) {
+                    warnings.push(`You have >10% mastery with a ${weaponTypeName(inputData.wepType)}, but you\u{2019}re not a warrior.`);
+                }
+                break;
+            }
+            case WeaponType.Dagger:
+            case WeaponType.Claw: {
+                if (inputData.mastery > 0.1 &&
+                    inputData.clazz !== Class.Rogue) {
+                    warnings.push(`You have >10% mastery with a ${weaponTypeName(inputData.wepType)}, but you\u{2019}re not a rogue.`);
+                }
+                break;
+            }
+            case WeaponType.Bow:
+            case WeaponType.Crossbow: {
+                if (inputData.mastery > 0.1 &&
+                    inputData.clazz !== Class.Archer) {
+                    warnings.push(`You have >10% mastery with a ${weaponTypeName(inputData.wepType)}, but you\u{2019}re not an archer.`);
+                }
+                break;
+            }
+            case WeaponType.Knuckler:
+            case WeaponType.Gun: {
+                if (inputData.mastery > 0.1 &&
+                    inputData.clazz !== Class.Pirate2nd) {
+                    warnings.push(`You have >10% mastery with a ${weaponTypeName(inputData.wepType)}, but you\u{2019}re not a \u{2265}2\u{207f}\u{1d48} \
+                        job pirate.`);
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        if (inputData.mastery > 0.6 &&
+            inputData.wepType !== WeaponType.Bow &&
+            inputData.wepType !== WeaponType.Crossbow &&
+            inputData.wepType !== WeaponType.None) {
+            warnings.push(`You have >60% mastery with a ${weaponTypeName(inputData.wepType)}.`);
+        }
+        if (!(inputData.clazz === Class.Rogue &&
+            inputData.wepType === WeaponType.Claw) &&
+            !(inputData.clazz === Class.Archer &&
+                (inputData.wepType === WeaponType.Bow ||
+                    inputData.wepType === WeaponType.Crossbow)) &&
+            !(inputData.clazz === Class.Pirate2nd &&
+                (inputData.wepType === WeaponType.None ||
+                    inputData.wepType === WeaponType.Knuckler))) {
+            if (inputData.critProb > 0.15) {
+                warnings.push("You have a >15% probability of critting, but you do not \
+                    have a class & weapon combo that has access to crits. You \
+                    can only crit due to Sharp Eyes, which normally grants a \
+                    15% crit probably at best.");
+            }
+            if (inputData.critDmg > 1.4) {
+                warnings.push("You have a >140% probability of critical multi, but you \
+                    do not have a class & weapon combo that has access to \
+                    crits. You can only crit due to Sharp Eyes, which \
+                    normally grants a 140% critical multi at best.");
+            }
+        }
+        const badWeps = BAD_WEPS.get(inputData.clazz);
+        if (badWeps === undefined) {
+            throw `Logic error: ${inputData.clazz} is not a key in BAD_WEPS`;
+        }
+        if (badWeps.has(inputData.wepType)) {
+            switch (inputData.wepType) {
+                case WeaponType.None: {
+                    warnings.push(`You\u{2019}re not wielding a weapon, but ${className(inputData.clazz)}s normally cannot attack that way.`);
+                    break;
+                }
+                case WeaponType.Staff: {
+                    warnings.push(`You\u{2019}re wielding a staff, but staves that are \
+                        equippable by ${className(inputData.clazz)}s don\u{2019}t usually exist.`);
+                    break;
+                }
+                case WeaponType.TwoHandedAxe:
+                case WeaponType.Bow:
+                case WeaponType.Crossbow:
+                case WeaponType.Knuckler:
+                case WeaponType.Gun: {
+                    const wepName = weaponTypeName(inputData.wepType);
+                    warnings.push(`You\u{2019}re wielding a ${wepName}, but \
+                        ${wepName}s that are equippable by ${className(inputData.clazz)}s don\u{2019}t usually exist.`);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        switch (inputData.clazz) {
+            case Class.Beginner: {
+                if (inputData.skillDmgMulti !== 1) {
+                    warnings.push("Your damage multi \u{2260}100%, but you\u{2019}re a \
+                        beginner.");
+                }
+                break;
+            }
+            case Class.Warrior: {
+                if (inputData.stats.str < 35) {
+                    warnings.push("Your total STR <35, but you\u{2019}re a warrior.");
+                }
+                if (inputData.skillDmgMulti !== 1) {
+                    if (inputData.wepType === WeaponType.Claw) {
+                        warnings.push("Your damage multi \u{2260}100%, but \
+                            you\u{2019}re a warrior using a claw.");
+                    }
+                }
+                break;
+            }
+            case Class.Magician: {
+                if (inputData.stats.int < 20) {
+                    warnings.push("Your total INT <20, but you\u{2019}re a magician.");
+                }
+                if (inputData.skillDmgMulti !== 1) {
+                    warnings.push("Your damage multi \u{2260}100%, but you\u{2019}re a \
+                        magician.");
+                }
+                break;
+            }
+            case Class.Archer: {
+                if (inputData.stats.dex < 25) {
+                    warnings.push("Your total DEX <25, but you\u{2019}re an archer.");
+                }
+                if (inputData.skillDmgMulti !== 1) {
+                    if (inputData.wepType !== WeaponType.Bow &&
+                        inputData.wepType !== WeaponType.Crossbow) {
+                        warnings.push(`Your damage multi \u{2260}100%, but \
+                            you\u{2019}re an archer using a ${weaponTypeName(inputData.wepType)}.`);
+                    }
+                }
+                break;
+            }
+            case Class.Rogue: {
+                if (inputData.stats.dex < 25) {
+                    warnings.push("Your total DEX <25, but you\u{2019}re a rogue.");
+                }
+                break;
+            }
+            case Class.Pirate:
+            case Class.Pirate2nd: {
+                if (inputData.stats.dex < 20) {
+                    warnings.push("Your total DEX <20, but you\u{2019}re a pirate.");
+                }
+                if (inputData.skillDmgMulti !== 1) {
+                    if (inputData.wepType === WeaponType.Claw) {
+                        warnings.push("Your damage multi \u{2260}100%, but \
+                            you\u{2019}re a pirate using a claw. \
+                            Claws\u{2019} interaction with Somersault Kick is \
+                            poorly understood.");
+                    }
+                }
+                break;
+            }
+        }
+        const attackReqs = ATTACK_REQS.get(inputData.attack);
+        if (attackReqs === undefined) {
+            throw `Logic error: ${inputData.attack} is not a key in \
+                  ATTACK_REQS`;
+        }
+        const [attackReqClasses, attackReqWepTypes] = attackReqs;
+        if (!attackReqClasses.has(inputData.clazz)) {
+            warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but you\u{2019}re not ${indefinite(Array.from(attackReqClasses).map(className).join("/"))}.`);
+        }
+        if (!attackReqWepTypes.has(inputData.wepType)) {
+            warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but you don\u{2019}t have ${indefinite(Array.from(attackReqWepTypes)
+                .map(weaponTypeName)
+                .join("/"))} equipped.`);
+        }
+        if (inputData.spell !== Spell.Other &&
+            inputData.clazz !== Class.Magician) {
+            warnings.push("You have a specific spell selected, but you\u{2019}re not a \
+                magician.");
+        }
+        if (inputData.speed > 4 /* Fast4 */ &&
+            inputData.wepType === WeaponType.None) {
+            warnings.push("You have no weapon equipped, but your speed >4. Bare fists \
+                have speed 4 when unbuffed.");
+        }
+        if (inputData.spellBooster !== 0) {
+            if (isHolySpell(inputData.spell)) {
+                warnings.push("Your spell booster value is nonzero, but you\u{2019}re \
+                    casting a cleric/priest/bishop spell.");
+            }
+            if (inputData.wepType !== WeaponType.Wand &&
+                inputData.wepType !== WeaponType.Staff) {
+                warnings.push("Your spell booster value is nonzero, but you \
+                    don\u{2019}t have a wand/staff equipped (Spell Booster \
+                    doesn\u{2019}t work with swords).");
+            }
+            if (inputData.clazz !== Class.Magician) {
+                warnings.push("Your spell booster value is nonzero, but you\u{2019}re \
+                    not a magician.");
+            }
+        }
+        if (inputData.eleAmp !== 1) {
+            if (inputData.clazz !== Class.Magician) {
+                warnings.push("Your element amplification >100%, but you\u{2019}re not \
+                    a magician.");
+            }
+            if (inputData.eleAmp > 1.5) {
+                warnings.push("Your element amplification >150%, but Element \
+                    Amplification usually goes up to 150% at best.");
+            }
+            if (isHolySpell(inputData.spell)) {
+                warnings.push("Your element amplification >100%, but you\u{2019}re \
+                    casting a cleric/priest/bishop spell.");
+            }
+        }
+        /*======== Remove old warnings display ========*/
+        {
+            const warningsElem = document.getElementById("warnings");
+            if (warningsElem) {
+                warningsDiv.removeChild(warningsElem);
+            }
+        }
+        /*======== Display warnings ========*/
+        if (warnings.length === 0) {
+            const warningsSpan = document.createElement("span");
+            warningsSpan.id = "warnings";
+            warningsSpan.classList.add("success");
+            const warningsTextNode = document.createTextNode("No warnings.");
+            warningsSpan.appendChild(warningsTextNode);
+            warningsDiv.appendChild(warningsSpan);
+        }
+        else {
+            const warningsUl = document.createElement("ul");
+            warningsUl.id = "warnings";
+            warningsUl.classList.add("warning");
+            for (const warningText of warnings) {
+                const warningLi = document.createElement("li");
+                const warningTextNode = document.createTextNode(warningText);
+                warningLi.appendChild(warningTextNode);
+                warningsUl.appendChild(warningLi);
+            }
+            warningsDiv.appendChild(warningsUl);
+        }
+    }
     for (const input of [
         strInput,
         dexInput,
@@ -358,11 +674,14 @@ function main() {
         critDmgInput,
         classInput,
         weaponTypeInput,
+        attackInput,
         spellInput,
         speedInput,
         spellBoosterInput,
+        eleAmpInput,
         enemyWdefInput,
         enemyMdefInput,
+        eleSusInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -446,18 +765,45 @@ function minDmgMagic(inputData) {
 function maxDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) +
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
-        inputData.totalWatk) /
+        (inputData.totalWatk +
+            (inputData.wepType === WeaponType.None
+                ? Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31)
+                : 0))) /
         100);
 }
 function minDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) *
         0.9 *
-        inputData.mastery +
+        (inputData.wepType === WeaponType.None ? 0.1 : inputData.mastery) +
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
-        inputData.totalWatk) /
+        (inputData.totalWatk +
+            (inputData.wepType === WeaponType.None
+                ? Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31)
+                : 0))) /
         100);
+}
+function maxDmgLuckySeven(inputData) {
+    return (inputData.stats.luk * 5 * inputData.totalWatk) / 100;
+}
+function minDmgLuckySeven(inputData) {
+    return (inputData.stats.luk * 2.5 * inputData.totalWatk) / 100;
 }
 function adjustRangeForDef(range, def) {
     const [min, max] = range;
     return [min - def * 0.6, max - def * 0.5];
+}
+/**
+ * This is how English works, right? Probably?
+ */
+function indefinite(s) {
+    switch (s.toLowerCase().codePointAt(0)) {
+        case "a".codePointAt(0):
+        case "e".codePointAt(0):
+        case "i".codePointAt(0):
+        case "o".codePointAt(0):
+        case "u".codePointAt(0):
+            return `an ${s}`;
+        default:
+            return `a ${s}`;
+    }
 }

@@ -722,6 +722,15 @@ ul.nav-list > li.active {
     color: #ec6163;
 }
 
+.warning {
+    color: #fff243;
+    list-style-type: '\26a0\a0';
+}
+
+.success {
+    color: var(--green);
+}
+
 #noscript {
     max-width: 60rem;
     height: auto;

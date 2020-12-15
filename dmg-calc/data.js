@@ -20,9 +20,19 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { Spell, WeaponType } from "./types.js";
+import { Attack, Class, Spell, WeaponType } from "./types.js";
 export function primaryStat(stats, wepType, goodAnim, clazz) {
     switch (wepType) {
+        case WeaponType.None: {
+            switch (clazz) {
+                case Class.Pirate:
+                    return stats.str * 3;
+                case Class.Pirate2nd:
+                    return stats.str * 4.2;
+                default:
+                    return 0;
+            }
+        }
         case WeaponType.OneHandedSword:
             return stats.str * 4;
         case WeaponType.OneHandedAxe:
@@ -30,7 +40,7 @@ export function primaryStat(stats, wepType, goodAnim, clazz) {
         case WeaponType.OneHandedMace:
             return stats.str * (goodAnim ? 4.4 : 3.2);
         case WeaponType.Dagger:
-            return clazz === 400 /* Rogue */ ? stats.luk * 3.6 : stats.str * 4;
+            return clazz === Class.Rogue ? stats.luk * 3.6 : stats.str * 4;
         case WeaponType.Wand:
             return stats.str * (goodAnim ? 4.4 : 3.2);
         case WeaponType.Staff:
@@ -59,6 +69,8 @@ export function primaryStat(stats, wepType, goodAnim, clazz) {
 }
 export function secondaryStat(stats, wepType, clazz) {
     switch (wepType) {
+        case WeaponType.None:
+            return stats.dex;
         case WeaponType.OneHandedSword:
             return stats.dex;
         case WeaponType.OneHandedAxe:
@@ -66,7 +78,7 @@ export function secondaryStat(stats, wepType, clazz) {
         case WeaponType.OneHandedMace:
             return stats.dex;
         case WeaponType.Dagger:
-            return clazz === 400 /* Rogue */ ? stats.str + stats.dex : stats.dex;
+            return clazz === Class.Rogue ? stats.str + stats.dex : stats.dex;
         case WeaponType.Wand:
             return stats.dex;
         case WeaponType.Staff:
@@ -261,6 +273,7 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
  */
 export function attackPeriod(wepType, speed) {
     switch (wepType) {
+        case WeaponType.None:
         case WeaponType.OneHandedSword:
         case WeaponType.OneHandedAxe:
         case WeaponType.OneHandedMace:
@@ -347,3 +360,196 @@ export function attackPeriod(wepType, speed) {
         }
     }
 }
+export function isHolySpell(spell) {
+    switch (spell) {
+        case Spell.Heal:
+        case Spell.ShiningRay:
+        case Spell.Genesis:
+            return true;
+        default:
+            return false;
+    }
+}
+export function weaponTypeName(wepType) {
+    switch (wepType) {
+        case WeaponType.None:
+            return "no weapon";
+        case WeaponType.OneHandedSword:
+            return "one-handed sword";
+        case WeaponType.OneHandedAxe:
+            return "one-handed axe";
+        case WeaponType.OneHandedMace:
+            return "one-handed blunt weapon";
+        case WeaponType.Dagger:
+            return "dagger";
+        case WeaponType.Wand:
+            return "wand";
+        case WeaponType.Staff:
+            return "staff";
+        case WeaponType.TwoHandedSword:
+            return "two-handed sword";
+        case WeaponType.TwoHandedAxe:
+            return "two-handed axe";
+        case WeaponType.TwoHandedMace:
+            return "two-handed blunt weapon";
+        case WeaponType.Spear:
+            return "spear";
+        case WeaponType.Polearm:
+            return "polearm";
+        case WeaponType.Bow:
+            return "bow";
+        case WeaponType.Crossbow:
+            return "crossbow";
+        case WeaponType.Claw:
+            return "claw";
+        case WeaponType.Knuckler:
+            return "knuckler";
+        case WeaponType.Gun:
+            return "gun";
+    }
+}
+export function className(clazz) {
+    switch (clazz) {
+        case Class.Beginner:
+            return "beginner";
+        case Class.Warrior:
+            return "warrior";
+        case Class.Magician:
+            return "magician";
+        case Class.Archer:
+            return "archer";
+        case Class.Rogue:
+            return "rogue";
+        case Class.Pirate:
+            return "pirate";
+        case Class.Pirate2nd:
+            return "\u{2265}2\u{207f}\u{1d48} job pirate";
+    }
+}
+export function attackName(attack) {
+    switch (attack) {
+        case Attack.Other:
+            return "basic attack";
+        case Attack.LuckySeven:
+            return "Lucky Seven";
+        case Attack.TripleThrow:
+            return "Triple Throw";
+    }
+}
+export const BAD_WEPS = new Map([
+    [
+        Class.Beginner,
+        new Set([
+            WeaponType.None,
+            WeaponType.TwoHandedAxe,
+            WeaponType.Staff,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+            WeaponType.Knuckler,
+            WeaponType.Gun,
+        ]),
+    ],
+    [
+        Class.Warrior,
+        new Set([
+            WeaponType.None,
+            WeaponType.Staff,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+            WeaponType.Knuckler,
+            WeaponType.Gun,
+        ]),
+    ],
+    [
+        Class.Magician,
+        new Set([
+            WeaponType.None,
+            WeaponType.TwoHandedAxe,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+            WeaponType.Knuckler,
+            WeaponType.Gun,
+        ]),
+    ],
+    [
+        Class.Archer,
+        new Set([
+            WeaponType.None,
+            WeaponType.Staff,
+            WeaponType.Knuckler,
+            WeaponType.Gun,
+        ]),
+    ],
+    [
+        Class.Rogue,
+        new Set([
+            WeaponType.None,
+            WeaponType.Staff,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+            WeaponType.Knuckler,
+            WeaponType.Gun,
+        ]),
+    ],
+    [
+        Class.Pirate,
+        new Set([
+            WeaponType.TwoHandedAxe,
+            WeaponType.Staff,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+        ]),
+    ],
+    [
+        Class.Pirate2nd,
+        new Set([
+            WeaponType.TwoHandedAxe,
+            WeaponType.Staff,
+            WeaponType.Bow,
+            WeaponType.Crossbow,
+        ]),
+    ],
+]);
+export const ATTACK_REQS = new Map([
+    [
+        Attack.Other,
+        [
+            new Set([
+                Class.Beginner,
+                Class.Warrior,
+                Class.Magician,
+                Class.Archer,
+                Class.Rogue,
+                Class.Pirate,
+                Class.Pirate2nd,
+            ]),
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.LuckySeven,
+        [new Set([Class.Rogue]), new Set([WeaponType.Claw])],
+    ],
+    [
+        Attack.TripleThrow,
+        [new Set([Class.Rogue]), new Set([WeaponType.Claw])],
+    ],
+]);

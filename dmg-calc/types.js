@@ -30,6 +30,7 @@ export class Stats {
 }
 export var WeaponType;
 (function (WeaponType) {
+    WeaponType[WeaponType["None"] = 0] = "None";
     WeaponType[WeaponType["OneHandedSword"] = 30] = "OneHandedSword";
     WeaponType[WeaponType["OneHandedAxe"] = 31] = "OneHandedAxe";
     WeaponType[WeaponType["OneHandedMace"] = 32] = "OneHandedMace";
@@ -47,6 +48,12 @@ export var WeaponType;
     WeaponType[WeaponType["Knuckler"] = 48] = "Knuckler";
     WeaponType[WeaponType["Gun"] = 49] = "Gun";
 })(WeaponType || (WeaponType = {}));
+export var Attack;
+(function (Attack) {
+    Attack[Attack["Other"] = 0] = "Other";
+    Attack[Attack["LuckySeven"] = 4001344] = "LuckySeven";
+    Attack[Attack["TripleThrow"] = 4121007] = "TripleThrow";
+})(Attack || (Attack = {}));
 export var Spell;
 (function (Spell) {
     Spell[Spell["Other"] = 0] = "Other";
@@ -63,8 +70,18 @@ export var Spell;
     Spell[Spell["ShiningRay"] = 2311004] = "ShiningRay";
     Spell[Spell["Genesis"] = 2321008] = "Genesis";
 })(Spell || (Spell = {}));
+export var Class;
+(function (Class) {
+    Class[Class["Beginner"] = 0] = "Beginner";
+    Class[Class["Warrior"] = 100] = "Warrior";
+    Class[Class["Magician"] = 200] = "Magician";
+    Class[Class["Archer"] = 300] = "Archer";
+    Class[Class["Rogue"] = 400] = "Rogue";
+    Class[Class["Pirate"] = 500] = "Pirate";
+    Class[Class["Pirate2nd"] = 510] = "Pirate2nd";
+})(Class || (Class = {}));
 export class InputData {
-    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, critProb, critDmg, clazz, wepType, spell, speed, spellBooster, enemyWdef, enemyMdef) {
+    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, enemyWdef, enemyMdef, eleSus) {
         this.stats = stats;
         this.totalWatk = totalWatk;
         this.totalMatk = totalMatk;
@@ -74,11 +91,15 @@ export class InputData {
         this.critProb = critProb;
         this.critDmg = critDmg;
         this.clazz = clazz;
+        this.level = level;
         this.wepType = wepType;
+        this.attack = attack;
         this.spell = spell;
         this.speed = speed;
         this.spellBooster = spellBooster;
+        this.eleAmp = eleAmp;
         this.enemyWdef = enemyWdef;
         this.enemyMdef = enemyMdef;
+        this.eleSus = eleSus;
     }
 }

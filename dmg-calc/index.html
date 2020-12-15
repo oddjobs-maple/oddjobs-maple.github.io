@@ -122,18 +122,18 @@
           <p>
             Weapon speeds are calculated based on the speed of the weapon
             itself, in addition to any booster effects that may be active. The
-            slowest possible speed is 9, and the fastest is 2. Booster skills
-            add &minus;2 to your speed value, and so does Speed Infusion.
-            Booster skills and Speed Infusion do stack, granting &minus;4 speed
-            (in addition to the speed of your weapon) when both are active.
-            However, your speed can never go below 2, so e.g. a weapon with
-            speed 3 that is affected by a Booster skill is speed 2,
-            <strong>not</strong> 1. You may need to use an external reference
-            and/or look in the game files to find out the speed of any given
-            weapon, because only some weapons have their true speeds displayed
-            in-game. Others have ambiguous speed descriptions like
-            &ldquo;Fast&rdquo;, which could correspond to a speed of 4, or to a
-            speed of 5.
+            slowest possible speed is 9,<sup>[1]</sup> and the fastest is 2.
+            Booster skills add &minus;2 to your speed value, and so does Speed
+            Infusion.<sup>[2]</sup> Booster skills and Speed Infusion do stack,
+            granting &minus;4 speed (in addition to the speed of your weapon)
+            when both are active.<sup>[2]</sup> However, your speed can never
+            go below 2, so e.g. a weapon with speed 3 that is affected by a
+            Booster skill is speed 2, <strong>not</strong> 1. You may need to
+            use an external reference and/or look in the game files to find out
+            the speed of any given weapon, because only some weapons have their
+            true speeds displayed in-game. Others have ambiguous speed
+            descriptions like &ldquo;Fast&rdquo;, which could correspond to a
+            speed of 4, or to a speed of 5.
           </p>
 
           <p>
@@ -304,6 +304,46 @@
             >.
           </p>
 
+          <details>
+            <summary>Footnotes for &ldquo;You Should Know&rdquo;</summary>
+
+            <p>
+              [1]: This is technically untrue; speeds above 9 are in fact
+              possible, but would require equipping a weapon with a speed above
+              9 (because there is no way to increase speed values with
+              (de)buffs or similar). Such weapons conventionally do not exist,
+              although see for example the
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://maplelegends.com/lib/equip?id=01322053"
+                >Golden Mace</a
+              >, which has a speed of 15 (but does not actually exist in
+              MapleLegends as far as I know). As a result, attack period values
+              for speeds above 9 are unknown &mdash; and they may just be the
+              same as for speed 9.
+            </p>
+
+            <p>
+              [2]: Depending on the implementation, this may or may not be
+              exactly correct. In early versions of MapleStory that have
+              pirates (e.g. GMS v62), the client did not have a separate buff
+              opcode for Speed Infusion, so Speed Infusion has to be
+              &ldquo;emulated&rdquo; by using an ordinary Booster buff with
+              twice the magnitude of a normal Booster skill (4 instead of 2).
+              The result is thus usually the same, but for jobs that lack a
+              booster skill of their own, this can be a big boon (&minus;4 to
+              the speed of their weapon when affected by Speed Infusion,
+              instead of the expected &minus;2). Also worth noting here is that
+              many implementations lack a separate opcode for Spell Booster, so
+              Speed Infusion can effectively lower spellcasting speeds beyond
+              the usual &minus;2 of maxed Spell Booster (all the way to
+              &minus;4, potentially). This is another artifact/bug of early
+              pirate implementations, and spellcasting speeds below &minus;2
+              are not handled by this calculator.
+            </p>
+          </details>
+
           <a href="#calculator" class="h-anchor"
             ><h2 id="calculator">Calculator</h2></a
           >
@@ -343,7 +383,7 @@
                   id="total-watk"
                   name="total-watk"
                   min="0"
-                  value="0"
+                  value="1"
                 />
               </label>
 
@@ -353,8 +393,8 @@
                   type="number"
                   id="total-matk"
                   name="total-matk"
-                  min="0"
-                  value="0"
+                  min="4"
+                  value="4"
                 />
               </label>
             </fieldset>
@@ -426,17 +466,34 @@
               </label>
             </fieldset>
 
-            <label for="class">
-              Class
-              <select name="class" id="class">
-                <option value="0">Beginner</option>
-                <option value="100">Warrior</option>
-                <option value="200">Magician</option>
-                <option value="300">Archer</option>
-                <option value="400">Rogue</option>
-                <option value="500">Pirate</option>
-              </select>
-            </label>
+            <fieldset>
+              <legend>Character</legend>
+
+              <label for="class">
+                Class
+                <select name="class" id="class">
+                  <option value="0" selected>Beginner</option>
+                  <option value="100">Warrior</option>
+                  <option value="200">Magician</option>
+                  <option value="300">Archer</option>
+                  <option value="400">Rogue</option>
+                  <option value="500">Pirate</option>
+                  <option value="510">Pirate &ge;2&#x207f;&#x1d48; job</option>
+                </select>
+              </label>
+
+              <label for="level">
+                Level
+                <input
+                  type="number"
+                  id="level"
+                  name="level"
+                  min="1"
+                  max="200"
+                  value="30"
+                />
+              </label>
+            </fieldset>
 
             <fieldset id="weapon">
               <legend>Weapon</legend>
@@ -444,8 +501,10 @@
               <label for="weapon-type">
                 Type
                 <select name="weapon-type" id="weapon-type">
+                  <option value="0">[no weapon]</option>
+
                   <optgroup label="Warrior&rsquo;s">
-                    <option value="30">One-handed sword</option>
+                    <option value="30" selected>One-handed sword</option>
                     <option value="40">Two-handed sword</option>
                     <option value="31">One-handed axe</option>
                     <option value="41">Two-handed axe</option>
@@ -473,6 +532,21 @@
                   <optgroup label="Pirate&rsquo;s">
                     <option value="48">Knuckler</option>
                     <option value="49">Gun</option>
+                  </optgroup>
+                </select>
+              </label>
+
+              <label for="attack">
+                Attack
+                <select name="attack" id="attack">
+                  <option value="0">[other]</option>
+
+                  <optgroup label="Rogue">
+                    <option value="4001344">Lucky Seven</option>
+                  </optgroup>
+
+                  <optgroup label="Night Lord">
+                    <option value="4121007">Triple Throw</option>
                   </optgroup>
                 </select>
               </label>
@@ -545,6 +619,21 @@
             </fieldset>
 
             <fieldset>
+              <legend>Elemental stuff</legend>
+
+              <label for="ele-amp">
+                Element Amplification
+                <input
+                  type="number"
+                  id="ele-amp"
+                  name="ele-amp"
+                  min="100"
+                  value="100"
+                />%
+              </label>
+            </fieldset>
+
+            <fieldset>
               <legend>Enemy</legend>
 
               <label for="enemy-wdef">
@@ -565,6 +654,16 @@
                   name="enemy-mdef"
                   value="0"
                 />
+              </label>
+
+              <label for="ele-sus">
+                Element susceptibility
+                <select name="ele-sus" id="ele-sus">
+                  <option value="0">Immune</option>
+                  <option value="0.5">Strong</option>
+                  <option value="1" selected>Neutral</option>
+                  <option value="1.5">Weak</option>
+                </select>
               </label>
             </fieldset>
           </div>
@@ -606,6 +705,14 @@
             <b>&sigma;<sub>DPS</sub>, CV<sub>DPS</sub>:</b>
             <span id="sd-dps-magic">???</span>,
             <span id="cv-dps-magic">???</span>
+
+            <hr />
+
+            <h3>Warnings</h3>
+
+            <div id="warnings-div">
+              <span id="warnings" class="success">No warnings.</span>
+            </div>
           </div>
 
           <a href="#legal" class="h-anchor"><h2 id="legal">Legal</h2></a>
