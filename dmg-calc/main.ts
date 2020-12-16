@@ -126,6 +126,18 @@ function main(): void {
     const cvPerHitOutput = document.getElementById(
         "cv-per-hit",
     ) as HTMLSpanElement;
+    const totalRangeOutput = document.getElementById(
+        "total-range",
+    ) as HTMLSpanElement;
+    const expectedPerHitTotalOutput = document.getElementById(
+        "expected-per-hit-total",
+    ) as HTMLSpanElement;
+    const sdPerHitTotalOutput = document.getElementById(
+        "sd-per-hit-total",
+    ) as HTMLSpanElement;
+    const cvPerHitTotalOutput = document.getElementById(
+        "cv-per-hit-total",
+    ) as HTMLSpanElement;
     const expectedDpsOutput = document.getElementById(
         "expected-dps",
     ) as HTMLSpanElement;
@@ -146,6 +158,18 @@ function main(): void {
     ) as HTMLSpanElement;
     const cvPerHitMagicOutput = document.getElementById(
         "cv-per-hit-magic",
+    ) as HTMLSpanElement;
+    const totalRangeMagicOutput = document.getElementById(
+        "total-range-magic",
+    ) as HTMLSpanElement;
+    const expectedPerHitTotalMagicOutput = document.getElementById(
+        "expected-per-hit-total-magic",
+    ) as HTMLSpanElement;
+    const sdPerHitTotalMagicOutput = document.getElementById(
+        "sd-per-hit-total-magic",
+    ) as HTMLSpanElement;
+    const cvPerHitTotalMagicOutput = document.getElementById(
+        "cv-per-hit-total-magic",
     ) as HTMLSpanElement;
     const expectedDpsMagicOutput = document.getElementById(
         "expected-dps-magic",
@@ -432,6 +456,10 @@ function main(): void {
         );
         rangeOutput.textContent = `${range[0]} ~ ${range[1]}`;
         critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
+        totalRangeOutput.textContent = `${range[0] * inputData.skillLines} ~ ${
+            (inputData.critProb > 0 ? critRange[1] : range[1]) *
+            inputData.skillLines
+        }`;
 
         const [expectedPerHitBadNoCrit, expectedPerHitBadCrit] = [
             clampedExpectation(minDmgPhysBadNoCrit, maxDmgPhysBadNoCrit),
@@ -448,8 +476,10 @@ function main(): void {
             critQ * expectedPerHitGoodNoCrit +
             inputData.critProb * expectedPerHitGoodCrit;
         const expectedPerHit = (expectedPerHitBad + expectedPerHitGood) / 2;
+        const expectedPerHitTotal = expectedPerHit * inputData.skillLines;
 
         expectedPerHitOutput.textContent = expectedPerHit.toFixed(3);
+        expectedPerHitTotalOutput.textContent = expectedPerHitTotal.toFixed(3);
 
         // The "mainVariance" in the following variable names is intended to
         // indicate that this is a variance against the expectation across
@@ -495,19 +525,39 @@ function main(): void {
             return;
         })();
 
-        let sdPerHit: number | undefined = undefined;
+        let sdPerHitTotal: number | undefined = undefined;
         if (variancePerHit !== undefined) {
             sdPerHitOutput.classList.remove("error");
+            cvPerHitOutput.classList.remove("error");
+            sdPerHitTotalOutput.classList.remove("error");
+            cvPerHitTotalOutput.classList.remove("error");
 
-            sdPerHit = Math.sqrt(variancePerHit);
+            const sdPerHit = Math.sqrt(variancePerHit);
+            // This is mathematically valid because the damage/outcome of each
+            // hit is independent of the damage of any other hit, thus implying
+            // uncorrelatedness.  Furthermore, this implies that the variance
+            // of the sum of hits is the sum of the variance of said hits (see
+            // the Bienaymé formula/identity).
+            sdPerHitTotal = Math.sqrt(variancePerHit * inputData.skillLines);
+
             sdPerHitOutput.textContent = sdPerHit.toFixed(3);
             cvPerHitOutput.textContent = (sdPerHit / expectedPerHit).toFixed(
                 5,
             );
+            sdPerHitTotalOutput.textContent = sdPerHitTotal.toFixed(3);
+            cvPerHitTotalOutput.textContent = (
+                sdPerHitTotal / expectedPerHitTotal
+            ).toFixed(5);
         } else {
             sdPerHitOutput.classList.add("error");
+            cvPerHitOutput.classList.add("error");
+            sdPerHitTotalOutput.classList.add("error");
+            cvPerHitTotalOutput.classList.add("error");
 
             sdPerHitOutput.textContent = "[undefined]";
+            cvPerHitOutput.textContent = "[undefined]";
+            sdPerHitTotalOutput.textContent = "[undefined]";
+            cvPerHitTotalOutput.textContent = "[undefined]";
         }
 
         const period = attackPeriod(inputData.wepType, inputData.speed);
@@ -515,37 +565,41 @@ function main(): void {
             expectedDpsOutput.classList.remove("error");
 
             const attackHz = 1000 / period;
-            const expectedDps = attackHz * expectedPerHit;
+            const expectedDps = attackHz * expectedPerHitTotal;
             expectedDpsOutput.textContent = expectedDps.toFixed(3);
 
-            if (sdPerHit !== undefined) {
+            if (sdPerHitTotal !== undefined) {
                 sdDpsOutput.classList.remove("error");
+                cvDpsOutput.classList.remove("error");
 
                 // This is mathematically valid because the damage/outcome of
                 // each hit is independent of the damage of any other hit, thus
                 // implying uncorrelatedness.  Furthermore, this implies that
                 // the variance of the sum of hits is the sum of the variance
-                // of said hits.
+                // of said hits (see the Bienaymé formula/identity).
                 const sdDps =
                     Math.sqrt(attackHz) *
-                    sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
-                                 = sqrt(attackHz * variancePerHit)
-                                 = sqrt(varianceDps). */
+                    sdPerHitTotal; /*
+                  = sqrt(attackHz) * sqrt(variancePerHitTotal)
+                  = sqrt(attackHz * variancePerHitTotal)
+                  = sqrt(varianceDps). */
                 sdDpsOutput.textContent = sdDps.toFixed(3);
                 cvDpsOutput.textContent = (sdDps / expectedDps).toFixed(5);
             } else {
                 sdDpsOutput.classList.add("error");
+                cvDpsOutput.classList.add("error");
 
                 sdDpsOutput.textContent = "[undefined]";
+                cvDpsOutput.textContent = "[undefined]";
             }
         } else {
             expectedDpsOutput.classList.add("error");
+            sdDpsOutput.classList.add("error");
+            cvDpsOutput.classList.add("error");
 
             expectedDpsOutput.textContent = "[unknown attack speed value]";
-
-            sdDpsOutput.classList.add("error");
-
             sdDpsOutput.textContent = "[undefined]";
+            cvDpsOutput.textContent = "[undefined]";
         }
     }
 
@@ -571,6 +625,12 @@ function main(): void {
         );
         rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}`;
         critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
+        totalRangeMagicOutput.textContent = `${
+            range[0] * inputData.skillLines
+        } ~ ${
+            (inputData.critProb > 0 ? critRange[1] : range[1]) *
+            inputData.skillLines
+        }`;
 
         const [expectedPerHitNoCrit, expectedPerHitCrit] = [
             clampedExpectation(minDmgNoCrit, maxDmgNoCrit),
@@ -579,8 +639,12 @@ function main(): void {
         const expectedPerHit =
             critQ * expectedPerHitNoCrit +
             inputData.critProb * expectedPerHitCrit;
+        const expectedPerHitTotal = expectedPerHit * inputData.skillLines;
 
         expectedPerHitMagicOutput.textContent = expectedPerHit.toFixed(3);
+        expectedPerHitTotalMagicOutput.textContent = expectedPerHitTotal.toFixed(
+            3,
+        );
 
         // The "mainVariance" in the following variable names is intended to
         // indicate that this is a variance against the expectation across
@@ -603,19 +667,39 @@ function main(): void {
                   inputData.critProb * mainVariancePerHitCrit
                 : undefined;
 
-        let sdPerHit: number | undefined = undefined;
+        let sdPerHitTotal: number | undefined = undefined;
         if (variancePerHit !== undefined) {
             sdPerHitMagicOutput.classList.remove("error");
+            cvPerHitMagicOutput.classList.remove("error");
+            sdPerHitTotalMagicOutput.classList.remove("error");
+            cvPerHitTotalMagicOutput.classList.remove("error");
 
-            sdPerHit = Math.sqrt(variancePerHit);
+            const sdPerHit = Math.sqrt(variancePerHit);
+            // This is mathematically valid because the damage/outcome of each
+            // hit is independent of the damage of any other hit, thus implying
+            // uncorrelatedness.  Furthermore, this implies that the variance
+            // of the sum of hits is the sum of the variance of said hits (see
+            // the Bienaymé formula/identity).
+            sdPerHitTotal = Math.sqrt(variancePerHit * inputData.skillLines);
+
             sdPerHitMagicOutput.textContent = sdPerHit.toFixed(3);
             cvPerHitMagicOutput.textContent = (
                 sdPerHit / expectedPerHit
             ).toFixed(5);
+            sdPerHitTotalMagicOutput.textContent = sdPerHitTotal.toFixed(3);
+            cvPerHitTotalMagicOutput.textContent = (
+                sdPerHitTotal / expectedPerHitTotal
+            ).toFixed(5);
         } else {
             sdPerHitMagicOutput.classList.add("error");
+            cvPerHitMagicOutput.classList.add("error");
+            sdPerHitTotalMagicOutput.classList.add("error");
+            cvPerHitTotalMagicOutput.classList.add("error");
 
             sdPerHitMagicOutput.textContent = "[undefined]";
+            cvPerHitMagicOutput.textContent = "[undefined]";
+            sdPerHitTotalMagicOutput.textContent = "[undefined]";
+            cvPerHitTotalMagicOutput.textContent = "[undefined]";
         }
 
         const period = magicAttackPeriod(
@@ -627,11 +711,12 @@ function main(): void {
             expectedDpsMagicOutput.classList.remove("error");
 
             const attackHz = 1000 / period;
-            const expectedDps = attackHz * expectedPerHit;
+            const expectedDps = attackHz * expectedPerHitTotal;
             expectedDpsMagicOutput.textContent = expectedDps.toFixed(3);
 
-            if (sdPerHit !== undefined) {
+            if (sdPerHitTotal !== undefined) {
                 sdDpsMagicOutput.classList.remove("error");
+                cvDpsMagicOutput.classList.remove("error");
 
                 // This is mathematically valid because the damage/outcome of
                 // each hit is independent of the damage of any other hit, thus
@@ -640,27 +725,30 @@ function main(): void {
                 // of said hits.
                 const sdDps =
                     Math.sqrt(attackHz) *
-                    sdPerHit; /* = sqrt(attackHz) * sqrt(variancePerHit)
-                                 = sqrt(attackHz * variancePerHit)
-                                 = sqrt(varianceDps). */
+                    sdPerHitTotal; /*
+                  = sqrt(attackHz) * sqrt(variancePerHitTotal)
+                  = sqrt(attackHz * variancePerHitTotal)
+                  = sqrt(varianceDps). */
                 sdDpsMagicOutput.textContent = sdDps.toFixed(3);
                 cvDpsMagicOutput.textContent = (sdDps / expectedDps).toFixed(
                     5,
                 );
             } else {
                 sdDpsMagicOutput.classList.add("error");
+                cvDpsMagicOutput.classList.add("error");
 
                 sdDpsMagicOutput.textContent = "[undefined]";
+                cvDpsMagicOutput.textContent = "[undefined]";
             }
         } else {
             expectedDpsMagicOutput.classList.add("error");
+            sdDpsMagicOutput.classList.add("error");
+            cvDpsMagicOutput.classList.add("error");
 
             expectedDpsMagicOutput.textContent =
                 "[unknown attack speed value]";
-
-            sdDpsMagicOutput.classList.add("error");
-
             sdDpsMagicOutput.textContent = "[undefined]";
+            cvDpsMagicOutput.textContent = "[undefined]";
         }
     }
 
