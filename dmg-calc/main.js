@@ -21,7 +21,7 @@
  * this page.
  */
 import { Attack, Class, InputData, Spell, Stats, WeaponType, } from "./types.js";
-import { ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, className, isHolySpell, magicAttackPeriod, primaryStat, secondaryStat, weaponTypeName, } from "./data.js";
+import { ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
         main();
@@ -405,7 +405,7 @@ function main() {
     }
     function recalculateWarnings(inputData) {
         const warnings = [];
-        /*======== Emit warnings ========*/
+        /*======== Accumulate warnings ========*/
         if (inputData.totalWatk === 0 &&
             inputData.wepType !== WeaponType.None) {
             warnings.push("Your total WATK is zero, but you have a weapon equipped.");
@@ -582,9 +582,12 @@ function main() {
             throw `Logic error: ${inputData.attack} is not a key in \
                   ATTACK_REQS`;
         }
-        const [attackReqClasses, attackReqWepTypes] = attackReqs;
+        const [attackReqClasses, attackReqLvl, attackReqWepTypes] = attackReqs;
         if (!attackReqClasses.has(inputData.clazz)) {
             warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but you\u{2019}re not ${indefinite(Array.from(attackReqClasses).map(className).join("/"))}.`);
+        }
+        if (inputData.level < attackReqLvl) {
+            warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but your level <${attackReqLvl}.`);
         }
         if (!attackReqWepTypes.has(inputData.wepType)) {
             warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but you don\u{2019}t have ${indefinite(Array.from(attackReqWepTypes)
@@ -595,6 +598,14 @@ function main() {
             inputData.clazz !== Class.Magician) {
             warnings.push("You have a specific spell selected, but you\u{2019}re not a \
                 magician.");
+        }
+        const spellLvlReq = SPELL_LVL_REQS.get(inputData.spell);
+        if (spellLvlReq === undefined) {
+            throw `Logic error: ${inputData.spell} is not a key in \
+                  SPELL_LVL_REQS`;
+        }
+        if (inputData.level < spellLvlReq) {
+            warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but your level <${spellLvlReq}.`);
         }
         if (inputData.speed > 4 /* Fast4 */ &&
             inputData.wepType === WeaponType.None) {
@@ -616,6 +627,12 @@ function main() {
                 warnings.push("Your spell booster value is nonzero, but you\u{2019}re \
                     not a magician.");
             }
+            if (inputData.spellBooster < -1 && inputData.level < 75) {
+                warnings.push("Your spell booster value <\u{2212}1, but your level <75.");
+            }
+            else if (inputData.level < 71) {
+                warnings.push("Your spell booster value is nonzero, but your level <71.");
+            }
         }
         if (inputData.eleAmp !== 1) {
             if (inputData.clazz !== Class.Magician) {
@@ -630,6 +647,17 @@ function main() {
                 warnings.push("Your element amplification >100%, but you\u{2019}re \
                     casting a cleric/priest/bishop spell.");
             }
+            if (inputData.level < 70) {
+                warnings.push("Your element amplification >100%, but your level <70.");
+            }
+        }
+        const jobLvlReq = JOB_LVL_REQS.get(inputData.clazz);
+        if (jobLvlReq === undefined) {
+            throw `Logic error: ${inputData.clazz} is not a key in \
+                  JOB_LVL_REQS`;
+        }
+        if (inputData.level < jobLvlReq) {
+            warnings.push(`You\u{2019}re ${indefinite(className(inputData.clazz))}, but your level <${jobLvlReq}.`);
         }
         /*======== Remove old warnings display ========*/
         {
@@ -673,6 +701,7 @@ function main() {
         critProbInput,
         critDmgInput,
         classInput,
+        levelInput,
         weaponTypeInput,
         attackInput,
         spellInput,
@@ -765,21 +794,15 @@ function minDmgMagic(inputData) {
 function maxDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) +
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
-        (inputData.totalWatk +
-            (inputData.wepType === WeaponType.None
-                ? Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31)
-                : 0))) /
+        effectiveWatk(inputData)) /
         100);
 }
 function minDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) *
         0.9 *
-        (inputData.wepType === WeaponType.None ? 0.1 : inputData.mastery) +
+        effectiveMastery(inputData) +
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
-        (inputData.totalWatk +
-            (inputData.wepType === WeaponType.None
-                ? Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31)
-                : 0))) /
+        effectiveWatk(inputData)) /
         100);
 }
 function maxDmgLuckySeven(inputData) {
@@ -791,6 +814,24 @@ function minDmgLuckySeven(inputData) {
 function adjustRangeForDef(range, def) {
     const [min, max] = range;
     return [min - def * 0.6, max - def * 0.5];
+}
+function effectiveMastery(inputData) {
+    if (inputData.wepType === WeaponType.None) {
+        return 0.1;
+    }
+    return inputData.mastery;
+}
+function effectiveWatk(inputData) {
+    if (inputData.wepType === WeaponType.None) {
+        switch (inputData.clazz) {
+            case Class.Pirate:
+            case Class.Pirate2nd:
+                return Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31);
+            default:
+                return 0;
+        }
+    }
+    return inputData.totalWatk;
 }
 /**
  * This is how English works, right? Probably?

@@ -462,6 +462,37 @@ export function attackName(attack: Attack): string {
     }
 }
 
+export function spellName(spell: Spell): string {
+    switch (spell) {
+        case Spell.Other:
+            return "a spell";
+        case Spell.Explosion:
+            return "Explosion";
+        case Spell.PoisonMist:
+            return "Poison Mist";
+        case Spell.ElementCompositionFP:
+            return "Element Composition [F/P]";
+        case Spell.MeteorShower:
+            return "Meteor Shower";
+        case Spell.IceStrike:
+            return "Ice Strike";
+        case Spell.ThunderSpear:
+            return "Thunder Spear";
+        case Spell.ElementCompositionIL:
+            return "Element Composition [I/L]";
+        case Spell.ChainLightning:
+            return "Chain Lightning";
+        case Spell.Blizzard:
+            return "Blizzard";
+        case Spell.Heal:
+            return "Heal";
+        case Spell.ShiningRay:
+            return "Shining Ray";
+        case Spell.Genesis:
+            return "Genesis";
+    }
+}
+
 export const BAD_WEPS = new Map([
     [
         Class.Beginner,
@@ -537,48 +568,76 @@ export const BAD_WEPS = new Map([
     ],
 ]);
 
-export const ATTACK_REQS: Map<Attack, [Set<Class>, Set<WeaponType>]> = new Map(
+export const ATTACK_REQS: Map<
+    Attack,
+    [Set<Class>, number, Set<WeaponType>]
+> = new Map([
     [
+        Attack.Other,
         [
-            Attack.Other,
-            [
-                new Set([
-                    Class.Beginner,
-                    Class.Warrior,
-                    Class.Magician,
-                    Class.Archer,
-                    Class.Rogue,
-                    Class.Pirate,
-                    Class.Pirate2nd,
-                ]),
-                new Set([
-                    WeaponType.None,
-                    WeaponType.OneHandedSword,
-                    WeaponType.OneHandedAxe,
-                    WeaponType.OneHandedMace,
-                    WeaponType.Dagger,
-                    WeaponType.Wand,
-                    WeaponType.Staff,
-                    WeaponType.TwoHandedSword,
-                    WeaponType.TwoHandedAxe,
-                    WeaponType.TwoHandedMace,
-                    WeaponType.Spear,
-                    WeaponType.Polearm,
-                    WeaponType.Bow,
-                    WeaponType.Crossbow,
-                    WeaponType.Claw,
-                    WeaponType.Knuckler,
-                    WeaponType.Gun,
-                ]),
-            ],
-        ],
-        [
-            Attack.LuckySeven,
-            [new Set([Class.Rogue]), new Set([WeaponType.Claw])],
-        ],
-        [
-            Attack.TripleThrow,
-            [new Set([Class.Rogue]), new Set([WeaponType.Claw])],
+            new Set([
+                Class.Beginner,
+                Class.Warrior,
+                Class.Magician,
+                Class.Archer,
+                Class.Rogue,
+                Class.Pirate,
+                Class.Pirate2nd,
+            ]),
+            0,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
         ],
     ],
-);
+    [
+        Attack.LuckySeven,
+        [new Set([Class.Rogue]), 10, new Set([WeaponType.Claw])],
+    ],
+    [
+        Attack.TripleThrow,
+        [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
+    ],
+]);
+
+export const SPELL_LVL_REQS: Map<Spell, number> = new Map([
+    [Spell.Other, 0],
+    [Spell.Explosion, 70],
+    [Spell.PoisonMist, 70],
+    [Spell.ElementCompositionFP, 70],
+    [Spell.MeteorShower, 120],
+    [Spell.IceStrike, 70],
+    [Spell.ThunderSpear, 70],
+    [Spell.ElementCompositionIL, 70],
+    [Spell.ChainLightning, 120],
+    [Spell.Blizzard, 120],
+    [Spell.Heal, 30],
+    [Spell.ShiningRay, 70],
+    [Spell.Genesis, 120],
+]);
+
+export const JOB_LVL_REQS: Map<Class, number> = new Map([
+    [Class.Beginner, 0],
+    [Class.Warrior, 10],
+    [Class.Magician, 8],
+    [Class.Archer, 10],
+    [Class.Rogue, 10],
+    [Class.Pirate, 10],
+    [Class.Pirate2nd, 30],
+]);
