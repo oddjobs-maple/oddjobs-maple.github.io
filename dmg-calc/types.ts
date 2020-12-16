@@ -101,6 +101,7 @@ export class InputData {
         public mastery: number,
         public skillDmgMulti: number,
         public skillBasicAtk: number,
+        public skillLines: number,
         public critProb: number,
         public critDmg: number,
         public clazz: Class,

@@ -641,3 +641,25 @@ export const JOB_LVL_REQS: Map<Class, number> = new Map([
     [Class.Pirate, 10],
     [Class.Pirate2nd, 30],
 ]);
+
+export const ATTACK_LINES: Map<Attack, [number, number]> = new Map([
+    [Attack.Other, [1, 32767]],
+    [Attack.LuckySeven, [2, 2]],
+    [Attack.TripleThrow, [3, 3]],
+]);
+
+export const SPELL_LINES: Map<Spell, [number, number]> = new Map([
+    [Spell.Other, [1, 32767]],
+    [Spell.Explosion, [1, 1]],
+    [Spell.PoisonMist, [1, 1]],
+    [Spell.ElementCompositionFP, [1, 1]],
+    [Spell.MeteorShower, [1, 1]],
+    [Spell.IceStrike, [1, 1]],
+    [Spell.ThunderSpear, [1, 1]],
+    [Spell.ElementCompositionIL, [1, 1]],
+    [Spell.ChainLightning, [1, 1]],
+    [Spell.Blizzard, [1, 1]],
+    [Spell.Heal, [1, 1]],
+    [Spell.ShiningRay, [1, 1]],
+    [Spell.Genesis, [1, 1]],
+]);

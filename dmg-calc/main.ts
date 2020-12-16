@@ -31,6 +31,7 @@ import {
     WeaponType,
 } from "./types.js";
 import {
+    ATTACK_LINES,
     ATTACK_REQS,
     attackName,
     attackPeriod,
@@ -41,6 +42,7 @@ import {
     magicAttackPeriod,
     primaryStat,
     secondaryStat,
+    SPELL_LINES,
     SPELL_LVL_REQS,
     spellName,
     weaponTypeName,
@@ -74,6 +76,9 @@ function main(): void {
     ) as HTMLInputElement;
     const skillBasicAtkInput = document.getElementById(
         "skill-basic-atk",
+    ) as HTMLInputElement;
+    const skillLinesInput = document.getElementById(
+        "skill-lines",
     ) as HTMLInputElement;
 
     const critProbInput = document.getElementById(
@@ -215,6 +220,11 @@ function main(): void {
             skillBasicAtk = 10;
         }
         skillBasicAtkInput.value = "" + skillBasicAtk;
+        let skillLines = Math.max(parseInt(skillLinesInput.value, 10), 1);
+        if (!Number.isFinite(skillLines)) {
+            skillLines = 1;
+        }
+        skillLinesInput.value = "" + skillLines;
 
         let critProb = Math.min(
             Math.max(parseInt(critProbInput.value, 10), 0),
@@ -302,6 +312,7 @@ function main(): void {
             mastery / 100,
             skillDmgMulti / 100,
             skillBasicAtk,
+            skillLines,
             critProb / 100,
             critDmg / 100,
             clazz,
@@ -792,9 +803,10 @@ function main(): void {
 
         const badWeps = BAD_WEPS.get(inputData.clazz);
         if (badWeps === undefined) {
-            throw `Logic error: ${inputData.clazz} is not a key in BAD_WEPS`;
-        }
-        if (badWeps.has(inputData.wepType)) {
+            console.error(
+                `Logic error: ${inputData.clazz} is not a key in BAD_WEPS`,
+            );
+        } else if (badWeps.has(inputData.wepType)) {
             switch (inputData.wepType) {
                 case WeaponType.None: {
                     warnings.push(
@@ -841,6 +853,13 @@ function main(): void {
                     warnings.push(
                         "Your damage multi \u{2260}100%, but you\u{2019}re a \
                         beginner.",
+                    );
+                }
+
+                if (inputData.skillLines !== 1) {
+                    warnings.push(
+                        "You\u{2019}re attacking with a number of lines \
+                        \u{2260}1, but you\u{2019}re a beginner.",
                     );
                 }
 
@@ -937,36 +956,42 @@ function main(): void {
 
         const attackReqs = ATTACK_REQS.get(inputData.attack);
         if (attackReqs === undefined) {
-            throw `Logic error: ${inputData.attack} is not a key in \
-                  ATTACK_REQS`;
-        }
-        const [attackReqClasses, attackReqLvl, attackReqWepTypes] = attackReqs;
-        if (!attackReqClasses.has(inputData.clazz)) {
-            warnings.push(
-                `You\u{2019}re attacking with ${attackName(
-                    inputData.attack,
-                )}, but you\u{2019}re not ${indefinite(
-                    Array.from(attackReqClasses).map(className).join("/"),
-                )}.`,
+            console.error(
+                `Logic error: ${inputData.attack} is not a key in ATTACK_REQS`,
             );
-        }
-        if (inputData.level < attackReqLvl) {
-            warnings.push(
-                `You\u{2019}re attacking with ${attackName(
-                    inputData.attack,
-                )}, but your level <${attackReqLvl}.`,
-            );
-        }
-        if (!attackReqWepTypes.has(inputData.wepType)) {
-            warnings.push(
-                `You\u{2019}re attacking with ${attackName(
-                    inputData.attack,
-                )}, but you don\u{2019}t have ${indefinite(
-                    Array.from(attackReqWepTypes)
-                        .map(weaponTypeName)
-                        .join("/"),
-                )} equipped.`,
-            );
+        } else {
+            const [
+                attackReqClasses,
+                attackReqLvl,
+                attackReqWepTypes,
+            ] = attackReqs;
+            if (!attackReqClasses.has(inputData.clazz)) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but you\u{2019}re not ${indefinite(
+                        Array.from(attackReqClasses).map(className).join("/"),
+                    )}.`,
+                );
+            }
+            if (inputData.level < attackReqLvl) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but your level <${attackReqLvl}.`,
+                );
+            }
+            if (!attackReqWepTypes.has(inputData.wepType)) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but you don\u{2019}t have ${indefinite(
+                        Array.from(attackReqWepTypes)
+                            .map(weaponTypeName)
+                            .join("/"),
+                    )} equipped.`,
+                );
+            }
         }
 
         if (
@@ -980,10 +1005,11 @@ function main(): void {
         }
         const spellLvlReq = SPELL_LVL_REQS.get(inputData.spell);
         if (spellLvlReq === undefined) {
-            throw `Logic error: ${inputData.spell} is not a key in \
-                  SPELL_LVL_REQS`;
-        }
-        if (inputData.level < spellLvlReq) {
+            console.error(
+                `Logic error: ${inputData.spell} is not a key in \
+                SPELL_LVL_REQS`,
+            );
+        } else if (inputData.level < spellLvlReq) {
             warnings.push(
                 `You\u{2019}re casting ${spellName(
                     inputData.spell,
@@ -1069,15 +1095,62 @@ function main(): void {
 
         const jobLvlReq = JOB_LVL_REQS.get(inputData.clazz);
         if (jobLvlReq === undefined) {
-            throw `Logic error: ${inputData.clazz} is not a key in \
-                  JOB_LVL_REQS`;
-        }
-        if (inputData.level < jobLvlReq) {
+            console.error(
+                `Logic error: ${inputData.clazz} is not a key in JOB_LVL_REQS`,
+            );
+        } else if (inputData.level < jobLvlReq) {
             warnings.push(
                 `You\u{2019}re ${indefinite(
                     className(inputData.clazz),
                 )}, but your level <${jobLvlReq}.`,
             );
+        }
+
+        const attackLines = ATTACK_LINES.get(inputData.attack);
+        if (attackLines === undefined) {
+            console.error(
+                `Logic error: ${inputData.attack} is not a key in \
+                ATTACK_LINES`,
+            );
+        } else {
+            const [minLines, maxLines] = attackLines;
+            if (inputData.skillLines < minLines) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but its number of lines <${minLines}.`,
+                );
+            }
+            if (inputData.skillLines > maxLines) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but its number of lines >${maxLines}.`,
+                );
+            }
+        }
+
+        const spellLines = SPELL_LINES.get(inputData.spell);
+        if (spellLines === undefined) {
+            console.error(
+                `Logic error: ${inputData.spell} is not a key in SPELL_LINES`,
+            );
+        } else {
+            const [minLines, maxLines] = spellLines;
+            if (inputData.skillLines < minLines) {
+                warnings.push(
+                    `You\u{2019}re casting ${spellName(
+                        inputData.spell,
+                    )}, but its number of lines <${minLines}.`,
+                );
+            }
+            if (inputData.skillLines > maxLines) {
+                warnings.push(
+                    `You\u{2019}re casting ${spellName(
+                        inputData.spell,
+                    )}, but its number of lines >${maxLines}.`,
+                );
+            }
         }
 
         /*======== Remove old warnings display ========*/
@@ -1128,6 +1201,7 @@ function main(): void {
         masteryInput,
         skillDmgMultiInput,
         skillBasicAtkInput,
+        skillLinesInput,
         critProbInput,
         critDmgInput,
         classInput,
