@@ -22,15 +22,6 @@
  */
 
 import {
-    Attack,
-    Class,
-    InputData,
-    Speed,
-    Spell,
-    Stats,
-    WeaponType,
-} from "./types.js";
-import {
     ATTACK_LINES,
     ATTACK_REQS,
     attackName,
@@ -47,6 +38,17 @@ import {
     spellName,
     weaponTypeName,
 } from "./data.js";
+import { truncClampedExpectation, truncClampedVariance } from "./math.js";
+import {
+    Attack,
+    Class,
+    InputData,
+    Speed,
+    Spell,
+    Stats,
+    WeaponType,
+} from "./types.js";
+import { indefinite } from "./util.js";
 
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
@@ -462,12 +464,15 @@ function main(): void {
         }`;
 
         const [expectedPerHitBadNoCrit, expectedPerHitBadCrit] = [
-            clampedExpectation(minDmgPhysBadNoCrit, maxDmgPhysBadNoCrit),
-            clampedExpectation(minDmgPhysBadCrit, maxDmgPhysBadCrit),
+            truncClampedExpectation(minDmgPhysBadNoCrit, maxDmgPhysBadNoCrit),
+            truncClampedExpectation(minDmgPhysBadCrit, maxDmgPhysBadCrit),
         ];
         const [expectedPerHitGoodNoCrit, expectedPerHitGoodCrit] = [
-            clampedExpectation(minDmgPhysGoodNoCrit, maxDmgPhysGoodNoCrit),
-            clampedExpectation(minDmgPhysGoodCrit, maxDmgPhysGoodCrit),
+            truncClampedExpectation(
+                minDmgPhysGoodNoCrit,
+                maxDmgPhysGoodNoCrit,
+            ),
+            truncClampedExpectation(minDmgPhysGoodCrit, maxDmgPhysGoodCrit),
         ];
         const expectedPerHitBad =
             critQ * expectedPerHitBadNoCrit +
@@ -485,22 +490,22 @@ function main(): void {
         // indicate that this is a variance against the expectation across
         // _all_ cases (`expectedPerHit`), not against the expected value of
         // the particular case in question.
-        const mainVariancePerHitBadNoCrit = clampedVariance(
+        const mainVariancePerHitBadNoCrit = truncClampedVariance(
             minDmgPhysBadNoCrit,
             maxDmgPhysBadNoCrit,
             expectedPerHit,
         );
-        const mainVariancePerHitGoodNoCrit = clampedVariance(
+        const mainVariancePerHitGoodNoCrit = truncClampedVariance(
             minDmgPhysGoodNoCrit,
             maxDmgPhysGoodNoCrit,
             expectedPerHit,
         );
-        const mainVariancePerHitBadCrit = clampedVariance(
+        const mainVariancePerHitBadCrit = truncClampedVariance(
             minDmgPhysBadCrit,
             maxDmgPhysBadCrit,
             expectedPerHit,
         );
-        const mainVariancePerHitGoodCrit = clampedVariance(
+        const mainVariancePerHitGoodCrit = truncClampedVariance(
             minDmgPhysGoodCrit,
             maxDmgPhysGoodCrit,
             expectedPerHit,
@@ -633,8 +638,8 @@ function main(): void {
         }`;
 
         const [expectedPerHitNoCrit, expectedPerHitCrit] = [
-            clampedExpectation(minDmgNoCrit, maxDmgNoCrit),
-            clampedExpectation(minDmgCrit, maxDmgCrit),
+            truncClampedExpectation(minDmgNoCrit, maxDmgNoCrit),
+            truncClampedExpectation(minDmgCrit, maxDmgCrit),
         ];
         const expectedPerHit =
             critQ * expectedPerHitNoCrit +
@@ -650,12 +655,12 @@ function main(): void {
         // indicate that this is a variance against the expectation across
         // _all_ cases (`expectedPerHit`), not against the expected value of
         // the particular case in question.
-        const mainVariancePerHitNoCrit = clampedVariance(
+        const mainVariancePerHitNoCrit = truncClampedVariance(
             minDmgNoCrit,
             maxDmgNoCrit,
             expectedPerHit,
         );
-        const mainVariancePerHitCrit = clampedVariance(
+        const mainVariancePerHitCrit = truncClampedVariance(
             minDmgCrit,
             maxDmgCrit,
             expectedPerHit,
@@ -1310,82 +1315,6 @@ function main(): void {
     recalculate();
 }
 
-/**
- * Gets the variance for a uniform distribution over the range `[a, b]` that is
- * **_actually not uniform_**, because the outcomes are clamped to a minimum
- * of 1.  The `mu` parameter is the expectation of the distribution, which can
- * be obtained from the `clampedExpectation` function.
- *
- * This function assumes that `b >= a`, so if `b < a`, you will get
- * `undefined`.
- *
- * In LaTeX:
- *
- * ```latex
- * \sigma^2 = \begin{cases}
- *   0 & \text{when } a = b \lor b \leq 1 \\
- *   \frac{(b - \mu)^3 - (\text{max}\left\{a, 1\right\} - \mu)^3}{3(b - a)} +
- *     (1 - \mu)^2\,\text{max}\!\left\{\frac{1 - a}{b - a}, 0\right\} &
- *     \text{when } b > \text{max}\!\left\{a, 1\right\}
- * \end{cases}
- * ```
- */
-function clampedVariance(
-    a: number,
-    b: number,
-    mu: number,
-): number | undefined {
-    if (a === b || b <= 1) {
-        return 0;
-    }
-    if (a > b) {
-        return;
-    }
-
-    const bMinusA = b - a;
-
-    return (
-        ((b - mu) ** 3 - (Math.max(a, 1) - mu) ** 3) / (3 * bMinusA) +
-        (1 - mu) ** 2 * Math.max((1 - a) / bMinusA, 0)
-    );
-}
-
-/**
- * Gets the expected value for a uniform distribution over the range
- * `[min, max]` that is **_actually not uniform_**, because the outcomes are
- * clamped to a minimum of 1.
- */
-function clampedExpectation(min: number, max: number): number {
-    if (min >= 1) {
-        return (min + max) / 2;
-    }
-
-    // The logic below is there because it's possible that the lower end of the
-    // damage range (and possibly the higher end as well) is strictly less than
-    // 1, in which case we no longer have a uniform distribution!  This means
-    // no simple `(minValue + maxValue) / 2` will calculate the expectation for
-    // us.  Instead, we have to split the distribution out into two parts: the
-    // clamped bit (everything at or below 1), which is always clamped to an
-    // outcome of 1, and the uniform bit (everything above 1).  These are then
-    // weighted and summed.  Note that it's possible for the uniform bit to
-    // have a measure/norm of zero (particularly, in the case that
-    // `maxValue <= 1`).
-
-    if (min >= max) {
-        return 1;
-    }
-
-    const rawRangeNorm = max - min;
-    const rawClampedNorm = Math.min(1 - min, rawRangeNorm);
-
-    const uniformExpected = (1 + max) / 2;
-
-    const clampedWeight = Math.min(rawClampedNorm / rawRangeNorm, 1);
-    const uniformWeight = 1 - clampedWeight;
-
-    return clampedWeight + uniformWeight * uniformExpected;
-}
-
 function dmgMulti(inputData: InputData, crit: boolean): number {
     return inputData.skillDmgMulti + (crit ? inputData.critDmg : 0);
 }
@@ -1486,20 +1415,4 @@ function effectiveWatk(inputData: InputData): number {
     }
 
     return inputData.totalWatk;
-}
-
-/**
- * This is how English works, right? Probably?
- */
-function indefinite(s: string): string {
-    switch (s.toLowerCase().codePointAt(0)) {
-        case "a".codePointAt(0):
-        case "e".codePointAt(0):
-        case "i".codePointAt(0):
-        case "o".codePointAt(0):
-        case "u".codePointAt(0):
-            return `an ${s}`;
-        default:
-            return `a ${s}`;
-    }
 }

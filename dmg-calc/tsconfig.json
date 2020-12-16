@@ -11,5 +11,5 @@
         "strict": true,
         "target": "ES2019"
     },
-    "files": ["main.ts", "data.ts", "types.ts"]
+    "files": ["data.ts", "main.ts", "math.ts", "types.ts", "util.ts"]
 }
