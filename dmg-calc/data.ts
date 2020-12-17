@@ -317,6 +317,9 @@ export function attackPeriod(
                     return 1800;
             }
         }
+        case Attack.Phoenix:
+        case Attack.Frostprey:
+            return 3030;
         case Attack.Assaulter: {
             switch (speed) {
                 case Speed.Faster2:
@@ -358,6 +361,10 @@ export function attackPeriod(
 
             break;
         }
+        case Attack.Octopus:
+        case Attack.Gaviota:
+        case Attack.WrathOfTheOctopi:
+            return 1530;
         default:
             break;
     }
@@ -534,6 +541,10 @@ export function attackName(attack: Attack): string {
             return "Dragon Roar";
         case Attack.PowerKnockBack:
             return "Power Knock-Back";
+        case Attack.Phoenix:
+            return "Phoenix";
+        case Attack.Frostprey:
+            return "Frostprey";
         case Attack.LuckySeven:
             return "Lucky Seven";
         case Attack.TripleThrow:
@@ -548,6 +559,12 @@ export function attackName(attack: Attack): string {
             return "Venomous Stab";
         case Attack.SomersaultKick:
             return "Somersault Kick";
+        case Attack.Octopus:
+            return "Octopus";
+        case Attack.Gaviota:
+            return "Gaviota";
+        case Attack.WrathOfTheOctopi:
+            return "Wrath of the Octopi";
     }
 }
 
@@ -762,6 +779,58 @@ export const ATTACK_REQS: Map<
         ],
     ],
     [
+        Attack.Phoenix,
+        [
+            new Set([Class.Archer]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.Frostprey,
+        [
+            new Set([Class.Archer]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
         Attack.LuckySeven,
         [new Set([Class.Rogue]), 10, new Set([WeaponType.Claw])],
     ],
@@ -833,6 +902,84 @@ export const ATTACK_REQS: Map<
             ]),
         ],
     ],
+    [
+        Attack.Octopus,
+        [
+            new Set([Class.Pirate2nd]),
+            70,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.Gaviota,
+        [
+            new Set([Class.Pirate2nd]),
+            70,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.WrathOfTheOctopi,
+        [
+            new Set([Class.Pirate2nd]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
 ]);
 
 export const SPELL_LVL_REQS: Map<Spell, number> = new Map([
@@ -872,6 +1019,8 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.ClawPunch, [1, 1, 1]],
     [Attack.DragonRoar, [1, 1, 6]],
     [Attack.PowerKnockBack, [1, 1, 6]],
+    [Attack.Phoenix, [1, 1, 4]],
+    [Attack.Frostprey, [1, 1, 4]],
     [Attack.LuckySeven, [2, 2, 1]],
     [Attack.TripleThrow, [3, 3, 1]],
     [Attack.Assaulter, [1, 1, 1]],
@@ -879,6 +1028,9 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.VenomousStar, [1, 1, 1]],
     [Attack.VenomousStab, [1, 1, 1]],
     [Attack.SomersaultKick, [1, 1, 6]],
+    [Attack.Octopus, [1, 1, 1]],
+    [Attack.Gaviota, [1, 1, 6]],
+    [Attack.WrathOfTheOctopi, [1, 1, 1]],
 ]);
 
 /**

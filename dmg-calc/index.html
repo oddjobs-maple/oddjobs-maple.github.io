@@ -219,10 +219,12 @@
             by any of said virtual enemies, except for one of them. The ability
             to select a number of targets is only there for skills like Heal,
             which change their per-line damage based on the total number of
-            targets. Also note that Heal, unlike most spells, uses the
-            &ldquo;Damage multi&rdquo; rather than the &ldquo;Basic
-            attack&rdquo; (the damage multi is typically 300% at maximum
-            level).
+            targets. Note that when casting Heal (maximum of 6 targets), the
+            caster counts as a target, thus lowering the maximum number of
+            possible enemy targets from 6 to 5. Also note that Heal, unlike
+            most spells, uses the &ldquo;Damage multi&rdquo; rather than the
+            &ldquo;Basic attack&rdquo; (the damage multi is typically 300% at
+            maximum level).
           </p>
 
           <p>
@@ -361,66 +363,10 @@
             can ever be sampled. This is perhaps a bigger deal than it usually
             would be, because the fractional parts of the samples are
             truncated, making a sample of e.g. 2.999 effectively much less
-            (viz. 1 less, instead of 0.001 less) than a sample of 3. Typically
-            (see e.g.
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html#random()"
-              >in Java</a
-            >), software functions that are intended to return a
-            uniformly-distributed sample from an interval of floating point
-            numbers do so from a nominally
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://mathworld.wolfram.com/Half-ClosedInterval.html"
-              >half-closed interval</a
-            >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
-            closed/included, while the upper &ldquo;half&rdquo; is
-            open/excluded. As a result, an upper range bound that has an
-            asterisk (*) can only be guaranteed to <em>nominally</em> be part
-            of the range, and it may or may not have a nonzero probability of
-            being sampled, depending upon the implementation. For reference,
-            the number of
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format"
-              >single-precision</a
-            >
-            (32-bit, typically <code>float</code> in
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/C_(programming_language)"
-              >C</a
-            >)
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/IEEE_754"
-              >IEEE 754</a
-            >
-            floating point numbers within
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Unit_interval"
-              >the unit interval</a
-            >
-            is 1,065,353,217 &mdash; this number is only for scale, since
-            precision varies depending on how far away from zero you are, and
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format"
-              >double-precision</a
-            >
-            floating point numbers are common as well &mdash; but the point is
-            that it shouldn&rsquo;t matter much for expected values and
-            variances. It&rsquo;s just that it may (or may not) be impossible
-            to <em>actually witness</em> that asterisked damage value.
+            (viz. 1 less, instead of 0.001 less) than a sample of 3. If you see
+            an asterisked value, you can effectively just subtract 1 from it.
+            The method here chosen to display these liminal values is largely
+            for completeness.<sup>[3]</sup>
           </p>
 
           <details>
@@ -460,6 +406,68 @@
               &minus;4, potentially). This is another artifact/bug of early
               pirate implementations, and spellcasting speeds below &minus;2
               are not handled by this calculator.
+            </p>
+
+            <p>
+              [3]: Typically (see e.g.
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html#random()"
+                >in Java</a
+              >), software functions that are intended to return a
+              uniformly-distributed sample from an interval of floating point
+              numbers do so from a nominally
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://mathworld.wolfram.com/Half-ClosedInterval.html"
+                >half-closed interval</a
+              >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
+              closed/included, while the upper &ldquo;half&rdquo; is
+              open/excluded. As a result, an upper range bound that has an
+              asterisk (*) can only be guaranteed to <em>nominally</em> be part
+              of the range, and it may or may not have a nonzero probability of
+              being sampled, depending upon the implementation. For reference,
+              the number of
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format"
+                >single-precision</a
+              >
+              (32-bit, typically <code>float</code> in
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/C_(programming_language)"
+                >C</a
+              >)
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/IEEE_754"
+                >IEEE 754</a
+              >
+              floating point numbers within
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Unit_interval"
+                >the unit interval</a
+              >
+              is 1,065,353,217 &mdash; this number is only for scale, since
+              precision varies depending on how far away from zero you are, and
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format"
+                >double-precision</a
+              >
+              floating point numbers are common as well &mdash; but the point
+              is that it shouldn&rsquo;t matter much for expected values and
+              variances. It&rsquo;s just that it may (or may not) be impossible
+              to <em>actually witness</em> that asterisked damage value.
             </p>
           </details>
 
@@ -681,8 +689,16 @@
                     <option value="3101003">Power Knock-Back</option>
                   </optgroup>
 
+                  <optgroup label="Bowmaster">
+                    <option value="3121006">Phoenix</option>
+                  </optgroup>
+
                   <optgroup label="Crossbowman">
                     <option value="3101003">Power Knock-Back</option>
+                  </optgroup>
+
+                  <optgroup label="Marksman">
+                    <option value="3221005">Frostprey</option>
                   </optgroup>
 
                   <optgroup label="Rogue">
@@ -706,6 +722,15 @@
 
                   <optgroup label="Pirate">
                     <option value="5001002">Somersault Kick</option>
+                  </optgroup>
+
+                  <optgroup label="Outlaw">
+                    <option value="5211001">Octopus</option>
+                    <option value="5211002">Gaviota</option>
+                  </optgroup>
+
+                  <optgroup label="Corsair">
+                    <option value="5220002">Wrath of the Octopi</option>
                   </optgroup>
                 </select>
               </label>

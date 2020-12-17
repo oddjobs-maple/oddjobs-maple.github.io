@@ -398,6 +398,12 @@ function main(): void {
                         return minDmgClawPunch(inputData);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
+                    case Attack.Phoenix:
+                    case Attack.Frostprey:
+                    case Attack.Octopus:
+                    case Attack.Gaviota:
+                    case Attack.WrathOfTheOctopi:
+                        return minDmgDexSummon(inputData);
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return minDmgLuckySeven(inputData);
@@ -421,6 +427,12 @@ function main(): void {
                         return maxDmgClawPunch(inputData);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
+                    case Attack.Phoenix:
+                    case Attack.Frostprey:
+                    case Attack.Octopus:
+                    case Attack.Gaviota:
+                    case Attack.WrathOfTheOctopi:
+                        return maxDmgDexSummon(inputData);
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return maxDmgLuckySeven(inputData);
@@ -443,6 +455,11 @@ function main(): void {
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
                     case Attack.DragonRoar:
+                    case Attack.Phoenix:
+                    case Attack.Frostprey:
+                    case Attack.Octopus:
+                    case Attack.Gaviota:
+                    case Attack.WrathOfTheOctopi:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                     case Attack.NinjaAmbush:
@@ -460,6 +477,11 @@ function main(): void {
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
                     case Attack.DragonRoar:
+                    case Attack.Phoenix:
+                    case Attack.Frostprey:
+                    case Attack.Octopus:
+                    case Attack.Gaviota:
+                    case Attack.WrathOfTheOctopi:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                     case Attack.NinjaAmbush:
@@ -475,6 +497,12 @@ function main(): void {
 
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
+                case Attack.Phoenix:
+                case Attack.Frostprey:
+                case Attack.Octopus:
+                case Attack.Gaviota:
+                case Attack.WrathOfTheOctopi:
+                    return [minDmgPhysBad, maxDmgPhysGood];
                 case Attack.Assaulter:
                     return inputData.level >= inputData.enemyLevel
                         ? [minDmgPhysBad, maxDmgPhysGood]
@@ -491,6 +519,12 @@ function main(): void {
         })();
         const [minDmgPhysGoodAdjusted, maxDmgPhysBadAdjusted] = (() => {
             switch (inputData.attack) {
+                case Attack.Phoenix:
+                case Attack.Frostprey:
+                case Attack.Octopus:
+                case Attack.Gaviota:
+                case Attack.WrathOfTheOctopi:
+                    return [minDmgPhysGood, maxDmgPhysBad];
                 case Attack.Assaulter:
                     return inputData.level >= inputData.enemyLevel
                         ? [minDmgPhysGood, maxDmgPhysBad]
@@ -1448,6 +1482,22 @@ function main(): void {
             );
         }
 
+        if (inputData.attack === Attack.Gaviota) {
+            warnings.push(
+                "Gaviota\u{2019}s attack period is based on an idealization; \
+                actual usage will almost certainly have a larger attack \
+                period and thus lower DPS.",
+            );
+        }
+
+        if (inputData.attack === Attack.WrathOfTheOctopi) {
+            warnings.push(
+                "The attack period for Wrath of the Octopi is unmeasured, so \
+                the slower attack period of Octopus (the skill which it \
+                upgrades) is used instead.",
+            );
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -1608,6 +1658,22 @@ function minDmgDragonRoar(inputData: InputData): number {
         ((inputData.stats.str * 4 * inputData.mastery * 0.9 +
             inputData.stats.dex) *
             effectiveWatk(inputData)) /
+        100
+    );
+}
+
+function maxDmgDexSummon(inputData: InputData): number {
+    return (
+        ((inputData.stats.dex * 2.5 + inputData.stats.str) *
+            inputData.skillBasicAtk) /
+        100
+    );
+}
+
+function minDmgDexSummon(inputData: InputData): number {
+    return (
+        ((inputData.stats.dex * 2.5 * 0.7 + inputData.stats.str) *
+            inputData.skillBasicAtk) /
         100
     );
 }

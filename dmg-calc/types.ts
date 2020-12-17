@@ -56,6 +56,8 @@ export enum Attack {
     ClawPunch = -2,
     DragonRoar = 1311006,
     PowerKnockBack = 3101003,
+    Phoenix = 3121006,
+    Frostprey = 3221005,
     LuckySeven = 4001344,
     TripleThrow = 4121007,
     Assaulter = 4211002,
@@ -63,6 +65,9 @@ export enum Attack {
     VenomousStar = 4120005,
     VenomousStab = 4220005,
     SomersaultKick = 5001002,
+    Octopus = 5211001,
+    Gaviota = 5211002,
+    WrathOfTheOctopi = 5220002,
 }
 
 export enum Spell {

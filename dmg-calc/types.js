@@ -55,6 +55,8 @@ export var Attack;
     Attack[Attack["ClawPunch"] = -2] = "ClawPunch";
     Attack[Attack["DragonRoar"] = 1311006] = "DragonRoar";
     Attack[Attack["PowerKnockBack"] = 3101003] = "PowerKnockBack";
+    Attack[Attack["Phoenix"] = 3121006] = "Phoenix";
+    Attack[Attack["Frostprey"] = 3221005] = "Frostprey";
     Attack[Attack["LuckySeven"] = 4001344] = "LuckySeven";
     Attack[Attack["TripleThrow"] = 4121007] = "TripleThrow";
     Attack[Attack["Assaulter"] = 4211002] = "Assaulter";
@@ -62,6 +64,9 @@ export var Attack;
     Attack[Attack["VenomousStar"] = 4120005] = "VenomousStar";
     Attack[Attack["VenomousStab"] = 4220005] = "VenomousStab";
     Attack[Attack["SomersaultKick"] = 5001002] = "SomersaultKick";
+    Attack[Attack["Octopus"] = 5211001] = "Octopus";
+    Attack[Attack["Gaviota"] = 5211002] = "Gaviota";
+    Attack[Attack["WrathOfTheOctopi"] = 5220002] = "WrathOfTheOctopi";
 })(Attack || (Attack = {}));
 export var Spell;
 (function (Spell) {
