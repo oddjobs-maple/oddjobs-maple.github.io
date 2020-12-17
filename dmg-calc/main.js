@@ -54,6 +54,7 @@ function main() {
     const enemyMdefInput = document.getElementById("enemy-mdef");
     const eleSusInput = document.getElementById("ele-sus");
     const enemyLevelInput = document.getElementById("enemy-level");
+    const enemyCountInput = document.getElementById("enemy-count");
     const rangeOutput = document.getElementById("range");
     const critRangeOutput = document.getElementById("crit-range");
     const expectedPerHitOutput = document.getElementById("expected-per-hit");
@@ -202,7 +203,12 @@ function main() {
             enemyLevel = 1;
         }
         enemyLevelInput.value = "" + enemyLevel;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus, enemyLevel);
+        let enemyCount = Math.min(Math.max(parseInt(enemyCountInput.value, 10), 1), 15);
+        if (!Number.isFinite(enemyCount)) {
+            enemyCount = 1;
+        }
+        enemyCountInput.value = "" + enemyCount;
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -218,6 +224,8 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                         return minDmgBowWhack(inputData);
+                    case Attack.ClawPunch:
+                        return minDmgClawPunch(inputData);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
                     case Attack.LuckySeven:
@@ -239,6 +247,8 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                         return maxDmgBowWhack(inputData);
+                    case Attack.ClawPunch:
+                        return maxDmgClawPunch(inputData);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
                     case Attack.LuckySeven:
@@ -261,6 +271,7 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
+                    case Attack.ClawPunch:
                     case Attack.DragonRoar:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
@@ -277,6 +288,7 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
+                    case Attack.ClawPunch:
                     case Attack.DragonRoar:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
@@ -456,8 +468,26 @@ function main() {
     }
     function recalculateMagic(inputData, critQ) {
         const [minDmg, maxDmg] = [
-            minDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
-            maxDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
+            (() => {
+                switch (inputData.spell) {
+                    case Spell.Heal:
+                        return minDmgHeal(inputData);
+                    default:
+                        return minDmgMagic(inputData);
+                }
+            })() *
+                inputData.eleAmp *
+                inputData.eleSus,
+            (() => {
+                switch (inputData.spell) {
+                    case Spell.Heal:
+                        return maxDmgHeal(inputData);
+                    default:
+                        return maxDmgMagic(inputData);
+                }
+            })() *
+                inputData.eleAmp *
+                inputData.eleSus,
         ];
         const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForMdef(inputData, [
             minDmg,
@@ -698,9 +728,10 @@ function main() {
                 if (inputData.stats.int < 20) {
                     warnings.push("Your total INT <20, but you\u{2019}re a magician.");
                 }
-                if (inputData.skillDmgMulti !== 1) {
+                if (inputData.skillDmgMulti !== 1 &&
+                    inputData.spell !== Spell.Heal) {
                     warnings.push("Your damage multi \u{2260}100%, but you\u{2019}re a \
-                        magician.");
+                        magician who is not casting Heal.");
                 }
                 break;
             }
@@ -827,12 +858,15 @@ function main() {
                 ATTACK_LINES`);
         }
         else {
-            const [minLines, maxLines] = attackLines;
+            const [minLines, maxLines, maxTargets] = attackLines;
             if (inputData.skillLines < minLines) {
                 warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but its number of lines <${minLines}.`);
             }
             if (inputData.skillLines > maxLines) {
                 warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but its number of lines >${maxLines}.`);
+            }
+            if (inputData.enemyCount > maxTargets) {
+                warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but your number of targets >${maxTargets}.`);
             }
         }
         const spellLines = SPELL_LINES.get(inputData.spell);
@@ -840,12 +874,15 @@ function main() {
             console.error(`Logic error: ${inputData.spell} is not a key in SPELL_LINES`);
         }
         else {
-            const [minLines, maxLines] = spellLines;
+            const [minLines, maxLines, maxTargets] = spellLines;
             if (inputData.skillLines < minLines) {
                 warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but its number of lines <${minLines}.`);
             }
             if (inputData.skillLines > maxLines) {
                 warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but its number of lines >${maxLines}.`);
+            }
+            if (inputData.enemyCount > maxTargets) {
+                warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but your number of targets >${maxTargets}.`);
             }
         }
         if (inputData.attack === Attack.SomersaultKick) {
@@ -877,6 +914,11 @@ function main() {
                     damage multi \u{2260}100%. Maybe you meant to use Power \
                     Knock-Back?");
             }
+        }
+        if (inputData.attack === Attack.ClawPunch &&
+            inputData.skillDmgMulti !== 1) {
+            warnings.push("You\u{2019}re punching with a claw, but your damage multi \
+                \u{2260}100%.");
         }
         /*======== Remove old warnings display ========*/
         {
@@ -932,6 +974,7 @@ function main() {
         enemyMdefInput,
         eleSusInput,
         enemyLevelInput,
+        enemyCountInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -939,18 +982,6 @@ function main() {
 }
 function dmgMulti(inputData, crit) {
     return inputData.skillDmgMulti + (crit ? inputData.critDmg : 0);
-}
-function maxDmgMagic(inputData) {
-    return (((inputData.totalMatk ** 2 / 1000 + inputData.totalMatk) / 30 +
-        inputData.stats.int / 200) *
-        inputData.skillBasicAtk);
-}
-function minDmgMagic(inputData) {
-    return (((inputData.totalMatk ** 2 / 1000 +
-        inputData.totalMatk * inputData.mastery * 0.9) /
-        30 +
-        inputData.stats.int / 200) *
-        inputData.skillBasicAtk);
 }
 function maxDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) +
@@ -973,6 +1004,18 @@ function maxDmgBowWhack(inputData) {
 }
 function minDmgBowWhack(inputData) {
     return (((inputData.stats.dex * 3.4 * 0.1 * 0.9 + inputData.stats.str) *
+        effectiveWatk(inputData)) /
+        150);
+}
+function maxDmgClawPunch(inputData) {
+    return (((inputData.stats.luk + inputData.stats.str + inputData.stats.dex) *
+        effectiveWatk(inputData)) /
+        150);
+}
+function minDmgClawPunch(inputData) {
+    return (((inputData.stats.luk * 0.1 +
+        inputData.stats.str +
+        inputData.stats.dex) *
         effectiveWatk(inputData)) /
         150);
 }
@@ -1043,6 +1086,35 @@ function minDmgSomersaultKick(inputData) {
         default:
             return minDmgPhys(inputData, true);
     }
+}
+function maxDmgMagic(inputData) {
+    return (((inputData.totalMatk ** 2 / 1000 + inputData.totalMatk) / 30 +
+        inputData.stats.int / 200) *
+        inputData.skillBasicAtk);
+}
+function minDmgMagic(inputData) {
+    return (((inputData.totalMatk ** 2 / 1000 +
+        inputData.totalMatk * inputData.mastery * 0.9) /
+        30 +
+        inputData.stats.int / 200) *
+        inputData.skillBasicAtk);
+}
+function healTargetMulti(enemyCount) {
+    return 1.5 + 5 / (enemyCount + 1);
+}
+function maxDmgHeal(inputData) {
+    return ((((inputData.stats.int * 1.2 + inputData.stats.luk) *
+        inputData.totalMatk) /
+        1000) *
+        healTargetMulti(inputData.enemyCount) *
+        inputData.skillDmgMulti);
+}
+function minDmgHeal(inputData) {
+    return ((((inputData.stats.int * 0.3 + inputData.stats.luk) *
+        inputData.totalMatk) /
+        1000) *
+        healTargetMulti(inputData.enemyCount) *
+        inputData.skillDmgMulti);
 }
 function adjustRangeForWdef(inputData, range) {
     const [min, max] = range;

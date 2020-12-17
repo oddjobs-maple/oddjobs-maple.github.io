@@ -52,6 +52,7 @@ export var Attack;
 (function (Attack) {
     Attack[Attack["Other"] = 0] = "Other";
     Attack[Attack["BowWhack"] = -1] = "BowWhack";
+    Attack[Attack["ClawPunch"] = -2] = "ClawPunch";
     Attack[Attack["DragonRoar"] = 1311006] = "DragonRoar";
     Attack[Attack["PowerKnockBack"] = 3101003] = "PowerKnockBack";
     Attack[Attack["LuckySeven"] = 4001344] = "LuckySeven";
@@ -89,7 +90,7 @@ export var Class;
     Class[Class["Pirate2nd"] = 510] = "Pirate2nd";
 })(Class || (Class = {}));
 export class InputData {
-    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, enemyWdef, enemyMdef, eleSus, enemyLevel) {
+    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount) {
         this.stats = stats;
         this.totalWatk = totalWatk;
         this.totalMatk = totalMatk;
@@ -111,5 +112,6 @@ export class InputData {
         this.enemyMdef = enemyMdef;
         this.eleSus = eleSus;
         this.enemyLevel = enemyLevel;
+        this.enemyCount = enemyCount;
     }
 }

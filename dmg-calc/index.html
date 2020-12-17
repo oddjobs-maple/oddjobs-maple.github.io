@@ -91,8 +91,14 @@
             We assume that the player can attack as quickly as possible (i.e.
             holding down the attack button), and does so uninterrupted: they
             are never struck, never have to move, never use potions, &amp;c.,
-            and also never miss. We also assume that they are fighting exactly
-            one foe at all times, and that that one foe has infinite HP.
+            and also never miss. We also assume that they are damaging exactly
+            one foe at all times, and that that one foe has infinite HP. You
+            can select a number of targets greater than one, but note that this
+            does <strong>not</strong> take into account the damage taken by any
+            of said virtual enemies, except for one of them. The ability to
+            select a number of targets is only there for skills like Heal,
+            which change their per-line damage based on the total number of
+            targets.
           </p>
 
           <p>
@@ -205,6 +211,18 @@
             non-critical basic attack would. Note that magic attacks work
             somewhat differently, and (as far as I know) do not use this
             additive notion of &ldquo;damage multiplier&rdquo;.
+          </p>
+
+          <p>
+            You can select a number of targets greater than one, but note that
+            this does <strong>not</strong> take into account the damage taken
+            by any of said virtual enemies, except for one of them. The ability
+            to select a number of targets is only there for skills like Heal,
+            which change their per-line damage based on the total number of
+            targets. Also note that Heal, unlike most spells, uses the
+            &ldquo;Damage multi&rdquo; rather than the &ldquo;Basic
+            attack&rdquo; (the damage multi is typically 300% at maximum
+            level).
           </p>
 
           <p>
@@ -653,6 +671,7 @@
                 <select name="attack" id="attack">
                   <option value="0" selected>[other]</option>
                   <option value="-1">[bow whack]</option>
+                  <option value="-2">[claw punch]</option>
 
                   <optgroup label="Dragon Knight">
                     <option value="1311006">Dragon Roar</option>
@@ -813,6 +832,18 @@
                   id="enemy-level"
                   name="enemy-level"
                   min="1"
+                  value="1"
+                />
+              </label>
+
+              <label for="enemy-count">
+                Count
+                <input
+                  type="number"
+                  id="enemy-count"
+                  name="enemy-count"
+                  min="1"
+                  max="15"
                   value="1"
                 />
               </label>

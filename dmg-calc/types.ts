@@ -53,6 +53,7 @@ export enum WeaponType {
 export enum Attack {
     Other = 0,
     BowWhack = -1,
+    ClawPunch = -2,
     DragonRoar = 1311006,
     PowerKnockBack = 3101003,
     LuckySeven = 4001344,
@@ -124,5 +125,6 @@ export class InputData {
         public enemyMdef: number,
         public eleSus: number,
         public enemyLevel: number,
+        public enemyCount: number,
     ) {}
 }

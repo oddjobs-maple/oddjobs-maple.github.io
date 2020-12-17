@@ -497,6 +497,8 @@ export function attackName(attack) {
             return "basic attack";
         case Attack.BowWhack:
             return "bow whack";
+        case Attack.ClawPunch:
+            return "claw punch";
         case Attack.DragonRoar:
             return "Dragon Roar";
         case Attack.PowerKnockBack:
@@ -673,6 +675,22 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.ClawPunch,
+        [
+            new Set([
+                Class.Beginner,
+                Class.Warrior,
+                Class.Magician,
+                Class.Archer,
+                Class.Rogue,
+                Class.Pirate,
+                Class.Pirate2nd,
+            ]),
+            0,
+            new Set([WeaponType.Claw]),
+        ],
+    ],
+    [
         Attack.DragonRoar,
         [
             new Set([Class.Warrior]),
@@ -803,31 +821,42 @@ export const JOB_LVL_REQS = new Map([
     [Class.Pirate, 10],
     [Class.Pirate2nd, 30],
 ]);
+/**
+ * The first two numbers of the 3-tuple represent the minimum and maximum
+ * number of lines, respectively.  The last number represents the maximum
+ * number of targets.
+ */
 export const ATTACK_LINES = new Map([
-    [Attack.Other, [1, 32767]],
-    [Attack.BowWhack, [1, 1]],
-    [Attack.DragonRoar, [1, 1]],
-    [Attack.PowerKnockBack, [1, 1]],
-    [Attack.LuckySeven, [2, 2]],
-    [Attack.TripleThrow, [3, 3]],
-    [Attack.Assaulter, [1, 1]],
-    [Attack.NinjaAmbush, [1, 1]],
-    [Attack.VenomousStar, [1, 1]],
-    [Attack.VenomousStab, [1, 1]],
-    [Attack.SomersaultKick, [1, 1]],
+    [Attack.Other, [1, 32767, 15]],
+    [Attack.BowWhack, [1, 1, 1]],
+    [Attack.ClawPunch, [1, 1, 1]],
+    [Attack.DragonRoar, [1, 1, 6]],
+    [Attack.PowerKnockBack, [1, 1, 6]],
+    [Attack.LuckySeven, [2, 2, 1]],
+    [Attack.TripleThrow, [3, 3, 1]],
+    [Attack.Assaulter, [1, 1, 1]],
+    [Attack.NinjaAmbush, [1, 1, 6]],
+    [Attack.VenomousStar, [1, 1, 1]],
+    [Attack.VenomousStab, [1, 1, 1]],
+    [Attack.SomersaultKick, [1, 1, 6]],
 ]);
+/**
+ * The first two numbers of the 3-tuple represent the minimum and maximum
+ * number of lines, respectively.  The last number represents the maximum
+ * number of targets.
+ */
 export const SPELL_LINES = new Map([
-    [Spell.Other, [1, 32767]],
-    [Spell.Explosion, [1, 1]],
-    [Spell.PoisonMist, [1, 1]],
-    [Spell.ElementCompositionFP, [1, 1]],
-    [Spell.MeteorShower, [1, 1]],
-    [Spell.IceStrike, [1, 1]],
-    [Spell.ThunderSpear, [1, 1]],
-    [Spell.ElementCompositionIL, [1, 1]],
-    [Spell.ChainLightning, [1, 1]],
-    [Spell.Blizzard, [1, 1]],
-    [Spell.Heal, [1, 1]],
-    [Spell.ShiningRay, [1, 1]],
-    [Spell.Genesis, [1, 1]],
+    [Spell.Other, [1, 32767, 15]],
+    [Spell.Explosion, [1, 1, 6]],
+    [Spell.PoisonMist, [1, 1, 6]],
+    [Spell.ElementCompositionFP, [1, 1, 1]],
+    [Spell.MeteorShower, [1, 1, 15]],
+    [Spell.IceStrike, [1, 1, 6]],
+    [Spell.ThunderSpear, [1, 1, 1]],
+    [Spell.ElementCompositionIL, [1, 1, 1]],
+    [Spell.ChainLightning, [1, 1, 6]],
+    [Spell.Blizzard, [1, 1, 15]],
+    [Spell.Heal, [1, 1, 5]],
+    [Spell.ShiningRay, [1, 1, 6]],
+    [Spell.Genesis, [1, 1, 15]],
 ]);
