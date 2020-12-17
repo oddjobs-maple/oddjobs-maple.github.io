@@ -456,11 +456,25 @@ function main(): void {
         const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x =>
             Math.max(Math.trunc(x), 1),
         );
-        rangeOutput.textContent = `${range[0]} ~ ${range[1]}`;
-        critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
+        rangeOutput.textContent = `${range[0]} ~ ${range[1]}${
+            range[1] === maxDmgPhysGoodNoCrit && range[1] !== 1 ? "*" : ""
+        }`;
+        critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${
+            critRange[1] === maxDmgPhysGoodCrit && critRange[1] !== 1
+                ? "*"
+                : ""
+        }`;
+        const combinedRangeTop =
+            inputData.critProb > 0 ? critRange[1] : range[1];
         totalRangeOutput.textContent = `${range[0] * inputData.skillLines} ~ ${
-            (inputData.critProb > 0 ? critRange[1] : range[1]) *
-            inputData.skillLines
+            combinedRangeTop * inputData.skillLines
+        }${
+            combinedRangeTop ===
+                (inputData.critProb > 0
+                    ? maxDmgPhysGoodCrit
+                    : maxDmgPhysGoodNoCrit) && combinedRangeTop !== 1
+                ? "*"
+                : ""
         }`;
 
         const [expectedPerHitBadNoCrit, expectedPerHitBadCrit] = [
@@ -628,13 +642,22 @@ function main(): void {
         const critRange = [minDmgCrit, maxDmgCrit].map(x =>
             Math.max(Math.trunc(x), 1),
         );
-        rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}`;
-        critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}`;
+        rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}${
+            range[1] === maxDmgNoCrit && range[1] !== 1 ? "*" : ""
+        }`;
+        critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${
+            critRange[1] === maxDmgCrit && critRange[1] !== 1 ? "*" : ""
+        }`;
+        const combinedRangeTop =
+            inputData.critProb > 0 ? critRange[1] : range[1];
         totalRangeMagicOutput.textContent = `${
             range[0] * inputData.skillLines
-        } ~ ${
-            (inputData.critProb > 0 ? critRange[1] : range[1]) *
-            inputData.skillLines
+        } ~ ${combinedRangeTop * inputData.skillLines}${
+            combinedRangeTop ===
+                (inputData.critProb > 0 ? maxDmgCrit : maxDmgNoCrit) &&
+            combinedRangeTop !== 1
+                ? "*"
+                : ""
         }`;
 
         const [expectedPerHitNoCrit, expectedPerHitCrit] = [

@@ -167,16 +167,16 @@
             refers to the damage percentage listed in the description of a
             physical attack; for example, the Power Strike skill has a
             &ldquo;Damage multi&rdquo; of 260% at max level. The &ldquo;Basic
-            attack&rdquo; only applies to magical attacks, and is generally
-            listed in the skill description as &ldquo;basic attack&rdquo;; for
-            example, the Magic Claw skill has a &ldquo;Basic attack&rdquo; of
-            40 at max level. &ldquo;Lines&rdquo; refers to how many lines of
-            damage the attacking skill does; for example, this value is 1 for
-            Power Strike and 2 for Magic Claw. It is assumed that attacks with
-            more than one line of damage calculate each line identically, even
-            if the actual <em>outcomes</em> for the various lines may differ
-            due to random chance. This assumption is violated by skills like
-            Barrage.
+            attack&rdquo; only applies to magical attacks and summons, and is
+            generally listed in the skill description as &ldquo;basic
+            attack&rdquo;; for example, the Magic Claw skill has a &ldquo;Basic
+            attack&rdquo; of 40 at max level. &ldquo;Lines&rdquo; refers to how
+            many lines of damage the attacking skill does; for example, this
+            value is 1 for Power Strike and 2 for Magic Claw. It is assumed
+            that attacks with more than one line of damage calculate each line
+            identically, even if the actual <em>outcomes</em> for the various
+            lines may differ due to random chance. This assumption is violated
+            by skills like Barrage.
           </p>
 
           <p>
@@ -282,8 +282,8 @@
             <em>absolute</em> measure of dispersion. As a result, two
             characters who appear to have roughly the <em>same</em> damage
             stability, but the magnitude of whose damage outputs &mdash; say,
-            damage per hit, for example &mdash; are significantly different,
-            will have damage-per-hit distributions with significantly
+            damage per line, for example &mdash; are significantly different,
+            will have damage-per-line distributions with significantly
             <em>different</em> standard deviations. This is because the
             standard deviation is expressed in the same dimensions as the
             values themselves, so it scales up linearly as the values of the
@@ -302,6 +302,104 @@
               href="https://en.wikipedia.org/wiki/Dimensionless_quantity"
               >a dimensionless quantity</a
             >.
+          </p>
+
+          <p>
+            If you see an asterisk (*) on the right-hand side of a damage value
+            (particularly, one of the bounds of a range), it means that that
+            value is <em>exactly</em> an integer, before it is sampled from.
+            Damage ranges are <em>virtually</em> intervals of real numbers
+            (actually
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Floating-point_arithmetic"
+              >floating point numbers</a
+            >, of course). To get a particular damage outcome, the interval is
+            sampled from (as a
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Continuous_uniform_distribution"
+              >continuous uniform distribution</a
+            >), the sample is then
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Clamping_(graphics)"
+              >clamped</a
+            >
+            to a minimum of 1, and the result&rsquo;s fractional part is then
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Truncation"
+              >truncated</a
+            >. There&rsquo;s some finer details here about the exact order of
+            operations, but the point is that when a particular bound (lower
+            and/or upper) is <em>exactly</em> an integer, it becomes unclear
+            whether or not it can ever be sampled. This is perhaps a bigger
+            deal than it usually would be, because the fractional parts of the
+            samples are truncated, making a sample of e.g. 2.999 effectively
+            much less (viz. 1 less, instead of 0.001 less) than a sample of 3.
+            Typically (see e.g.
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html#random()"
+              >in Java</a
+            >), software functions that are intended to return a
+            uniformly-distributed sample from an interval of floating point
+            numbers do so from a nominally
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://mathworld.wolfram.com/Half-ClosedInterval.html"
+              >half-closed interval</a
+            >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
+            closed/included, while the upper &ldquo;half&rdquo; is
+            open/excluded. As a result, a range bound that has an asterisk (*)
+            can only be guaranteed to <em>nominally</em> be part of the range,
+            and it may or may not have a nonzero probability of being sampled,
+            depending on the implementation. For reference, the number of
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format"
+              >single-precision</a
+            >
+            (32-bit, typically <code>float</code> in
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/C_(programming_language)"
+              >C</a
+            >)
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/IEEE_754"
+              >IEEE 754</a
+            >
+            floating point numbers within
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Unit_interval"
+              >the unit interval</a
+            >
+            is 1,065,353,217 &mdash; this number is only for scale, since
+            precision varies depending on how far away from zero you are, and
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format"
+              >double-precision</a
+            >
+            floating point numbers are common as well, but the point is that it
+            shouldn&rsquo;t matter much for expected values and variances.
+            It&rsquo;s just that it may (or may not) be impossible to
+            <em>actually witness</em> that asterisked damage value.
           </p>
 
           <details>
