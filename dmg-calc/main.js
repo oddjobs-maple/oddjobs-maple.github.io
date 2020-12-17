@@ -212,6 +212,11 @@ function main() {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return minDmgLuckySeven(inputData);
+                    case Attack.NinjaAmbush:
+                        return dmgNinjaAmbush(inputData);
+                    case Attack.VenomousStar:
+                    case Attack.VenomousStab:
+                        return minDmgVenom(inputData);
                     case Attack.SomersaultKick:
                         return minDmgSomersaultKick(inputData);
                     default:
@@ -223,6 +228,11 @@ function main() {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return maxDmgLuckySeven(inputData);
+                    case Attack.NinjaAmbush:
+                        return dmgNinjaAmbush(inputData);
+                    case Attack.VenomousStar:
+                    case Attack.VenomousStab:
+                        return maxDmgVenom(inputData);
                     case Attack.SomersaultKick:
                         return maxDmgSomersaultKick(inputData);
                     default:
@@ -235,6 +245,9 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
+                    case Attack.NinjaAmbush:
+                    case Attack.VenomousStar:
+                    case Attack.VenomousStab:
                     case Attack.SomersaultKick:
                         return minDmgPhysBad;
                     default:
@@ -245,6 +258,9 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
+                    case Attack.NinjaAmbush:
+                    case Attack.VenomousStar:
+                    case Attack.VenomousStab:
                     case Attack.SomersaultKick:
                         return maxDmgPhysGood;
                     default:
@@ -884,6 +900,29 @@ function minDmgPhys(inputData, goodAnim) {
         effectiveWatk(inputData)) /
         100);
 }
+function maxDmgLuckySeven(inputData) {
+    return (inputData.stats.luk * 5 * inputData.totalWatk) / 100;
+}
+function minDmgLuckySeven(inputData) {
+    return (inputData.stats.luk * 2.5 * inputData.totalWatk) / 100;
+}
+function dmgNinjaAmbush(inputData) {
+    return (2 *
+        (inputData.stats.str + inputData.stats.luk) *
+        inputData.skillDmgMulti);
+}
+function maxDmgVenom(inputData) {
+    return (((18.5 * (inputData.stats.str + inputData.stats.luk) +
+        inputData.stats.dex * 2) /
+        100) *
+        inputData.skillBasicAtk);
+}
+function minDmgVenom(inputData) {
+    return (((8 * (inputData.stats.str + inputData.stats.luk) +
+        inputData.stats.dex * 2) /
+        100) *
+        inputData.skillBasicAtk);
+}
 /**
  * Somersault Kick always "stabs".
  */
@@ -917,12 +956,6 @@ function minDmgSomersaultKick(inputData) {
         default:
             return minDmgPhys(inputData, true);
     }
-}
-function maxDmgLuckySeven(inputData) {
-    return (inputData.stats.luk * 5 * inputData.totalWatk) / 100;
-}
-function minDmgLuckySeven(inputData) {
-    return (inputData.stats.luk * 2.5 * inputData.totalWatk) / 100;
 }
 function adjustRangeForDef(range, def) {
     const [min, max] = range;

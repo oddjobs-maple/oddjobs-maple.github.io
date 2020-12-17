@@ -274,6 +274,10 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
 export function attackPeriod(wepType, speed, attack) {
     /*======== Attacking skills with special attack periods ========*/
     switch (attack) {
+        case Attack.NinjaAmbush:
+        case Attack.VenomousStar:
+        case Attack.VenomousStab:
+            return 1000;
         // Assuming (probably incorrectly) that all weapons use Somersault Kick
         // at the same speed as knucklers.
         case Attack.SomersaultKick: {
@@ -461,6 +465,12 @@ export function attackName(attack) {
             return "Lucky Seven";
         case Attack.TripleThrow:
             return "Triple Throw";
+        case Attack.NinjaAmbush:
+            return "Ninja Ambush";
+        case Attack.VenomousStar:
+            return "Venomous Star";
+        case Attack.VenomousStab:
+            return "Venomous Stab";
         case Attack.SomersaultKick:
             return "Somersault Kick";
     }
@@ -613,6 +623,40 @@ export const ATTACK_REQS = new Map([
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
     ],
     [
+        Attack.NinjaAmbush,
+        [
+            new Set([Class.Rogue]),
+            122,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.VenomousStar,
+        [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
+    ],
+    [
+        Attack.VenomousStab,
+        [new Set([Class.Rogue]), 120, new Set([WeaponType.Dagger])],
+    ],
+    [
         Attack.SomersaultKick,
         [
             new Set([Class.Pirate, Class.Pirate2nd]),
@@ -667,6 +711,9 @@ export const ATTACK_LINES = new Map([
     [Attack.Other, [1, 32767]],
     [Attack.LuckySeven, [2, 2]],
     [Attack.TripleThrow, [3, 3]],
+    [Attack.NinjaAmbush, [1, 1]],
+    [Attack.VenomousStar, [1, 1]],
+    [Attack.VenomousStab, [1, 1]],
     [Attack.SomersaultKick, [1, 1]],
 ]);
 export const SPELL_LINES = new Map([
