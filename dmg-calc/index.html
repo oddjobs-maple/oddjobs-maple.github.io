@@ -306,7 +306,7 @@
 
           <p>
             If you see an asterisk (*) on the right-hand side of a damage value
-            (particularly, one of the bounds of a range), it means that that
+            (particularly, the upper bound of a range), it means that that
             value is <em>exactly</em> an integer, before it is sampled from.
             Damage ranges are <em>virtually</em> intervals of real numbers
             (actually
@@ -336,13 +336,13 @@
               href="https://en.wikipedia.org/wiki/Truncation"
               >truncated</a
             >. There&rsquo;s some finer details here about the exact order of
-            operations, but the point is that when a particular bound (lower
-            and/or upper) is <em>exactly</em> an integer, it becomes unclear
-            whether or not it can ever be sampled. This is perhaps a bigger
-            deal than it usually would be, because the fractional parts of the
-            samples are truncated, making a sample of e.g. 2.999 effectively
-            much less (viz. 1 less, instead of 0.001 less) than a sample of 3.
-            Typically (see e.g.
+            operations, but the point is that when a particular bound is
+            <em>exactly</em> an integer, it becomes unclear whether or not it
+            can ever be sampled. This is perhaps a bigger deal than it usually
+            would be, because the fractional parts of the samples are
+            truncated, making a sample of e.g. 2.999 effectively much less
+            (viz. 1 less, instead of 0.001 less) than a sample of 3. Typically
+            (see e.g.
             <a
               target="_blank"
               rel="noopener noreferrer"
@@ -358,10 +358,11 @@
               >half-closed interval</a
             >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
             closed/included, while the upper &ldquo;half&rdquo; is
-            open/excluded. As a result, a range bound that has an asterisk (*)
-            can only be guaranteed to <em>nominally</em> be part of the range,
-            and it may or may not have a nonzero probability of being sampled,
-            depending on the implementation. For reference, the number of
+            open/excluded. As a result, an upper range bound that has an
+            asterisk (*) can only be guaranteed to <em>nominally</em> be part
+            of the range, and it may or may not have a nonzero probability of
+            being sampled, depending upon the implementation. For reference,
+            the number of
             <a
               target="_blank"
               rel="noopener noreferrer"
