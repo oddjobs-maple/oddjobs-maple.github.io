@@ -271,7 +271,34 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
  * The values here were extracted from:
  * <http://www.southperry.net/showthread.php?t=3217>
  */
-export function attackPeriod(wepType, speed) {
+export function attackPeriod(wepType, speed, attack) {
+    /*======== Attacking skills with special attack periods ========*/
+    switch (attack) {
+        // Assuming (probably incorrectly) that all weapons use Somersault Kick
+        // at the same speed as knucklers.
+        case Attack.SomersaultKick: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 660;
+                case 3 /* Faster3 */:
+                    return 720;
+                case 4 /* Fast4 */:
+                    return 780;
+                case 5 /* Fast5 */:
+                    return 840;
+                case 6 /* Normal */:
+                    return 840;
+                default:
+                    // Again, same assumption.
+                    wepType = WeaponType.Knuckler;
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    /*======== Basic attack periods ========*/
     switch (wepType) {
         case WeaponType.None:
         case WeaponType.OneHandedSword:
@@ -434,6 +461,8 @@ export function attackName(attack) {
             return "Lucky Seven";
         case Attack.TripleThrow:
             return "Triple Throw";
+        case Attack.SomersaultKick:
+            return "Somersault Kick";
     }
 }
 export function spellName(spell) {
@@ -583,6 +612,32 @@ export const ATTACK_REQS = new Map([
         Attack.TripleThrow,
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
     ],
+    [
+        Attack.SomersaultKick,
+        [
+            new Set([Class.Pirate, Class.Pirate2nd]),
+            10,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
 ]);
 export const SPELL_LVL_REQS = new Map([
     [Spell.Other, 0],
@@ -612,6 +667,7 @@ export const ATTACK_LINES = new Map([
     [Attack.Other, [1, 32767]],
     [Attack.LuckySeven, [2, 2]],
     [Attack.TripleThrow, [3, 3]],
+    [Attack.SomersaultKick, [1, 1]],
 ]);
 export const SPELL_LINES = new Map([
     [Spell.Other, [1, 32767]],

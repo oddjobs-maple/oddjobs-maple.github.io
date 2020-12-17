@@ -53,6 +53,7 @@ export var Attack;
     Attack[Attack["Other"] = 0] = "Other";
     Attack[Attack["LuckySeven"] = 4001344] = "LuckySeven";
     Attack[Attack["TripleThrow"] = 4121007] = "TripleThrow";
+    Attack[Attack["SomersaultKick"] = 5001002] = "SomersaultKick";
 })(Attack || (Attack = {}));
 export var Spell;
 (function (Spell) {

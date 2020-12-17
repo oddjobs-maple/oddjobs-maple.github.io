@@ -212,6 +212,8 @@ function main() {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return minDmgLuckySeven(inputData);
+                    case Attack.SomersaultKick:
+                        return minDmgSomersaultKick(inputData);
                     default:
                         return minDmgPhys(inputData, false);
                 }
@@ -221,6 +223,8 @@ function main() {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return maxDmgLuckySeven(inputData);
+                    case Attack.SomersaultKick:
+                        return maxDmgSomersaultKick(inputData);
                     default:
                         return maxDmgPhys(inputData, true);
                 }
@@ -231,6 +235,7 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
+                    case Attack.SomersaultKick:
                         return minDmgPhysBad;
                     default:
                         return minDmgPhys(inputData, true);
@@ -240,6 +245,7 @@ function main() {
                 switch (inputData.attack) {
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
+                    case Attack.SomersaultKick:
                         return maxDmgPhysGood;
                     default:
                         return maxDmgPhys(inputData, false);
@@ -342,7 +348,7 @@ function main() {
             sdPerHitTotalOutput.textContent = "[undefined]";
             cvPerHitTotalOutput.textContent = "[undefined]";
         }
-        const period = attackPeriod(inputData.wepType, inputData.speed);
+        const period = attackPeriod(inputData.wepType, inputData.speed, inputData.attack);
         if (period !== undefined) {
             expectedDpsOutput.classList.remove("error");
             const attackHz = 1000 / period;
@@ -771,6 +777,26 @@ function main() {
                 warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but its number of lines >${maxLines}.`);
             }
         }
+        if (inputData.attack === Attack.SomersaultKick) {
+            if (inputData.wepType !== WeaponType.Knuckler &&
+                inputData.wepType !== WeaponType.None) {
+                warnings.push("You\u{2019}re attacking with Somersault Kick, and have a \
+                    weapon equipped that isn\u{2019}t a knuckler; the attack \
+                    period is given on a best-effort basis that may or may \
+                    not be accurate.");
+            }
+            switch (inputData.wepType) {
+                case WeaponType.Bow:
+                case WeaponType.Crossbow:
+                case WeaponType.Claw:
+                case WeaponType.Gun:
+                    warnings.push(`You\u{2019}re using Somersault Kick with ${indefinite(weaponTypeName(inputData.wepType))} equipped; the damage calculation is done on a \
+                        best-effort basis that may or may not be accurate.`);
+                    break;
+                default:
+                    break;
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -857,6 +883,40 @@ function minDmgPhys(inputData, goodAnim) {
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
         effectiveWatk(inputData)) /
         100);
+}
+/**
+ * Somersault Kick always "stabs".
+ */
+function maxDmgSomersaultKick(inputData) {
+    switch (inputData.wepType) {
+        case WeaponType.OneHandedAxe:
+        case WeaponType.OneHandedMace:
+        case WeaponType.Wand:
+        case WeaponType.Staff:
+        case WeaponType.TwoHandedAxe:
+        case WeaponType.TwoHandedMace:
+        case WeaponType.Polearm:
+            return maxDmgPhys(inputData, false);
+        default:
+            return maxDmgPhys(inputData, true);
+    }
+}
+/**
+ * Somersault Kick always "stabs".
+ */
+function minDmgSomersaultKick(inputData) {
+    switch (inputData.wepType) {
+        case WeaponType.OneHandedAxe:
+        case WeaponType.OneHandedMace:
+        case WeaponType.Wand:
+        case WeaponType.Staff:
+        case WeaponType.TwoHandedAxe:
+        case WeaponType.TwoHandedMace:
+        case WeaponType.Polearm:
+            return minDmgPhys(inputData, false);
+        default:
+            return minDmgPhys(inputData, true);
+    }
 }
 function maxDmgLuckySeven(inputData) {
     return (inputData.stats.luk * 5 * inputData.totalWatk) / 100;

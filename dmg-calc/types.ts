@@ -54,6 +54,7 @@ export enum Attack {
     Other = 0,
     LuckySeven = 4001344,
     TripleThrow = 4121007,
+    SomersaultKick = 5001002,
 }
 
 export enum Spell {
