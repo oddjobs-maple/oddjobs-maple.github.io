@@ -53,6 +53,7 @@ function main() {
     const enemyWdefInput = document.getElementById("enemy-wdef");
     const enemyMdefInput = document.getElementById("enemy-mdef");
     const eleSusInput = document.getElementById("ele-sus");
+    const enemyLevelInput = document.getElementById("enemy-level");
     const rangeOutput = document.getElementById("range");
     const critRangeOutput = document.getElementById("crit-range");
     const expectedPerHitOutput = document.getElementById("expected-per-hit");
@@ -196,7 +197,12 @@ function main() {
             eleSus = 1;
         }
         eleSusInput.value = "" + eleSus;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus);
+        let enemyLevel = Math.max(parseInt(enemyLevelInput.value, 10), 1);
+        if (!Number.isFinite(enemyLevel)) {
+            enemyLevel = 1;
+        }
+        enemyLevelInput.value = "" + enemyLevel;
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus, enemyLevel);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -209,6 +215,11 @@ function main() {
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
                 switch (inputData.attack) {
+                    case Attack.BowWhack:
+                    case Attack.PowerKnockBack:
+                        return minDmgBowWhack(inputData);
+                    case Attack.DragonRoar:
+                        return minDmgDragonRoar(inputData);
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return minDmgLuckySeven(inputData);
@@ -225,6 +236,11 @@ function main() {
             })(),
             (() => {
                 switch (inputData.attack) {
+                    case Attack.BowWhack:
+                    case Attack.PowerKnockBack:
+                        return maxDmgBowWhack(inputData);
+                    case Attack.DragonRoar:
+                        return maxDmgDragonRoar(inputData);
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                         return maxDmgLuckySeven(inputData);
@@ -243,6 +259,9 @@ function main() {
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
+                    case Attack.BowWhack:
+                    case Attack.PowerKnockBack:
+                    case Attack.DragonRoar:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                     case Attack.NinjaAmbush:
@@ -256,6 +275,9 @@ function main() {
             })(),
             (() => {
                 switch (inputData.attack) {
+                    case Attack.BowWhack:
+                    case Attack.PowerKnockBack:
+                    case Attack.DragonRoar:
                     case Attack.LuckySeven:
                     case Attack.TripleThrow:
                     case Attack.NinjaAmbush:
@@ -268,8 +290,38 @@ function main() {
                 }
             })(),
         ];
-        const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted,] = adjustRangeForDef([minDmgPhysBad, maxDmgPhysGood], inputData.enemyWdef);
-        const [minDmgPhysGoodAdjusted, maxDmgPhysBadAdjusted,] = adjustRangeForDef([minDmgPhysGood, maxDmgPhysBad], inputData.enemyWdef);
+        const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
+            switch (inputData.attack) {
+                case Attack.Assaulter:
+                    return inputData.level >= inputData.enemyLevel
+                        ? [minDmgPhysBad, maxDmgPhysGood]
+                        : adjustRangeForWdef(inputData, [
+                            minDmgPhysBad,
+                            maxDmgPhysGood,
+                        ]);
+                default:
+                    return adjustRangeForWdef(inputData, [
+                        minDmgPhysBad,
+                        maxDmgPhysGood,
+                    ]);
+            }
+        })();
+        const [minDmgPhysGoodAdjusted, maxDmgPhysBadAdjusted] = (() => {
+            switch (inputData.attack) {
+                case Attack.Assaulter:
+                    return inputData.level >= inputData.enemyLevel
+                        ? [minDmgPhysGood, maxDmgPhysBad]
+                        : adjustRangeForWdef(inputData, [
+                            minDmgPhysGood,
+                            maxDmgPhysBad,
+                        ]);
+                default:
+                    return adjustRangeForWdef(inputData, [
+                        minDmgPhysGood,
+                        maxDmgPhysBad,
+                    ]);
+            }
+        })();
         const [dmgMultiNoCrit, dmgMultiCrit] = [
             dmgMulti(inputData, false),
             dmgMulti(inputData, true),
@@ -407,7 +459,10 @@ function main() {
             minDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
             maxDmgMagic(inputData) * inputData.eleAmp * inputData.eleSus,
         ];
-        const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForDef([minDmg, maxDmg], inputData.enemyMdef);
+        const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForMdef(inputData, [
+            minDmg,
+            maxDmg,
+        ]);
         const [minDmgCrit, maxDmgCrit] = [minDmgNoCrit, maxDmgNoCrit].map(x => x * inputData.critDmg);
         const range = [minDmgNoCrit, maxDmgNoCrit].map(x => Math.max(Math.trunc(x), 1));
         const critRange = [minDmgCrit, maxDmgCrit].map(x => Math.max(Math.trunc(x), 1));
@@ -813,6 +868,16 @@ function main() {
                     break;
             }
         }
+        if (inputData.attack === Attack.BowWhack) {
+            warnings.push("You\u{2019}re whacking with a (cross)bow; the damage \
+                calculation is done on a best-effort basis that may or may \
+                not be accurate.");
+            if (inputData.skillDmgMulti !== 1) {
+                warnings.push("You\u{2019}re whacking with a (cross)bow, but your \
+                    damage multi \u{2260}100%. Maybe you meant to use Power \
+                    Knock-Back?");
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -866,6 +931,7 @@ function main() {
         enemyWdefInput,
         enemyMdefInput,
         eleSusInput,
+        enemyLevelInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -900,11 +966,32 @@ function minDmgPhys(inputData, goodAnim) {
         effectiveWatk(inputData)) /
         100);
 }
+function maxDmgBowWhack(inputData) {
+    return (((inputData.stats.dex * 3.4 + inputData.stats.str) *
+        effectiveWatk(inputData)) /
+        150);
+}
+function minDmgBowWhack(inputData) {
+    return (((inputData.stats.dex * 3.4 * 0.1 * 0.9 + inputData.stats.str) *
+        effectiveWatk(inputData)) /
+        150);
+}
+function maxDmgDragonRoar(inputData) {
+    return (((inputData.stats.str * 4 + inputData.stats.dex) *
+        effectiveWatk(inputData)) /
+        100);
+}
+function minDmgDragonRoar(inputData) {
+    return (((inputData.stats.str * 4 * inputData.mastery * 0.9 +
+        inputData.stats.dex) *
+        effectiveWatk(inputData)) /
+        100);
+}
 function maxDmgLuckySeven(inputData) {
-    return (inputData.stats.luk * 5 * inputData.totalWatk) / 100;
+    return (inputData.stats.luk * 5 * effectiveWatk(inputData)) / 100;
 }
 function minDmgLuckySeven(inputData) {
-    return (inputData.stats.luk * 2.5 * inputData.totalWatk) / 100;
+    return (inputData.stats.luk * 2.5 * effectiveWatk(inputData)) / 100;
 }
 function dmgNinjaAmbush(inputData) {
     return (2 *
@@ -957,9 +1044,23 @@ function minDmgSomersaultKick(inputData) {
             return minDmgPhys(inputData, true);
     }
 }
-function adjustRangeForDef(range, def) {
+function adjustRangeForWdef(inputData, range) {
     const [min, max] = range;
-    return [min - def * 0.6, max - def * 0.5];
+    const levelDelta = Math.max(inputData.enemyLevel - inputData.level, 0);
+    const levelDeltaSlope = 1 - 0.01 * levelDelta;
+    return [
+        min * levelDeltaSlope - inputData.enemyWdef * 0.6,
+        max * levelDeltaSlope - inputData.enemyWdef * 0.5,
+    ];
+}
+function adjustRangeForMdef(inputData, range) {
+    const [min, max] = range;
+    const levelDelta = Math.max(inputData.enemyLevel - inputData.level, 0);
+    const levelDeltaSlope = 1 + 0.01 * levelDelta;
+    return [
+        min - inputData.enemyMdef * 0.6 * levelDeltaSlope,
+        max - inputData.enemyMdef * 0.5 * levelDeltaSlope,
+    ];
 }
 function effectiveMastery(inputData) {
     if (inputData.wepType === WeaponType.None) {

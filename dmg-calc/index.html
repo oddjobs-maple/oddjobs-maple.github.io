@@ -96,11 +96,6 @@
           </p>
 
           <p>
-            We assume that the player character and their foe are of the same
-            level.
-          </p>
-
-          <p>
             We assume that, for weapons with &ldquo;good&rdquo; and
             &ldquo;bad&rdquo; animations (e.g. stabbing and swinging,
             respectively, for spears), there is a &frac12; probability that the
@@ -656,7 +651,20 @@
               <label for="attack">
                 Attack
                 <select name="attack" id="attack">
-                  <option value="0">[other]</option>
+                  <option value="0" selected>[other]</option>
+                  <option value="-1">[bow whack]</option>
+
+                  <optgroup label="Dragon Knight">
+                    <option value="1311006">Dragon Roar</option>
+                  </optgroup>
+
+                  <optgroup label="Hunter">
+                    <option value="3101003">Power Knock-Back</option>
+                  </optgroup>
+
+                  <optgroup label="Crossbowman">
+                    <option value="3101003">Power Knock-Back</option>
+                  </optgroup>
 
                   <optgroup label="Rogue">
                     <option value="4001344">Lucky Seven</option>
@@ -666,6 +674,10 @@
                     <option value="4121007">Triple Throw</option>
                     <option value="4121004">Ninja Ambush</option>
                     <option value="4120005">Venomous Star</option>
+                  </optgroup>
+
+                  <optgroup label="Chief Bandit">
+                    <option value="4211002">Assaulter</option>
                   </optgroup>
 
                   <optgroup label="Shadower">
@@ -792,6 +804,17 @@
                   <option value="1" selected>Neutral</option>
                   <option value="1.5">Weak</option>
                 </select>
+              </label>
+
+              <label for="enemy-level">
+                Level
+                <input
+                  type="number"
+                  id="enemy-level"
+                  name="enemy-level"
+                  min="1"
+                  value="1"
+                />
               </label>
             </fieldset>
           </div>

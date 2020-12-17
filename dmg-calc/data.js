@@ -274,6 +274,40 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
 export function attackPeriod(wepType, speed, attack) {
     /*======== Attacking skills with special attack periods ========*/
     switch (attack) {
+        case Attack.DragonRoar: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 1140;
+                case 3 /* Faster3 */:
+                    return 1230;
+                case 4 /* Fast4 */:
+                    return 1320;
+                case 5 /* Fast5 */:
+                    return 1410;
+                case 6 /* Normal */:
+                    return 1500;
+                case 7 /* Slow7 */:
+                    return 1620;
+                case 8 /* Slow8 */:
+                    return 1710;
+                case 9 /* Slower */:
+                    return 1800;
+            }
+        }
+        case Attack.Assaulter: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 900;
+                case 3 /* Faster3 */:
+                    return 990;
+                case 4 /* Fast4 */:
+                    return 1050;
+                case 5 /* Fast5 */:
+                    return 1140;
+                default:
+                    return;
+            }
+        }
         case Attack.NinjaAmbush:
         case Attack.VenomousStar:
         case Attack.VenomousStab:
@@ -461,10 +495,18 @@ export function attackName(attack) {
     switch (attack) {
         case Attack.Other:
             return "basic attack";
+        case Attack.BowWhack:
+            return "bow whack";
+        case Attack.DragonRoar:
+            return "Dragon Roar";
+        case Attack.PowerKnockBack:
+            return "Power Knock-Back";
         case Attack.LuckySeven:
             return "Lucky Seven";
         case Attack.TripleThrow:
             return "Triple Throw";
+        case Attack.Assaulter:
+            return "Assaulter";
         case Attack.NinjaAmbush:
             return "Ninja Ambush";
         case Attack.VenomousStar:
@@ -615,12 +657,66 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.BowWhack,
+        [
+            new Set([
+                Class.Beginner,
+                Class.Warrior,
+                Class.Magician,
+                Class.Archer,
+                Class.Rogue,
+                Class.Pirate,
+                Class.Pirate2nd,
+            ]),
+            0,
+            new Set([WeaponType.Bow, WeaponType.Crossbow]),
+        ],
+    ],
+    [
+        Attack.DragonRoar,
+        [
+            new Set([Class.Warrior]),
+            71,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.PowerKnockBack,
+        [
+            new Set([Class.Archer]),
+            30,
+            new Set([WeaponType.Bow, WeaponType.Crossbow]),
+        ],
+    ],
+    [
         Attack.LuckySeven,
         [new Set([Class.Rogue]), 10, new Set([WeaponType.Claw])],
     ],
     [
         Attack.TripleThrow,
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
+    ],
+    [
+        Attack.Assaulter,
+        [new Set([Class.Rogue]), 70, new Set([WeaponType.Dagger])],
     ],
     [
         Attack.NinjaAmbush,
@@ -709,8 +805,12 @@ export const JOB_LVL_REQS = new Map([
 ]);
 export const ATTACK_LINES = new Map([
     [Attack.Other, [1, 32767]],
+    [Attack.BowWhack, [1, 1]],
+    [Attack.DragonRoar, [1, 1]],
+    [Attack.PowerKnockBack, [1, 1]],
     [Attack.LuckySeven, [2, 2]],
     [Attack.TripleThrow, [3, 3]],
+    [Attack.Assaulter, [1, 1]],
     [Attack.NinjaAmbush, [1, 1]],
     [Attack.VenomousStar, [1, 1]],
     [Attack.VenomousStab, [1, 1]],
