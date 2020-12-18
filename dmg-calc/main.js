@@ -250,6 +250,10 @@ function main() {
                     case Attack.Panic:
                     case Attack.Coma:
                         return minDmgCaFinisher(inputData, false);
+                    case Attack.HeavensHammerXiuz:
+                        return minDmgHhXiuz(inputData);
+                    case Attack.HeavensHammerXiuzCorrected:
+                        return minDmgPhys(inputData, true);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
                     case Attack.Phoenix:
@@ -282,6 +286,9 @@ function main() {
                     case Attack.Panic:
                     case Attack.Coma:
                         return maxDmgCaFinisher(inputData, true);
+                    case Attack.HeavensHammerXiuz:
+                    case Attack.HeavensHammerXiuzCorrected:
+                        return maxDmgPhys(inputData, true);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
                     case Attack.Phoenix:
@@ -311,6 +318,8 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
+                    case Attack.HeavensHammerXiuz:
+                    case Attack.HeavensHammerXiuzCorrected:
                     case Attack.DragonRoar:
                     case Attack.Phoenix:
                     case Attack.Frostprey:
@@ -336,6 +345,8 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
+                    case Attack.HeavensHammerXiuz:
+                    case Attack.HeavensHammerXiuzCorrected:
                     case Attack.DragonRoar:
                     case Attack.Phoenix:
                     case Attack.Frostprey:
@@ -359,6 +370,8 @@ function main() {
         ].map(dmg => dmg * caMod);
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
+                case Attack.HeavensHammerXiuz:
+                case Attack.HeavensHammerXiuzCorrected:
                 case Attack.Phoenix:
                 case Attack.Frostprey:
                 case Attack.Octopus:
@@ -381,6 +394,8 @@ function main() {
         })();
         const [minDmgPhysGoodAdjusted, maxDmgPhysBadAdjusted] = (() => {
             switch (inputData.attack) {
+                case Attack.HeavensHammerXiuz:
+                case Attack.HeavensHammerXiuzCorrected:
                 case Attack.Phoenix:
                 case Attack.Frostprey:
                 case Attack.Octopus:
@@ -403,7 +418,15 @@ function main() {
         })();
         const [dmgMultiNoCrit, dmgMultiCrit] = [
             dmgMulti(inputData, false),
-            dmgMulti(inputData, true),
+            dmgMulti(inputData, inputData.attack !== Attack.HeavensHammerXiuz &&
+                inputData.attack !== Attack.HeavensHammerXiuzCorrected &&
+                inputData.attack !== Attack.Phoenix &&
+                inputData.attack !== Attack.Frostprey &&
+                inputData.attack !== Attack.Octopus &&
+                inputData.attack !== Attack.Gaviota &&
+                inputData.attack !== Attack.WrathOfTheOctopi &&
+                inputData.attack !== Attack.VenomousStar &&
+                inputData.attack !== Attack.VenomousStab),
         ];
         const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = [
             minDmgPhysBadAdjusted,
@@ -1155,6 +1178,9 @@ function maxDmgCaFinisher(inputData, goodAnim) {
 }
 function minDmgCaFinisher(inputData, goodAnim) {
     return minDmgPhys(inputData, goodAnim) * orbMulti(inputData);
+}
+function minDmgHhXiuz(inputData) {
+    return maxDmgPhys(inputData, true) * 0.8;
 }
 function maxDmgDragonRoar(inputData) {
     return (((inputData.stats.str * 4 + inputData.stats.dex) *

@@ -56,6 +56,8 @@ export enum Attack {
     ClawPunch = -2,
     Panic = 1111003,
     Coma = 1111005,
+    HeavensHammerXiuz = 1221011,
+    HeavensHammerXiuzCorrected = 1221111,
     DragonRoar = 1311006,
     PowerKnockBack = 3101003,
     Phoenix = 3121006,

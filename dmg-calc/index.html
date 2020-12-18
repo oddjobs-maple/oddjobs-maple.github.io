@@ -283,6 +283,16 @@
           </p>
 
           <p>
+            The damage of the Heaven&rsquo;s Hammer skill is calculated on the
+            server side. As a result, its exact damage formula has remained
+            somewhat elusive. Two versions are given here: the original
+            XiuzSource version, and a &ldquo;corrected&rdquo; version that uses
+            the attacker&rsquo;s mastery to determine the minimum damage. The
+            original XiuzSource version determines the minimum damage by simply
+            multiplying the maximum damage by 0.8.
+          </p>
+
+          <p>
             The terms &ldquo;expectation&rdquo; and &ldquo;expected&rdquo; are
             here used in
             <a
@@ -692,6 +702,15 @@
                   <optgroup label="Crusader">
                     <option value="1111003">Panic</option>
                     <option value="1111005">Coma</option>
+                  </optgroup>
+
+                  <optgroup label="Paladin">
+                    <option value="1221011">
+                      Heaven&rsquo;s Hammer (original Xiuz)
+                    </option>
+                    <option value="1221111">
+                      Heaven&rsquo;s Hammer (corrected Xiuz)
+                    </option>
                   </optgroup>
 
                   <optgroup label="Dragon Knight">

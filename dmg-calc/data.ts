@@ -299,6 +299,8 @@ export function attackPeriod(
     switch (attack) {
         case Attack.Panic:
         case Attack.Coma:
+        case Attack.HeavensHammerXiuz:
+        case Attack.HeavensHammerXiuzCorrected:
             return;
         case Attack.DragonRoar: {
             switch (speed) {
@@ -544,6 +546,10 @@ export function attackName(attack: Attack): string {
             return "Panic";
         case Attack.Coma:
             return "Coma";
+        case Attack.HeavensHammerXiuz:
+            return "Heaven\u{2019}s Hammer (original Xiuz)";
+        case Attack.HeavensHammerXiuzCorrected:
+            return "Heaven\u{2019}s Hammer (corrected Xiuz)";
         case Attack.DragonRoar:
             return "Dragon Roar";
         case Attack.PowerKnockBack:
@@ -774,6 +780,58 @@ export const ATTACK_REQS: Map<
                 WeaponType.OneHandedAxe,
                 WeaponType.TwoHandedSword,
                 WeaponType.TwoHandedAxe,
+            ]),
+        ],
+    ],
+    [
+        Attack.HeavensHammerXiuz,
+        [
+            new Set([Class.Warrior]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.HeavensHammerXiuzCorrected,
+        [
+            new Set([Class.Warrior]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
             ]),
         ],
     ],
@@ -1052,6 +1110,8 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.ClawPunch, [1, 1, 1]],
     [Attack.Panic, [1, 1, 1]],
     [Attack.Coma, [1, 1, 6]],
+    [Attack.HeavensHammerXiuz, [1, 1, 15]],
+    [Attack.HeavensHammerXiuzCorrected, [1, 1, 15]],
     [Attack.DragonRoar, [1, 1, 6]],
     [Attack.PowerKnockBack, [1, 1, 6]],
     [Attack.Phoenix, [1, 1, 4]],
