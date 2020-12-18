@@ -256,6 +256,11 @@ function main() {
                         return minDmgPhys(inputData, true);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
+                    // Massive hack to make Arrow Bomb easier to work with...
+                    case Attack.ArrowBombImpact:
+                        return minDmgArrowBombImpact(inputData, false);
+                    case Attack.ArrowBombSplash:
+                        return minDmgArrowBombSplash(inputData, false);
                     case Attack.Phoenix:
                     case Attack.Frostprey:
                     case Attack.Octopus:
@@ -291,6 +296,11 @@ function main() {
                         return maxDmgPhys(inputData, true);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
+                    // Massive hack to make Arrow Bomb easier to work with...
+                    case Attack.ArrowBombImpact:
+                        return maxDmgArrowBombImpact(inputData, true);
+                    case Attack.ArrowBombSplash:
+                        return maxDmgArrowBombSplash(inputData, true);
                     case Attack.Phoenix:
                     case Attack.Frostprey:
                     case Attack.Octopus:
@@ -336,6 +346,11 @@ function main() {
                     case Attack.Panic:
                     case Attack.Coma:
                         return minDmgCaFinisher(inputData, true);
+                    // Massive hack to make Arrow Bomb easier to work with...
+                    case Attack.ArrowBombImpact:
+                        return minDmgArrowBombImpact(inputData, true);
+                    case Attack.ArrowBombSplash:
+                        return minDmgArrowBombSplash(inputData, true);
                     default:
                         return minDmgPhys(inputData, true);
                 }
@@ -363,6 +378,11 @@ function main() {
                     case Attack.Panic:
                     case Attack.Coma:
                         return maxDmgCaFinisher(inputData, false);
+                    // Massive hack to make Arrow Bomb easier to work with...
+                    case Attack.ArrowBombImpact:
+                        return maxDmgArrowBombImpact(inputData, false);
+                    case Attack.ArrowBombSplash:
+                        return maxDmgArrowBombSplash(inputData, false);
                     default:
                         return maxDmgPhys(inputData, false);
                 }
@@ -428,18 +448,38 @@ function main() {
                 inputData.attack !== Attack.VenomousStar &&
                 inputData.attack !== Attack.VenomousStab),
         ];
-        const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = [
-            minDmgPhysBadAdjusted,
-            maxDmgPhysGoodAdjusted,
-            minDmgPhysGoodAdjusted,
-            maxDmgPhysBadAdjusted,
-        ].map(x => x * dmgMultiNoCrit);
-        const [minDmgPhysBadCrit, maxDmgPhysGoodCrit, minDmgPhysGoodCrit, maxDmgPhysBadCrit,] = [
-            minDmgPhysBadAdjusted,
-            maxDmgPhysGoodAdjusted,
-            minDmgPhysGoodAdjusted,
-            maxDmgPhysBadAdjusted,
-        ].map(x => x * dmgMultiCrit);
+        const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = 
+        // Massive hack to make Arrow Bomb easier to work with...
+        inputData.attack === Attack.ArrowBombImpact ||
+            inputData.attack === Attack.ArrowBombSplash
+            ? [
+                minDmgPhysBadAdjusted,
+                maxDmgPhysBadAdjusted,
+                minDmgPhysBadAdjusted,
+                maxDmgPhysBadAdjusted,
+            ]
+            : [
+                minDmgPhysBadAdjusted,
+                maxDmgPhysGoodAdjusted,
+                minDmgPhysGoodAdjusted,
+                maxDmgPhysBadAdjusted,
+            ].map(x => x * dmgMultiNoCrit);
+        const [minDmgPhysBadCrit, maxDmgPhysGoodCrit, minDmgPhysGoodCrit, maxDmgPhysBadCrit,] = 
+        // Massive hack to make Arrow Bomb easier to work with...
+        inputData.attack === Attack.ArrowBombImpact ||
+            inputData.attack === Attack.ArrowBombSplash
+            ? [
+                minDmgPhysGoodAdjusted,
+                maxDmgPhysGoodAdjusted,
+                minDmgPhysGoodAdjusted,
+                maxDmgPhysGoodAdjusted,
+            ]
+            : [
+                minDmgPhysBadAdjusted,
+                maxDmgPhysGoodAdjusted,
+                minDmgPhysGoodAdjusted,
+                maxDmgPhysBadAdjusted,
+            ].map(x => x * dmgMultiCrit);
         const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x => Math.max(Math.trunc(x), 1));
         const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x => Math.max(Math.trunc(x), 1));
         rangeOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgPhysGoodNoCrit && range[1] !== 1 ? "*" : ""}`;
@@ -1192,6 +1232,22 @@ function minDmgDragonRoar(inputData) {
         inputData.stats.dex) *
         effectiveWatk(inputData)) /
         100);
+}
+function maxDmgArrowBombImpact(inputData, crit) {
+    return 0.5 * maxDmgPhys(inputData, true) * (crit ? inputData.critDmg : 1);
+}
+function minDmgArrowBombImpact(inputData, crit) {
+    return 0.5 * minDmgPhys(inputData, true) * (crit ? inputData.critDmg : 1);
+}
+function maxDmgArrowBombSplash(inputData, crit) {
+    return (inputData.skillDmgMulti *
+        maxDmgPhys(inputData, true) *
+        (crit ? inputData.critDmg : 1));
+}
+function minDmgArrowBombSplash(inputData, crit) {
+    return (inputData.skillDmgMulti *
+        minDmgPhys(inputData, true) *
+        (crit ? inputData.critDmg : 1));
 }
 function maxDmgDexSummon(inputData) {
     return (((inputData.stats.dex * 2.5 + inputData.stats.str) *

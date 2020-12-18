@@ -60,6 +60,8 @@ export enum Attack {
     HeavensHammerXiuzCorrected = 1221111,
     DragonRoar = 1311006,
     PowerKnockBack = 3101003,
+    ArrowBombImpact = 3101005,
+    ArrowBombSplash = 3101105,
     Phoenix = 3121006,
     Frostprey = 3221005,
     LuckySeven = 4001344,

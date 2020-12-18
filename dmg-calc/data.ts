@@ -554,6 +554,10 @@ export function attackName(attack: Attack): string {
             return "Dragon Roar";
         case Attack.PowerKnockBack:
             return "Power Knock-Back";
+        case Attack.ArrowBombImpact:
+            return "Arrow Bomb (impact)";
+        case Attack.ArrowBombSplash:
+            return "Arrow Bomb (splash)";
         case Attack.Phoenix:
             return "Phoenix";
         case Attack.Frostprey:
@@ -870,6 +874,14 @@ export const ATTACK_REQS: Map<
         ],
     ],
     [
+        Attack.ArrowBombImpact,
+        [new Set([Class.Archer]), 30, new Set([WeaponType.Bow])],
+    ],
+    [
+        Attack.ArrowBombSplash,
+        [new Set([Class.Archer]), 30, new Set([WeaponType.Bow])],
+    ],
+    [
         Attack.Phoenix,
         [
             new Set([Class.Archer]),
@@ -1114,6 +1126,8 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.HeavensHammerXiuzCorrected, [1, 1, 15]],
     [Attack.DragonRoar, [1, 1, 6]],
     [Attack.PowerKnockBack, [1, 1, 6]],
+    [Attack.ArrowBombImpact, [1, 1, 1]],
+    [Attack.ArrowBombSplash, [1, 1, 5]],
     [Attack.Phoenix, [1, 1, 4]],
     [Attack.Frostprey, [1, 1, 4]],
     [Attack.LuckySeven, [2, 2, 1]],

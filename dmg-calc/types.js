@@ -59,6 +59,8 @@ export var Attack;
     Attack[Attack["HeavensHammerXiuzCorrected"] = 1221111] = "HeavensHammerXiuzCorrected";
     Attack[Attack["DragonRoar"] = 1311006] = "DragonRoar";
     Attack[Attack["PowerKnockBack"] = 3101003] = "PowerKnockBack";
+    Attack[Attack["ArrowBombImpact"] = 3101005] = "ArrowBombImpact";
+    Attack[Attack["ArrowBombSplash"] = 3101105] = "ArrowBombSplash";
     Attack[Attack["Phoenix"] = 3121006] = "Phoenix";
     Attack[Attack["Frostprey"] = 3221005] = "Frostprey";
     Attack[Attack["LuckySeven"] = 4001344] = "LuckySeven";

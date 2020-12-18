@@ -25,7 +25,14 @@
  * This is how English works, right?  Probably?
  */
 export function indefinite(s: string): string {
-    switch (s.toLowerCase().codePointAt(0)) {
+    const sLower = s.toLowerCase();
+
+    // le sigh...
+    if (sLower.startsWith("one")) {
+        return `a ${s}`;
+    }
+
+    switch (sLower.codePointAt(0)) {
         case "a".codePointAt(0):
         case "e".codePointAt(0):
         case "i".codePointAt(0):
