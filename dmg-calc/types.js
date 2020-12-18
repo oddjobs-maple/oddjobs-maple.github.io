@@ -53,6 +53,8 @@ export var Attack;
     Attack[Attack["Other"] = 0] = "Other";
     Attack[Attack["BowWhack"] = -1] = "BowWhack";
     Attack[Attack["ClawPunch"] = -2] = "ClawPunch";
+    Attack[Attack["Panic"] = 1111003] = "Panic";
+    Attack[Attack["Coma"] = 1111005] = "Coma";
     Attack[Attack["DragonRoar"] = 1311006] = "DragonRoar";
     Attack[Attack["PowerKnockBack"] = 3101003] = "PowerKnockBack";
     Attack[Attack["Phoenix"] = 3121006] = "Phoenix";

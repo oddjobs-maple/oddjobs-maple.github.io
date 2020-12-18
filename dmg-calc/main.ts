@@ -434,6 +434,9 @@ function main(): void {
                         return minDmgBowWhack(inputData);
                     case Attack.ClawPunch:
                         return minDmgClawPunch(inputData);
+                    case Attack.Panic:
+                    case Attack.Coma:
+                        return minDmgCaFinisher(inputData, false);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
                     case Attack.Phoenix:
@@ -463,6 +466,9 @@ function main(): void {
                         return maxDmgBowWhack(inputData);
                     case Attack.ClawPunch:
                         return maxDmgClawPunch(inputData);
+                    case Attack.Panic:
+                    case Attack.Coma:
+                        return maxDmgCaFinisher(inputData, true);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
                     case Attack.Phoenix:
@@ -505,6 +511,9 @@ function main(): void {
                     case Attack.VenomousStab:
                     case Attack.SomersaultKick:
                         return minDmgPhysBad;
+                    case Attack.Panic:
+                    case Attack.Coma:
+                        return minDmgCaFinisher(inputData, true);
                     default:
                         return minDmgPhys(inputData, true);
                 }
@@ -527,6 +536,9 @@ function main(): void {
                     case Attack.VenomousStab:
                     case Attack.SomersaultKick:
                         return maxDmgPhysGood;
+                    case Attack.Panic:
+                    case Attack.Coma:
+                        return maxDmgCaFinisher(inputData, false);
                     default:
                         return maxDmgPhys(inputData, false);
                 }
@@ -1563,6 +1575,17 @@ function main(): void {
                     <120.",
                 );
             }
+        } else {
+            if (
+                inputData.attack === Attack.Panic ||
+                inputData.attack === Attack.Coma
+            ) {
+                warnings.push(
+                    `You\u{2019}re attacking with ${attackName(
+                        inputData.attack,
+                    )}, but (Advanced) Combo Attack is inactive.`,
+                );
+            }
         }
 
         /*======== Remove old warnings display ========*/
@@ -1730,6 +1753,29 @@ function minDmgClawPunch(inputData: InputData): number {
             effectiveWatk(inputData)) /
         150
     );
+}
+
+function orbMulti(inputData: InputData): number {
+    switch (inputData.caOrbs) {
+        case 1:
+            return 1;
+        case 2:
+            return 1.2;
+        case 3:
+            return 1.54;
+        case 4:
+            return 2;
+        default:
+            return 2.5;
+    }
+}
+
+function maxDmgCaFinisher(inputData: InputData, goodAnim: boolean): number {
+    return maxDmgPhys(inputData, goodAnim) * orbMulti(inputData);
+}
+
+function minDmgCaFinisher(inputData: InputData, goodAnim: boolean): number {
+    return minDmgPhys(inputData, goodAnim) * orbMulti(inputData);
 }
 
 function maxDmgDragonRoar(inputData: InputData): number {

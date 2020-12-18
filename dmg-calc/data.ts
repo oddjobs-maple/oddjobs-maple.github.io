@@ -297,6 +297,9 @@ export function attackPeriod(
     /*======== Attacking skills with special attack periods ========*/
 
     switch (attack) {
+        case Attack.Panic:
+        case Attack.Coma:
+            return;
         case Attack.DragonRoar: {
             switch (speed) {
                 case Speed.Faster2:
@@ -537,6 +540,10 @@ export function attackName(attack: Attack): string {
             return "bow whack";
         case Attack.ClawPunch:
             return "claw punch";
+        case Attack.Panic:
+            return "Panic";
+        case Attack.Coma:
+            return "Coma";
         case Attack.DragonRoar:
             return "Dragon Roar";
         case Attack.PowerKnockBack:
@@ -742,6 +749,32 @@ export const ATTACK_REQS: Map<
             ]),
             0,
             new Set([WeaponType.Claw]),
+        ],
+    ],
+    [
+        Attack.Panic,
+        [
+            new Set([Class.Warrior]),
+            71,
+            new Set([
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+            ]),
+        ],
+    ],
+    [
+        Attack.Coma,
+        [
+            new Set([Class.Warrior]),
+            71,
+            new Set([
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+            ]),
         ],
     ],
     [
@@ -1017,6 +1050,8 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.Other, [1, 32767, 15]],
     [Attack.BowWhack, [1, 1, 1]],
     [Attack.ClawPunch, [1, 1, 1]],
+    [Attack.Panic, [1, 1, 1]],
+    [Attack.Coma, [1, 1, 6]],
     [Attack.DragonRoar, [1, 1, 6]],
     [Attack.PowerKnockBack, [1, 1, 6]],
     [Attack.Phoenix, [1, 1, 4]],
