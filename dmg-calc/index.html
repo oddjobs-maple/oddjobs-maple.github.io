@@ -817,6 +817,54 @@
               </label>
             </fieldset>
 
+            <details>
+              <summary>Combo attack</summary>
+
+              <fieldset>
+                <legend>(Advanced) combo attack</legend>
+
+                <label for="ca-active">
+                  Active
+                  <input type="checkbox" id="ca-active" name="ca-active" />
+                </label>
+
+                <label for="ca-dmg">
+                  CA+ACA dmg
+                  <input
+                    type="number"
+                    id="ca-dmg"
+                    name="ca-dmg"
+                    min="100"
+                    value="104"
+                  />%
+                </label>
+
+                <label for="ca-level">
+                  CA level
+                  <input
+                    type="number"
+                    id="ca-level"
+                    name="ca-level"
+                    min="1"
+                    max="30"
+                    value="1"
+                  />
+                </label>
+
+                <label for="ca-orbs">
+                  Orbs
+                  <input
+                    type="number"
+                    id="ca-orbs"
+                    name="ca-orbs"
+                    min="1"
+                    max="10"
+                    value="1"
+                  />
+                </label>
+              </fieldset>
+            </details>
+
             <fieldset>
               <legend>Enemy</legend>
 

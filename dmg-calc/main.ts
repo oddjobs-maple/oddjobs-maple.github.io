@@ -105,6 +105,15 @@ function main(): void {
 
     const eleAmpInput = document.getElementById("ele-amp") as HTMLInputElement;
 
+    const caActiveInput = document.getElementById(
+        "ca-active",
+    ) as HTMLInputElement;
+    const caDmgInput = document.getElementById("ca-dmg") as HTMLInputElement;
+    const caLevelInput = document.getElementById(
+        "ca-level",
+    ) as HTMLInputElement;
+    const caOrbsInput = document.getElementById("ca-orbs") as HTMLInputElement;
+
     const enemyWdefInput = document.getElementById(
         "enemy-wdef",
     ) as HTMLInputElement;
@@ -318,6 +327,29 @@ function main(): void {
         }
         eleAmpInput.value = "" + eleAmp;
 
+        const caActive = caActiveInput.checked;
+        let caDmg = Math.max(parseInt(caDmgInput.value, 10), 100);
+        if (!Number.isFinite(caDmg)) {
+            caDmg = 104;
+        }
+        caDmgInput.value = "" + caDmg;
+        let caLevel = Math.min(
+            Math.max(parseInt(caLevelInput.value, 10), 1),
+            30,
+        );
+        if (!Number.isFinite(caLevel)) {
+            caLevel = 1;
+        }
+        caLevelInput.value = "" + caLevel;
+        let caOrbs = Math.min(
+            Math.max(parseInt(caOrbsInput.value, 10), 1),
+            10,
+        );
+        if (!Number.isFinite(caOrbs)) {
+            caOrbs = 1;
+        }
+        caOrbsInput.value = "" + caOrbs;
+
         let enemyWdef = parseInt(enemyWdefInput.value, 10);
         if (!Number.isFinite(enemyWdef)) {
             enemyWdef = 0;
@@ -368,6 +400,10 @@ function main(): void {
             speed,
             spellBooster,
             eleAmp / 100,
+            caActive,
+            caDmg,
+            caLevel,
+            caOrbs,
             enemyWdef,
             enemyMdef,
             eleSus,
@@ -388,6 +424,8 @@ function main(): void {
     }
 
     function recalculatePhys(inputData: InputData, critQ: number): void {
+        const caMod = caModifier(inputData);
+
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
                 switch (inputData.attack) {
@@ -447,7 +485,7 @@ function main(): void {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ];
+        ].map(dmg => dmg * caMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -493,7 +531,7 @@ function main(): void {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ];
+        ].map(dmg => dmg * caMod);
 
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
@@ -1498,6 +1536,35 @@ function main(): void {
             );
         }
 
+        if (inputData.caActive) {
+            if (inputData.clazz !== Class.Warrior) {
+                warnings.push(
+                    "You have (Advanced) Combo Attack active, but \
+                    you\u{2019}re not a warrior.",
+                );
+            }
+            if (inputData.level < 70) {
+                warnings.push(
+                    "You have (Advanced) Combo Attack active, but your level \
+                    <70.",
+                );
+            }
+
+            if (1 + (inputData.level - 70) * 3 < inputData.caLevel) {
+                warnings.push(
+                    `You have ${inputData.caLevel} SP in the Combo Attack \
+                    skill, but you\u{2019}re not high enough level to have \
+                    that many third job SP.`,
+                );
+            }
+            if (inputData.caOrbs > 5 && inputData.level < 120) {
+                warnings.push(
+                    "You have >5 (Advanced) Combo Attack orbs, but your level \
+                    <120.",
+                );
+            }
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -1557,6 +1624,10 @@ function main(): void {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        caActiveInput,
+        caDmgInput,
+        caLevelInput,
+        caOrbsInput,
         enemyWdefInput,
         enemyMdefInput,
         eleSusInput,
@@ -1609,6 +1680,22 @@ function minDmgPhys(inputData: InputData, goodAnim: boolean): number {
             effectiveWatk(inputData)) /
         100
     );
+}
+
+function caModifier(inputData: InputData): number {
+    if (!inputData.caActive) {
+        return 1;
+    }
+
+    if (inputData.caOrbs < 6) {
+        return (
+            (inputData.caDmg +
+                Math.floor((inputData.caOrbs - 1) * (inputData.caLevel / 6))) /
+            100
+        );
+    }
+
+    return (inputData.caDmg + 20 + (inputData.caOrbs - 5) * 4) / 100;
 }
 
 function maxDmgBowWhack(inputData: InputData): number {

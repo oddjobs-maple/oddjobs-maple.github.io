@@ -95,7 +95,7 @@ export var Class;
     Class[Class["Pirate2nd"] = 510] = "Pirate2nd";
 })(Class || (Class = {}));
 export class InputData {
-    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount) {
+    constructor(stats, totalWatk, totalMatk, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount) {
         this.stats = stats;
         this.totalWatk = totalWatk;
         this.totalMatk = totalMatk;
@@ -113,6 +113,10 @@ export class InputData {
         this.speed = speed;
         this.spellBooster = spellBooster;
         this.eleAmp = eleAmp;
+        this.caActive = caActive;
+        this.caDmg = caDmg;
+        this.caLevel = caLevel;
+        this.caOrbs = caOrbs;
         this.enemyWdef = enemyWdef;
         this.enemyMdef = enemyMdef;
         this.eleSus = eleSus;

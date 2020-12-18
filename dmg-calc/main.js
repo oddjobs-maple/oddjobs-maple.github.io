@@ -50,6 +50,10 @@ function main() {
     const speedInput = document.getElementById("speed");
     const spellBoosterInput = document.getElementById("spell-booster");
     const eleAmpInput = document.getElementById("ele-amp");
+    const caActiveInput = document.getElementById("ca-active");
+    const caDmgInput = document.getElementById("ca-dmg");
+    const caLevelInput = document.getElementById("ca-level");
+    const caOrbsInput = document.getElementById("ca-orbs");
     const enemyWdefInput = document.getElementById("enemy-wdef");
     const enemyMdefInput = document.getElementById("enemy-mdef");
     const eleSusInput = document.getElementById("ele-sus");
@@ -182,6 +186,22 @@ function main() {
             eleAmp = 100;
         }
         eleAmpInput.value = "" + eleAmp;
+        const caActive = caActiveInput.checked;
+        let caDmg = Math.max(parseInt(caDmgInput.value, 10), 100);
+        if (!Number.isFinite(caDmg)) {
+            caDmg = 104;
+        }
+        caDmgInput.value = "" + caDmg;
+        let caLevel = Math.min(Math.max(parseInt(caLevelInput.value, 10), 1), 30);
+        if (!Number.isFinite(caLevel)) {
+            caLevel = 1;
+        }
+        caLevelInput.value = "" + caLevel;
+        let caOrbs = Math.min(Math.max(parseInt(caOrbsInput.value, 10), 1), 10);
+        if (!Number.isFinite(caOrbs)) {
+            caOrbs = 1;
+        }
+        caOrbsInput.value = "" + caOrbs;
         let enemyWdef = parseInt(enemyWdefInput.value, 10);
         if (!Number.isFinite(enemyWdef)) {
             enemyWdef = 0;
@@ -208,7 +228,7 @@ function main() {
             enemyCount = 1;
         }
         enemyCountInput.value = "" + enemyCount;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -218,6 +238,7 @@ function main() {
         recalculateWarnings(inputData);
     }
     function recalculatePhys(inputData, critQ) {
+        const caMod = caModifier(inputData);
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
                 switch (inputData.attack) {
@@ -277,7 +298,7 @@ function main() {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ];
+        ].map(dmg => dmg * caMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -323,7 +344,7 @@ function main() {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ];
+        ].map(dmg => dmg * caMod);
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
                 case Attack.Phoenix:
@@ -964,6 +985,25 @@ function main() {
                 the slower attack period of Octopus (the skill which it \
                 upgrades) is used instead.");
         }
+        if (inputData.caActive) {
+            if (inputData.clazz !== Class.Warrior) {
+                warnings.push("You have (Advanced) Combo Attack active, but \
+                    you\u{2019}re not a warrior.");
+            }
+            if (inputData.level < 70) {
+                warnings.push("You have (Advanced) Combo Attack active, but your level \
+                    <70.");
+            }
+            if (1 + (inputData.level - 70) * 3 < inputData.caLevel) {
+                warnings.push(`You have ${inputData.caLevel} SP in the Combo Attack \
+                    skill, but you\u{2019}re not high enough level to have \
+                    that many third job SP.`);
+            }
+            if (inputData.caOrbs > 5 && inputData.level < 120) {
+                warnings.push("You have >5 (Advanced) Combo Attack orbs, but your level \
+                    <120.");
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1014,6 +1054,10 @@ function main() {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        caActiveInput,
+        caDmgInput,
+        caLevelInput,
+        caOrbsInput,
         enemyWdefInput,
         enemyMdefInput,
         eleSusInput,
@@ -1040,6 +1084,17 @@ function minDmgPhys(inputData, goodAnim) {
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
         effectiveWatk(inputData)) /
         100);
+}
+function caModifier(inputData) {
+    if (!inputData.caActive) {
+        return 1;
+    }
+    if (inputData.caOrbs < 6) {
+        return ((inputData.caDmg +
+            Math.floor((inputData.caOrbs - 1) * (inputData.caLevel / 6))) /
+            100);
+    }
+    return (inputData.caDmg + 20 + (inputData.caOrbs - 5) * 4) / 100;
 }
 function maxDmgBowWhack(inputData) {
     return (((inputData.stats.dex * 3.4 + inputData.stats.str) *
