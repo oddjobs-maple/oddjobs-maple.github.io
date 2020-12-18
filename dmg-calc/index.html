@@ -143,10 +143,10 @@
             Likewise, total WATK is the sum of all WATK from your equipment
             (including both your weapon, and your other equips), plus WATK from
             skills, plus WATK from buffs. Total MATK is defined similarly to
-            total WATK, but it should be noted that it also includes the MATK
-            that is due to your total INT score. This &ldquo;total MATK&rdquo;
-            is displayed in-game as &ldquo;MAGIC&rdquo; inside of the
-            &ldquo;DETAIL&rdquo; tab of the &ldquo;CHARACTER STATS&rdquo;
+            total WATK, but it should be noted that it should also include the
+            MATK that is due to your total INT score. This &ldquo;total
+            MATK&rdquo; is displayed in-game as &ldquo;MAGIC&rdquo; inside of
+            the &ldquo;DETAIL&rdquo; tab of the &ldquo;CHARACTER STATS&rdquo;
             window (in the keybinding GUI, this window is listed as
             &ldquo;ABILITY&rdquo;).
           </p>
@@ -260,6 +260,15 @@
             attacks combined with Sharp Eyes, you should set the values in the
             inputs below as if you were setting them for a physical attacker
             who has no critical-hit-granting skill of their own.
+          </p>
+
+          <p>
+            &ldquo;Ordinal # of hit&rdquo; refers to the position/index of the
+            particular damaging strike in question, within the ordering of all
+            damaging strikes produced by the attack in question. For example,
+            when using Iron Arrow, the first damaging strike (the one that
+            damages the first monster struck by the arrow) has an ordinal # of
+            1, the next damaging strike an ordinal # of 2, and so on.
           </p>
 
           <p>
@@ -729,6 +738,7 @@
 
                   <optgroup label="Crossbowman">
                     <option value="3101003">Power Knock-Back</option>
+                    <option value="3201005">Iron Arrow</option>
                   </optgroup>
 
                   <optgroup label="Marksman">
@@ -951,6 +961,18 @@
                   name="enemy-count"
                   min="1"
                   max="15"
+                  value="1"
+                />
+              </label>
+
+              <label for="hit-ord">
+                Ordinal # of hit
+                <input
+                  type="number"
+                  id="hit-ord"
+                  name="hit-ord"
+                  min="1"
+                  max="6"
                   value="1"
                 />
               </label>

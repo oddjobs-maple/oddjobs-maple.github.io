@@ -59,6 +59,7 @@ function main() {
     const eleSusInput = document.getElementById("ele-sus");
     const enemyLevelInput = document.getElementById("enemy-level");
     const enemyCountInput = document.getElementById("enemy-count");
+    const hitOrdInput = document.getElementById("hit-ord");
     const rangeOutput = document.getElementById("range");
     const critRangeOutput = document.getElementById("crit-range");
     const expectedPerHitOutput = document.getElementById("expected-per-hit");
@@ -228,7 +229,12 @@ function main() {
             enemyCount = 1;
         }
         enemyCountInput.value = "" + enemyCount;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount);
+        let hitOrd = Math.min(Math.max(parseInt(hitOrdInput.value, 10), 1), 6);
+        if (!Number.isFinite(hitOrd)) {
+            hitOrd = 1;
+        }
+        hitOrdInput.value = "" + hitOrd;
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -448,6 +454,7 @@ function main() {
                 inputData.attack !== Attack.VenomousStar &&
                 inputData.attack !== Attack.VenomousStab),
         ];
+        const afterModifier = afterMod(inputData);
         const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = 
         // Massive hack to make Arrow Bomb easier to work with...
         inputData.attack === Attack.ArrowBombImpact ||
@@ -463,7 +470,7 @@ function main() {
                 maxDmgPhysGoodAdjusted,
                 minDmgPhysGoodAdjusted,
                 maxDmgPhysBadAdjusted,
-            ].map(x => x * dmgMultiNoCrit);
+            ].map(x => x * dmgMultiNoCrit * afterModifier);
         const [minDmgPhysBadCrit, maxDmgPhysGoodCrit, minDmgPhysGoodCrit, maxDmgPhysBadCrit,] = 
         // Massive hack to make Arrow Bomb easier to work with...
         inputData.attack === Attack.ArrowBombImpact ||
@@ -479,7 +486,7 @@ function main() {
                 maxDmgPhysGoodAdjusted,
                 minDmgPhysGoodAdjusted,
                 maxDmgPhysBadAdjusted,
-            ].map(x => x * dmgMultiCrit);
+            ].map(x => x * dmgMultiCrit * afterModifier);
         const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x => Math.max(Math.trunc(x), 1));
         const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x => Math.max(Math.trunc(x), 1));
         rangeOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgPhysGoodNoCrit && range[1] !== 1 ? "*" : ""}`;
@@ -1085,6 +1092,10 @@ function main() {
                 warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but (Advanced) Combo Attack is inactive.`);
             }
         }
+        if (inputData.hitOrd > inputData.enemyCount) {
+            warnings.push("The ordinal # of your hit is greater than the total number \
+                of enemies being targeted.");
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1144,6 +1155,7 @@ function main() {
         eleSusInput,
         enemyLevelInput,
         enemyCountInput,
+        hitOrdInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -1165,6 +1177,14 @@ function minDmgPhys(inputData, goodAnim) {
         secondaryStat(inputData.stats, inputData.wepType, inputData.clazz)) *
         effectiveWatk(inputData)) /
         100);
+}
+function afterMod(inputData) {
+    switch (inputData.attack) {
+        case Attack.IronArrow:
+            return 0.9 ** (inputData.hitOrd - 1);
+        default:
+            return 1;
+    }
 }
 function caModifier(inputData) {
     if (!inputData.caActive) {

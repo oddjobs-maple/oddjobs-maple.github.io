@@ -62,6 +62,7 @@ export enum Attack {
     PowerKnockBack = 3101003,
     ArrowBombImpact = 3101005,
     ArrowBombSplash = 3101105,
+    IronArrow = 3201005,
     Phoenix = 3121006,
     Frostprey = 3221005,
     LuckySeven = 4001344,
@@ -141,5 +142,6 @@ export class InputData {
         public eleSus: number,
         public enemyLevel: number,
         public enemyCount: number,
+        public hitOrd: number,
     ) {}
 }

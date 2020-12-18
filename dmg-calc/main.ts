@@ -129,6 +129,7 @@ function main(): void {
     const enemyCountInput = document.getElementById(
         "enemy-count",
     ) as HTMLInputElement;
+    const hitOrdInput = document.getElementById("hit-ord") as HTMLInputElement;
 
     const rangeOutput = document.getElementById("range") as HTMLSpanElement;
     const critRangeOutput = document.getElementById(
@@ -381,6 +382,11 @@ function main(): void {
             enemyCount = 1;
         }
         enemyCountInput.value = "" + enemyCount;
+        let hitOrd = Math.min(Math.max(parseInt(hitOrdInput.value, 10), 1), 6);
+        if (!Number.isFinite(hitOrd)) {
+            hitOrd = 1;
+        }
+        hitOrdInput.value = "" + hitOrd;
 
         return new InputData(
             new Stats(str, dex, int, luk),
@@ -409,6 +415,7 @@ function main(): void {
             eleSus,
             enemyLevel,
             enemyCount,
+            hitOrd,
         );
     }
 
@@ -640,6 +647,7 @@ function main(): void {
                     inputData.attack !== Attack.VenomousStab,
             ),
         ];
+        const afterModifier = afterMod(inputData);
         const [
             minDmgPhysBadNoCrit,
             maxDmgPhysGoodNoCrit,
@@ -660,7 +668,7 @@ function main(): void {
                       maxDmgPhysGoodAdjusted,
                       minDmgPhysGoodAdjusted,
                       maxDmgPhysBadAdjusted,
-                  ].map(x => x * dmgMultiNoCrit);
+                  ].map(x => x * dmgMultiNoCrit * afterModifier);
         const [
             minDmgPhysBadCrit,
             maxDmgPhysGoodCrit,
@@ -681,7 +689,7 @@ function main(): void {
                       maxDmgPhysGoodAdjusted,
                       minDmgPhysGoodAdjusted,
                       maxDmgPhysBadAdjusted,
-                  ].map(x => x * dmgMultiCrit);
+                  ].map(x => x * dmgMultiCrit * afterModifier);
 
         const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x =>
             Math.max(Math.trunc(x), 1),
@@ -1654,6 +1662,13 @@ function main(): void {
             }
         }
 
+        if (inputData.hitOrd > inputData.enemyCount) {
+            warnings.push(
+                "The ordinal # of your hit is greater than the total number \
+                of enemies being targeted.",
+            );
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -1722,6 +1737,7 @@ function main(): void {
         eleSusInput,
         enemyLevelInput,
         enemyCountInput,
+        hitOrdInput,
     ]) {
         input.addEventListener("change", recalculate);
     }
@@ -1769,6 +1785,15 @@ function minDmgPhys(inputData: InputData, goodAnim: boolean): number {
             effectiveWatk(inputData)) /
         100
     );
+}
+
+function afterMod(inputData: InputData): number {
+    switch (inputData.attack) {
+        case Attack.IronArrow:
+            return 0.9 ** (inputData.hitOrd - 1);
+        default:
+            return 1;
+    }
 }
 
 function caModifier(inputData: InputData): number {
