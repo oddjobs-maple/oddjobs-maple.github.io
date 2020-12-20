@@ -1173,6 +1173,13 @@ function main() {
                 hypothetical buccaneer, who would be attacking in between \
                 Barrages.");
         }
+        if (inputData.attack === Attack.BoomerangStep) {
+            warnings.push("You\u{2019}re attacking with Boomerang Step; the attack \
+                period (and thus DPS value) is based on the spamming of \
+                solely Boomerang Step. The projected DPS will thus be less \
+                than that of a hypothetical shadower, who would be attacking \
+                in between Boomerang Steps.");
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");

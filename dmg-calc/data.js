@@ -309,6 +309,22 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.Phoenix:
         case Attack.Frostprey:
             return 3030;
+        case Attack.Avenger: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 630;
+                case 3 /* Faster3 */:
+                    return 690;
+                case 4 /* Fast4 */:
+                    return 750;
+                case 5 /* Fast5 */:
+                    return 810;
+                case 6 /* Normal */:
+                    return 840;
+                default:
+                    return;
+            }
+        }
         case Attack.Assaulter: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -327,6 +343,24 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.VenomousStar:
         case Attack.VenomousStab:
             return 1000;
+        case Attack.NinjaStorm:
+            return 1440;
+        case Attack.SavageBlow: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 720;
+                case 3 /* Faster3 */:
+                    return 780;
+                case 4 /* Fast4 */:
+                    return 840;
+                case 5 /* Fast5 */:
+                    return 900;
+                default:
+                    return;
+            }
+        }
+        case Attack.BoomerangStep:
+            return 1950;
         // Assuming (probably incorrectly) that all weapons use Somersault Kick
         // at the same speed as knucklers.
         case Attack.SomersaultKick: {
@@ -348,6 +382,21 @@ export function attackPeriod(wepType, speed, attack) {
             }
             break;
         }
+        case Attack.DoubleShot: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 390;
+                case 3 /* Faster3 */:
+                    return 420;
+                case 4 /* Fast4 */:
+                    return 450;
+                case 5 /* Fast5 */:
+                case 6 /* Normal */:
+                    return 480;
+                default:
+                    return;
+            }
+        }
         case Attack.EnergyOrb: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -366,10 +415,59 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.Barrage:
             return 3240;
+        case Attack.InvisibleShot: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 630;
+                case 3 /* Faster3 */:
+                    return 660;
+                case 4 /* Fast4 */:
+                    return 720;
+                case 5 /* Fast5 */:
+                    return 750;
+                case 6 /* Normal */:
+                    return 810;
+                default:
+                    return;
+            }
+        }
+        case Attack.BlankShot:
+        case Attack.BurstFire: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 660;
+                case 3 /* Faster3 */:
+                    return 690;
+                case 4 /* Fast4 */:
+                    return 750;
+                case 5 /* Fast5 */:
+                    return 810;
+                case 6 /* Normal */:
+                    return 840;
+                default:
+                    return;
+            }
+        }
         case Attack.Octopus:
         case Attack.Gaviota:
         case Attack.WrathOfTheOctopi:
             return 1530;
+        case Attack.BattleshipCannon: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 600;
+                case 3 /* Faster3 */:
+                    return 630;
+                case 4 /* Fast4 */:
+                    return 690;
+                case 5 /* Fast5 */:
+                    return 750;
+                case 6 /* Normal */:
+                    return 780;
+                default:
+                    return;
+            }
+        }
         default:
             break;
     }
@@ -566,6 +664,8 @@ export function attackName(attack) {
             return "Piercing Arrow";
         case Attack.LuckySeven:
             return "Lucky Seven";
+        case Attack.Avenger:
+            return "Avenger";
         case Attack.TripleThrow:
             return "Triple Throw";
         case Attack.Assaulter:
@@ -576,18 +676,34 @@ export function attackName(attack) {
             return "Venomous Star";
         case Attack.VenomousStab:
             return "Venomous Stab";
+        case Attack.NinjaStorm:
+            return "Ninja Storm";
+        case Attack.SavageBlow:
+            return "Savage Blow";
+        case Attack.BoomerangStep:
+            return "Boomerang Step";
         case Attack.SomersaultKick:
             return "Somersault Kick";
+        case Attack.DoubleShot:
+            return "Double Shot";
         case Attack.EnergyOrb:
             return "Energy Orb";
         case Attack.Barrage:
             return "Barrage";
+        case Attack.InvisibleShot:
+            return "Invisible Shot";
+        case Attack.BlankShot:
+            return "Blank Shot";
+        case Attack.BurstFire:
+            return "Burst Fire";
         case Attack.Octopus:
             return "Octopus";
         case Attack.Gaviota:
             return "Gaviota";
         case Attack.WrathOfTheOctopi:
             return "Wrath of the Octopi";
+        case Attack.BattleshipCannon:
+            return "Battleship Cannon";
     }
 }
 export function spellName(spell) {
@@ -957,6 +1073,7 @@ export const ATTACK_REQS = new Map([
         Attack.LuckySeven,
         [new Set([Class.Rogue]), 10, new Set([WeaponType.Claw])],
     ],
+    [Attack.Avenger, [new Set([Class.Rogue]), 70, new Set([WeaponType.Claw])]],
     [
         Attack.TripleThrow,
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Claw])],
@@ -1000,6 +1117,40 @@ export const ATTACK_REQS = new Map([
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Dagger])],
     ],
     [
+        Attack.NinjaStorm,
+        [
+            new Set([Class.Rogue]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.SavageBlow,
+        [new Set([Class.Rogue]), 30, new Set([WeaponType.Dagger])],
+    ],
+    [
+        Attack.BoomerangStep,
+        [new Set([Class.Rogue]), 120, new Set([WeaponType.Dagger])],
+    ],
+    [
         Attack.SomersaultKick,
         [
             new Set([Class.Pirate, Class.Pirate2nd]),
@@ -1026,12 +1177,32 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.DoubleShot,
+        [
+            new Set([Class.Pirate, Class.Pirate2nd]),
+            10,
+            new Set([WeaponType.Gun]),
+        ],
+    ],
+    [
         Attack.EnergyOrb,
         [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
     ],
     [
         Attack.Barrage,
         [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
+    ],
+    [
+        Attack.InvisibleShot,
+        [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.BlankShot,
+        [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.BurstFire,
+        [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
     ],
     [
         Attack.Octopus,
@@ -1111,6 +1282,10 @@ export const ATTACK_REQS = new Map([
             ]),
         ],
     ],
+    [
+        Attack.BattleshipCannon,
+        [new Set([Class.Pirate2nd]), 121, new Set([WeaponType.Gun])],
+    ],
 ]);
 export const SPELL_LVL_REQS = new Map([
     [Spell.Other, 0],
@@ -1163,17 +1338,26 @@ export const ATTACK_LINES = new Map([
     [Attack.Frostprey, [1, 1, 4]],
     [Attack.PiercingArrow, [1, 1, 6]],
     [Attack.LuckySeven, [2, 2, 1]],
+    [Attack.Avenger, [1, 1, 6]],
     [Attack.TripleThrow, [3, 3, 1]],
     [Attack.Assaulter, [1, 1, 1]],
     [Attack.NinjaAmbush, [1, 1, 6]],
     [Attack.VenomousStar, [1, 1, 1]],
     [Attack.VenomousStab, [1, 1, 1]],
+    [Attack.NinjaStorm, [1, 1, 6]],
+    [Attack.SavageBlow, [4, 6, 1]],
+    [Attack.BoomerangStep, [2, 2, 4]],
     [Attack.SomersaultKick, [1, 1, 6]],
+    [Attack.DoubleShot, [2, 2, 1]],
     [Attack.EnergyOrb, [1, 1, 6]],
     [Attack.Barrage, [6, 6, 1]],
+    [Attack.InvisibleShot, [1, 1, 3]],
+    [Attack.BlankShot, [1, 1, 3]],
+    [Attack.BurstFire, [3, 3, 1]],
     [Attack.Octopus, [1, 1, 1]],
     [Attack.Gaviota, [1, 1, 6]],
     [Attack.WrathOfTheOctopi, [1, 1, 1]],
+    [Attack.BattleshipCannon, [3, 4, 1]],
 ]);
 /**
  * The first two numbers of the 3-tuple represent the minimum and maximum
