@@ -86,14 +86,18 @@ export enum Spell {
     Explosion = 2111002,
     PoisonMist = 2111003,
     ElementCompositionFP = 2111006,
+    Elquines = 2121005,
     MeteorShower = 2121007,
     IceStrike = 2211002,
     ThunderSpear = 2211003,
     ElementCompositionIL = 2211006,
+    Ifrit = 2221005,
     ChainLightning = 2221006,
     Blizzard = 2221007,
     Heal = 2301002,
     ShiningRay = 2311004,
+    SummonDragon = 2311006,
+    Bahamut = 2321003,
     Genesis = 2321008,
 }
 

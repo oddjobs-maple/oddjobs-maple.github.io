@@ -232,6 +232,11 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
                     return;
             }
         }
+        case Spell.Elquines:
+        case Spell.Ifrit:
+        case Spell.SummonDragon:
+        case Spell.Bahamut:
+            return 3030;
         case Spell.Genesis:
             return 2700;
         case Spell.MeteorShower:
@@ -461,6 +466,8 @@ export function isHolySpell(spell) {
     switch (spell) {
         case Spell.Heal:
         case Spell.ShiningRay:
+        case Spell.SummonDragon:
+        case Spell.Bahamut:
         case Spell.Genesis:
             return true;
         default:
@@ -593,6 +600,8 @@ export function spellName(spell) {
             return "Poison Mist";
         case Spell.ElementCompositionFP:
             return "Element Composition [F/P]";
+        case Spell.Elquines:
+            return "Elquines";
         case Spell.MeteorShower:
             return "Meteor Shower";
         case Spell.IceStrike:
@@ -601,6 +610,8 @@ export function spellName(spell) {
             return "Thunder Spear";
         case Spell.ElementCompositionIL:
             return "Element Composition [I/L]";
+        case Spell.Ifrit:
+            return "Ifrit";
         case Spell.ChainLightning:
             return "Chain Lightning";
         case Spell.Blizzard:
@@ -609,6 +620,10 @@ export function spellName(spell) {
             return "Heal";
         case Spell.ShiningRay:
             return "Shining Ray";
+        case Spell.SummonDragon:
+            return "Summon Dragon";
+        case Spell.Bahamut:
+            return "Bahamut";
         case Spell.Genesis:
             return "Genesis";
     }
@@ -1102,14 +1117,18 @@ export const SPELL_LVL_REQS = new Map([
     [Spell.Explosion, 70],
     [Spell.PoisonMist, 70],
     [Spell.ElementCompositionFP, 70],
+    [Spell.Elquines, 120],
     [Spell.MeteorShower, 120],
     [Spell.IceStrike, 70],
     [Spell.ThunderSpear, 70],
     [Spell.ElementCompositionIL, 70],
+    [Spell.Ifrit, 120],
     [Spell.ChainLightning, 120],
     [Spell.Blizzard, 120],
     [Spell.Heal, 30],
     [Spell.ShiningRay, 70],
+    [Spell.SummonDragon, 70],
+    [Spell.Bahamut, 120],
     [Spell.Genesis, 120],
 ]);
 export const JOB_LVL_REQS = new Map([
@@ -1166,13 +1185,17 @@ export const SPELL_LINES = new Map([
     [Spell.Explosion, [1, 1, 6]],
     [Spell.PoisonMist, [1, 1, 6]],
     [Spell.ElementCompositionFP, [1, 1, 1]],
+    [Spell.Elquines, [1, 1, 3]],
     [Spell.MeteorShower, [1, 1, 15]],
     [Spell.IceStrike, [1, 1, 6]],
     [Spell.ThunderSpear, [1, 1, 1]],
     [Spell.ElementCompositionIL, [1, 1, 1]],
+    [Spell.Ifrit, [1, 1, 3]],
     [Spell.ChainLightning, [1, 1, 6]],
     [Spell.Blizzard, [1, 1, 15]],
     [Spell.Heal, [1, 1, 5]],
     [Spell.ShiningRay, [1, 1, 6]],
+    [Spell.SummonDragon, [1, 1, 1]],
+    [Spell.Bahamut, [1, 1, 3]],
     [Spell.Genesis, [1, 1, 15]],
 ]);
