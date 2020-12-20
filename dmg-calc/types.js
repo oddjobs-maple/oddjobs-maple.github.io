@@ -62,6 +62,7 @@ export var Attack;
     Attack[Attack["ArrowBombImpact"] = 3101005] = "ArrowBombImpact";
     Attack[Attack["ArrowBombSplash"] = 3101105] = "ArrowBombSplash";
     Attack[Attack["IronArrow"] = 3201005] = "IronArrow";
+    Attack[Attack["Hurricane"] = 3121004] = "Hurricane";
     Attack[Attack["Phoenix"] = 3121006] = "Phoenix";
     Attack[Attack["Frostprey"] = 3221005] = "Frostprey";
     Attack[Attack["PiercingArrow"] = 3221001] = "PiercingArrow";

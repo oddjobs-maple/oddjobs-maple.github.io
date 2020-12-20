@@ -322,6 +322,8 @@ export function attackPeriod(
                     return 1800;
             }
         }
+        case Attack.Hurricane:
+            return 120;
         case Attack.Phoenix:
         case Attack.Frostprey:
             return 3030;
@@ -578,6 +580,8 @@ export function attackName(attack: Attack): string {
             return "Arrow Bomb (splash)";
         case Attack.IronArrow:
             return "Iron Arrow";
+        case Attack.Hurricane:
+            return "Hurricane";
         case Attack.Phoenix:
             return "Phoenix";
         case Attack.Frostprey:
@@ -912,6 +916,10 @@ export const ATTACK_REQS: Map<
         [new Set([Class.Archer]), 30, new Set([WeaponType.Crossbow])],
     ],
     [
+        Attack.Hurricane,
+        [new Set([Class.Archer]), 120, new Set([WeaponType.Bow])],
+    ],
+    [
         Attack.Phoenix,
         [
             new Set([Class.Archer]),
@@ -1171,6 +1179,7 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.ArrowBombImpact, [1, 1, 1]],
     [Attack.ArrowBombSplash, [1, 1, 5]],
     [Attack.IronArrow, [1, 1, 6]],
+    [Attack.Hurricane, [1, 1, 1]],
     [Attack.Phoenix, [1, 1, 4]],
     [Attack.Frostprey, [1, 1, 4]],
     [Attack.PiercingArrow, [1, 1, 6]],

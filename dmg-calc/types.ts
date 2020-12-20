@@ -63,6 +63,7 @@ export enum Attack {
     ArrowBombImpact = 3101005,
     ArrowBombSplash = 3101105,
     IronArrow = 3201005,
+    Hurricane = 3121004,
     Phoenix = 3121006,
     Frostprey = 3221005,
     PiercingArrow = 3221001,
