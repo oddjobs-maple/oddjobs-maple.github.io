@@ -341,6 +341,22 @@ export function attackPeriod(wepType, speed, attack) {
             }
             break;
         }
+        case Attack.EnergyOrb: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 930;
+                case 3 /* Faster3 */:
+                    return 990;
+                case 4 /* Fast4 */:
+                    return 1050;
+                case 5 /* Fast5 */:
+                    return 1140;
+                case 6 /* Normal */:
+                    return 1200;
+                default:
+                    return;
+            }
+        }
         case Attack.Octopus:
         case Attack.Gaviota:
         case Attack.WrathOfTheOctopi:
@@ -533,6 +549,8 @@ export function attackName(attack) {
             return "Phoenix";
         case Attack.Frostprey:
             return "Frostprey";
+        case Attack.PiercingArrow:
+            return "Piercing Arrow";
         case Attack.LuckySeven:
             return "Lucky Seven";
         case Attack.TripleThrow:
@@ -547,6 +565,8 @@ export function attackName(attack) {
             return "Venomous Stab";
         case Attack.SomersaultKick:
             return "Somersault Kick";
+        case Attack.EnergyOrb:
+            return "Energy Orb";
         case Attack.Octopus:
             return "Octopus";
         case Attack.Gaviota:
@@ -903,6 +923,10 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.PiercingArrow,
+        [new Set([Class.Archer]), 120, new Set([WeaponType.Crossbow])],
+    ],
+    [
         Attack.LuckySeven,
         [new Set([Class.Rogue]), 10, new Set([WeaponType.Claw])],
     ],
@@ -973,6 +997,10 @@ export const ATTACK_REQS = new Map([
                 WeaponType.Gun,
             ]),
         ],
+    ],
+    [
+        Attack.EnergyOrb,
+        [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
     ],
     [
         Attack.Octopus,
@@ -1097,6 +1125,7 @@ export const ATTACK_LINES = new Map([
     [Attack.IronArrow, [1, 1, 6]],
     [Attack.Phoenix, [1, 1, 4]],
     [Attack.Frostprey, [1, 1, 4]],
+    [Attack.PiercingArrow, [1, 1, 6]],
     [Attack.LuckySeven, [2, 2, 1]],
     [Attack.TripleThrow, [3, 3, 1]],
     [Attack.Assaulter, [1, 1, 1]],
@@ -1104,6 +1133,7 @@ export const ATTACK_LINES = new Map([
     [Attack.VenomousStar, [1, 1, 1]],
     [Attack.VenomousStab, [1, 1, 1]],
     [Attack.SomersaultKick, [1, 1, 6]],
+    [Attack.EnergyOrb, [1, 1, 6]],
     [Attack.Octopus, [1, 1, 1]],
     [Attack.Gaviota, [1, 1, 6]],
     [Attack.WrathOfTheOctopi, [1, 1, 1]],

@@ -454,7 +454,7 @@ function main() {
                 inputData.attack !== Attack.VenomousStar &&
                 inputData.attack !== Attack.VenomousStab),
         ];
-        const afterModifier = afterMod(inputData);
+        const afterModifier = afterModPhys(inputData);
         const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = 
         // Massive hack to make Arrow Bomb easier to work with...
         inputData.attack === Attack.ArrowBombImpact ||
@@ -470,7 +470,7 @@ function main() {
                 maxDmgPhysGoodAdjusted,
                 minDmgPhysGoodAdjusted,
                 maxDmgPhysBadAdjusted,
-            ].map(x => x * dmgMultiNoCrit * afterModifier);
+            ].map(x => Math.max(x * dmgMultiNoCrit, 1) * afterModifier);
         const [minDmgPhysBadCrit, maxDmgPhysGoodCrit, minDmgPhysGoodCrit, maxDmgPhysBadCrit,] = 
         // Massive hack to make Arrow Bomb easier to work with...
         inputData.attack === Attack.ArrowBombImpact ||
@@ -486,7 +486,7 @@ function main() {
                 maxDmgPhysGoodAdjusted,
                 minDmgPhysGoodAdjusted,
                 maxDmgPhysBadAdjusted,
-            ].map(x => x * dmgMultiCrit * afterModifier);
+            ].map(x => Math.max(x * dmgMultiCrit, 1) * afterModifier);
         const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x => Math.max(Math.trunc(x), 1));
         const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x => Math.max(Math.trunc(x), 1));
         rangeOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgPhysGoodNoCrit && range[1] !== 1 ? "*" : ""}`;
@@ -631,19 +631,21 @@ function main() {
             maxDmg,
         ]);
         const [minDmgCrit, maxDmgCrit] = [minDmgNoCrit, maxDmgNoCrit].map(x => x * inputData.critDmg);
-        const range = [minDmgNoCrit, maxDmgNoCrit].map(x => Math.max(Math.trunc(x), 1));
-        const critRange = [minDmgCrit, maxDmgCrit].map(x => Math.max(Math.trunc(x), 1));
-        rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgNoCrit && range[1] !== 1 ? "*" : ""}`;
-        critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${critRange[1] === maxDmgCrit && critRange[1] !== 1 ? "*" : ""}`;
+        const [minDmgNoCritAfter, maxDmgNoCritAfter, minDmgCritAfter, maxDmgCritAfter,] = [minDmgNoCrit, maxDmgNoCrit, minDmgCrit, maxDmgCrit].map(x => Math.max(x, 1) * afterModMagic(inputData));
+        const range = [minDmgNoCritAfter, maxDmgNoCritAfter].map(x => Math.max(Math.trunc(x), 1));
+        const critRange = [minDmgCritAfter, maxDmgCritAfter].map(x => Math.max(Math.trunc(x), 1));
+        rangeMagicOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgNoCritAfter && range[1] !== 1 ? "*" : ""}`;
+        critRangeMagicOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${critRange[1] === maxDmgCritAfter && critRange[1] !== 1 ? "*" : ""}`;
         const combinedRangeTop = inputData.critProb > 0 ? critRange[1] : range[1];
         totalRangeMagicOutput.textContent = `${range[0] * inputData.skillLines} ~ ${combinedRangeTop * inputData.skillLines}${combinedRangeTop ===
-            (inputData.critProb > 0 ? maxDmgCrit : maxDmgNoCrit) &&
-            combinedRangeTop !== 1
+            (inputData.critProb > 0
+                ? maxDmgCritAfter
+                : maxDmgNoCritAfter) && combinedRangeTop !== 1
             ? "*"
             : ""}`;
         const [expectedPerHitNoCrit, expectedPerHitCrit] = [
-            truncClampedExpectation(minDmgNoCrit, maxDmgNoCrit),
-            truncClampedExpectation(minDmgCrit, maxDmgCrit),
+            truncClampedExpectation(minDmgNoCritAfter, maxDmgNoCritAfter),
+            truncClampedExpectation(minDmgCritAfter, maxDmgCritAfter),
         ];
         const expectedPerHit = critQ * expectedPerHitNoCrit +
             inputData.critProb * expectedPerHitCrit;
@@ -654,8 +656,8 @@ function main() {
         // indicate that this is a variance against the expectation across
         // _all_ cases (`expectedPerHit`), not against the expected value of
         // the particular case in question.
-        const mainVariancePerHitNoCrit = truncClampedVariance(minDmgNoCrit, maxDmgNoCrit, expectedPerHit);
-        const mainVariancePerHitCrit = truncClampedVariance(minDmgCrit, maxDmgCrit, expectedPerHit);
+        const mainVariancePerHitNoCrit = truncClampedVariance(minDmgNoCritAfter, maxDmgNoCritAfter, expectedPerHit);
+        const mainVariancePerHitCrit = truncClampedVariance(minDmgCritAfter, maxDmgCritAfter, expectedPerHit);
         const variancePerHit = mainVariancePerHitNoCrit !== undefined &&
             mainVariancePerHitCrit !== undefined
             ? critQ * mainVariancePerHitNoCrit +
@@ -1178,10 +1180,14 @@ function minDmgPhys(inputData, goodAnim) {
         effectiveWatk(inputData)) /
         100);
 }
-function afterMod(inputData) {
+function afterModPhys(inputData) {
     switch (inputData.attack) {
         case Attack.IronArrow:
             return 0.9 ** (inputData.hitOrd - 1);
+        case Attack.PiercingArrow:
+            return 1.2 ** (inputData.hitOrd - 1);
+        case Attack.EnergyOrb:
+            return (2 / 3) ** (inputData.hitOrd - 1);
         default:
             return 1;
     }
@@ -1347,6 +1353,14 @@ function minDmgMagic(inputData) {
         30 +
         inputData.stats.int / 200) *
         inputData.skillBasicAtk);
+}
+function afterModMagic(inputData) {
+    switch (inputData.spell) {
+        case Spell.ChainLightning:
+            return 0.7 ** (inputData.hitOrd - 1);
+        default:
+            return 1;
+    }
 }
 function healTargetMulti(enemyCount) {
     return 1.5 + 5 / (enemyCount + 1);

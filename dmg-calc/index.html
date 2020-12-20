@@ -116,386 +116,404 @@
             violated by skills like Barrage.
           </p>
 
+          <p>
+            We assume that there is no particular damage cap.
+          </p>
+
           <a href="#you-should-know" class="h-anchor"
             ><h2 id="you-should-know">You Should Know</h2></a
           >
 
-          <p>
-            Weapon speeds are calculated based on the speed of the weapon
-            itself, in addition to any booster effects that may be active. The
-            slowest possible speed is 9,<sup>[1]</sup> and the fastest is 2.
-            Booster skills add &minus;2 to your speed value, and so does Speed
-            Infusion.<sup>[2]</sup> Booster skills and Speed Infusion do stack,
-            granting &minus;4 speed (in addition to the speed of your weapon)
-            when both are active.<sup>[2]</sup> However, your speed can never
-            go below 2, so e.g. a weapon with speed 3 that is affected by a
-            Booster skill is speed 2, <strong>not</strong> 1. You may need to
-            use an external reference and/or look in the game files to find out
-            the speed of any given weapon, because only some weapons have their
-            true speeds displayed in-game. Others have ambiguous speed
-            descriptions like &ldquo;Fast&rdquo;, which could correspond to a
-            speed of 4, or to a speed of 5.
-          </p>
-
-          <p>
-            Stats (STR, DEX, INT, LUK) are total stat values, after base stats
-            <strong>and</strong> equipment <strong>and</strong> buffs.
-            Likewise, total WATK is the sum of all WATK from your equipment
-            (including both your weapon, and your other equips), plus WATK from
-            skills, plus WATK from buffs. Total MATK is defined similarly to
-            total WATK, but it should be noted that it should also include the
-            MATK that is due to your total INT score. This &ldquo;total
-            MATK&rdquo; is displayed in-game as &ldquo;MAGIC&rdquo; inside of
-            the &ldquo;DETAIL&rdquo; tab of the &ldquo;CHARACTER STATS&rdquo;
-            window (in the keybinding GUI, this window is listed as
-            &ldquo;ABILITY&rdquo;).
-          </p>
-
-          <p>
-            The mastery is given here as a percentage. Your mastery can never
-            be less than 10%, but it can be higher, if you have one or more
-            relevant mastery skills (&ldquo;relevant&rdquo; because mastery
-            skills typically only apply to certain classes of weapons, e.g.
-            only axes). Most mastery skills increase your mastery up to a total
-            of 60%, but some fourth-job skills can take you up to as high as
-            90%. Mastery for magical attacks works on a per-spell basis (based
-            on which spell it is and what level it&rsquo;s at), and should be
-            listed in-game within the spell&rsquo;s description.
-          </p>
-
-          <p>
-            The &ldquo;Damage multi&rdquo; field under &ldquo;Skill&rdquo;
-            refers to the damage percentage listed in the description of a
-            physical attack; for example, the Power Strike skill has a
-            &ldquo;Damage multi&rdquo; of 260% at max level. The &ldquo;Basic
-            attack&rdquo; only applies to magical attacks and summons, and is
-            generally listed in the skill description as &ldquo;basic
-            attack&rdquo;; for example, the Magic Claw skill has a &ldquo;Basic
-            attack&rdquo; of 40 at max level. &ldquo;Lines&rdquo; refers to how
-            many lines of damage the attacking skill does; for example, this
-            value is 1 for Power Strike and 2 for Magic Claw. It is assumed
-            that attacks with more than one line of damage calculate each line
-            identically, even if the actual <em>outcomes</em> for the various
-            lines may differ due to random chance. This assumption is violated
-            by skills like Barrage.
-          </p>
-
-          <p>
-            Damage multipliers from skills, critical hits, and elemental
-            effects work in tandem. All of these influences combine into a
-            single multiplier that we will here refer to as &ldquo;<strong
-              >the</strong
-            >
-            damage multiplier&rdquo;. This is the number by which you multiply
-            your basic attack damage (for physical attacks, this is your basic
-            attack &mdash; i.e. not using a skill &mdash; with no crits nor
-            elemental effects nor reduction due to WDEF). These sources of
-            damage multiplier (skills, crits, elemental effects) are
-            <strong>additive</strong> in the sense that these multipliers are
-            summed together, and then that sum makes up <em>the</em> damage
-            multiplier.
-            <strong
-              >Note that basic attacks have a &ldquo;skill&rdquo; multiplier of
-              1</strong
-            >, i.e. as if you were using an attacking skill that said
-            &ldquo;100% damage&rdquo; in the description. For example, say you
-            use the Arrow Blow skill as an archer who has maxed both Arrow Blow
-            (described in-game as &ldquo;Damage 260%&rdquo;) and Critical Shot
-            (described in-game as &ldquo;40% success rate, critical damage
-            200%&rdquo;). Let&rsquo;s assume that this particular use of Arrow
-            Blow is a crit, and thus we get the benefit of the &ldquo;critical
-            damage 200%&rdquo;. The damage multiplier is the sum of the
-            multipliers from Arrow Blow and Critical Shot:
-            2.6&nbsp;+&nbsp;2&nbsp;=&nbsp;4.6. Thus, we expect this attack to
-            (again, assuming the monster has 0 WDEF) do 4.6 times as much as a
-            non-critical basic attack would. Note that magic attacks work
-            somewhat differently, and (as far as I know) do not use this
-            additive notion of &ldquo;damage multiplier&rdquo;.
-          </p>
-
-          <p>
-            You can select a number of targets greater than one, but note that
-            this does <strong>not</strong> take into account the damage taken
-            by any of said virtual enemies, except for one of them. The ability
-            to select a number of targets is only there for skills like Heal,
-            which change their per-line damage based on the total number of
-            targets. Note that when casting Heal (maximum of 6 targets), the
-            caster counts as a target, thus lowering the maximum number of
-            possible enemy targets from 6 to 5. Also note that Heal, unlike
-            most spells, uses the &ldquo;Damage multi&rdquo; rather than the
-            &ldquo;Basic attack&rdquo; (the damage multi is typically 300% at
-            maximum level).
-          </p>
-
-          <p>
-            The in-game description of the Sharp Eyes skill is somewhat
-            misleading. At max level, the skill grants &ldquo;[Critical] Damage
-            + 40%&rdquo;. However, this should probably read
-            &ldquo;+140%&rdquo;, because the actual value that is added to the
-            damage multiplier is 1.4. For those who already have a
-            critical-hit-granting skill (archers, assassins/hermits/nightlords,
-            and situationally marauders/buccaneers), interpreting Sharp Eyes is
-            pretty straightforward: it just adds something to your
-            already-existing critical chance and to your already-existing
-            critical multiplier. For example, an archer with maxed Critical
-            Shot and maxed Sharp Eyes has a
-            0.4&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.55 probability of critting, and
-            a critical multiplier of 2&nbsp;+&nbsp;1.4&nbsp;=&nbsp;3.4. For
-            physical attackers who do
-            <em>not</em> already have a critical-hit-granting skill, being
-            buffed with maxed Sharp Eyes means an overall
-            0&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.15 probability of critting, and a
-            critical multiplier of 1.4; <strong>not</strong> a critical
-            multiplier of 0.4. Note that the value referred to here as the
-            &ldquo;critical multiplier&rdquo; is <strong>additive</strong> and
-            <em>only</em> serves to cumulate into the overall &ldquo;damage
-            multiplier&rdquo;. For more on this, see the previous paragraph.
-            For magical attacks, the probability of critting with maxed Sharp
-            Eyes is also 0.15, but an attack that crits does
-            <strong>not</strong> add 1.4 to the damage multiplier of a
-            non-crit, as you would expect (magical attacks do not use the same
-            notion of &ldquo;damage multiplier&rdquo;). Instead, it simply
-            multiplies the overall damage of the magical attack by a factor of
-            1.4. Nevertheless, if you want to use the calculator for magical
-            attacks combined with Sharp Eyes, you should set the values in the
-            inputs below as if you were setting them for a physical attacker
-            who has no critical-hit-granting skill of their own.
-          </p>
-
-          <p>
-            &ldquo;Ordinal # of hit&rdquo; refers to the position/index of the
-            particular damaging strike in question, within the ordering of all
-            damaging strikes produced by the attack in question. For example,
-            when using Iron Arrow, the first damaging strike (the one that
-            damages the first monster struck by the arrow) has an ordinal # of
-            1, the next damaging strike an ordinal # of 2, and so on.
-          </p>
-
-          <p>
-            It is possible for enemies to have negative WDEF values, due to
-            effects like Threaten.
-          </p>
-
-          <p>
-            The &ldquo;Attack with Dark Power&rdquo; in the description of the
-            Panic skills is a probability of the target having Darkness (the
-            status effect that lowers WACC) inflicted on them, and is unrelated
-            to the damage that each skill deals. Both Panic and Coma lack
-            attack periods, because they are combo finishers.
-          </p>
-
-          <p>
-            Venom skills (Venomous Star and Venomous Stab) have their damage
-            calculated for <strong>just the venom</strong> damage over time.
-            Also note that these same skills make use of the &ldquo;Basic
-            attack&rdquo; parameter, as noted in their skill descriptions.
-          </p>
-
-          <p>
-            The damage of the Heaven&rsquo;s Hammer skill is calculated on the
-            server side. As a result, its exact damage formula has remained
-            somewhat elusive. Two versions are given here: the original
-            XiuzSource version, and a &ldquo;corrected&rdquo; version that uses
-            the attacker&rsquo;s mastery to determine the minimum damage. The
-            original XiuzSource version determines the minimum damage by simply
-            multiplying the maximum damage by 0.8.
-          </p>
-
-          <p>
-            The terms &ldquo;expectation&rdquo; and &ldquo;expected&rdquo; are
-            here used in
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Expected_value"
-              >the probability-theoretic sense</a
-            >. The &ldquo;&sigma;&rdquo; symbol refers to
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Standard_deviation"
-              >the standard deviation</a
-            >, which is conveniently in the same units/dimensions as the values
-            themselves. We often talk about the so-called
-            &ldquo;stability&rdquo; of damage, which is essentially a way of
-            talking about the
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Statistical_dispersion"
-              >dispersion</a
-            >
-            of the damage instances, and the standard deviation is one way of
-            quantifying dispersion. However, care must be taken when comparing
-            two separate standard deviations, because standard deviation is an
-            <em>absolute</em> measure of dispersion. As a result, two
-            characters who appear to have roughly the <em>same</em> damage
-            stability, but the magnitude of whose damage outputs &mdash; say,
-            damage per line, for example &mdash; are significantly different,
-            will have damage-per-line distributions with significantly
-            <em>different</em> standard deviations. This is because the
-            standard deviation is expressed in the same dimensions as the
-            values themselves, so it scales up linearly as the values of the
-            distribution are scaled up. To help get a <em>relative</em> (and
-            thus more comparable) measure of damage stability,
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Coefficient_of_variation"
-              >the coefficient of variation</a
-            >
-            (CV) is used. The CV is
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Dimensionless_quantity"
-              >a dimensionless quantity</a
-            >.
-          </p>
-
-          <p>
-            If you see an asterisk (*) on the right-hand side of a damage value
-            (particularly, the upper bound of a range), it means that that
-            value is <em>exactly</em> an integer, before it is sampled from.
-            Damage ranges are <em>virtually</em> intervals of real numbers
-            (actually
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Floating-point_arithmetic"
-              >floating point numbers</a
-            >, of course). To get a particular damage outcome, the interval is
-            sampled from (as a
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Continuous_uniform_distribution"
-              >continuous uniform distribution</a
-            >), the sample is then
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Clamping_(graphics)"
-              >clamped</a
-            >
-            to a minimum of 1, and the result&rsquo;s fractional part is then
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://en.wikipedia.org/wiki/Truncation"
-              >truncated</a
-            >. There&rsquo;s some finer details here about the exact order of
-            operations, but the point is that when a particular bound is
-            <em>exactly</em> an integer, it becomes unclear whether or not it
-            can ever be sampled. This is perhaps a bigger deal than it usually
-            would be, because the fractional parts of the samples are
-            truncated, making a sample of e.g. 2.999 effectively much less
-            (viz. 1 less, instead of 0.001 less) than a sample of 3. If you see
-            an asterisked value, you can effectively just subtract 1 from it.
-            The method here chosen to display these liminal values is largely
-            for completeness.<sup>[3]</sup>
-          </p>
-
           <details>
-            <summary>Footnotes for &ldquo;You Should Know&rdquo;</summary>
+            <summary>You Should Know&hellip;</summary>
 
             <p>
-              [1]: This is technically untrue; speeds above 9 are in fact
-              possible, but would require equipping a weapon with a speed above
-              9 (because there is no way to increase speed values with
-              (de)buffs or similar). Such weapons conventionally do not exist,
-              although see for example the
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://maplelegends.com/lib/equip?id=01322053"
-                >Golden Mace</a
-              >, which has a speed of 15 (but does not actually exist in
-              MapleLegends as far as I know). As a result, attack period values
-              for speeds above 9 are unknown &mdash; and they may just be the
-              same as for speed 9.
+              Weapon speeds are calculated based on the speed of the weapon
+              itself, in addition to any booster effects that may be active.
+              The slowest possible speed is 9,<sup>[1]</sup> and the fastest is
+              2. Booster skills add &minus;2 to your speed value, and so does
+              Speed Infusion.<sup>[2]</sup> Booster skills and Speed Infusion
+              do stack, granting &minus;4 speed (in addition to the speed of
+              your weapon) when both are active.<sup>[2]</sup> However, your
+              speed can never go below 2, so e.g. a weapon with speed 3 that is
+              affected by a Booster skill is speed 2, <strong>not</strong> 1.
+              You may need to use an external reference and/or look in the game
+              files to find out the speed of any given weapon, because only
+              some weapons have their true speeds displayed in-game. Others
+              have ambiguous speed descriptions like &ldquo;Fast&rdquo;, which
+              could correspond to a speed of 4, or to a speed of 5.
             </p>
 
             <p>
-              [2]: Depending on the implementation, this may or may not be
-              exactly correct. In early versions of MapleStory that have
-              pirates (e.g. GMS v62), the client did not have a separate buff
-              opcode for Speed Infusion, so Speed Infusion has to be
-              &ldquo;emulated&rdquo; by using an ordinary Booster buff with
-              twice the magnitude of a normal Booster skill (4 instead of 2).
-              The result is thus usually the same, but for jobs that lack a
-              booster skill of their own, this can be a big boon (&minus;4 to
-              the speed of their weapon when affected by Speed Infusion,
-              instead of the expected &minus;2). Also worth noting here is that
-              many implementations lack a separate opcode for Spell Booster, so
-              Speed Infusion can effectively lower spellcasting speeds beyond
-              the usual &minus;2 of maxed Spell Booster (all the way to
-              &minus;4, potentially). This is another artifact/bug of early
-              pirate implementations, and spellcasting speeds below &minus;2
-              are not handled by this calculator.
+              Stats (STR, DEX, INT, LUK) are total stat values, after base
+              stats
+              <strong>and</strong> equipment <strong>and</strong> buffs.
+              Likewise, total WATK is the sum of all WATK from your equipment
+              (including both your weapon, and your other equips), plus WATK
+              from skills, plus WATK from buffs. Total MATK is defined
+              similarly to total WATK, but it should be noted that it should
+              also include the MATK that is due to your total INT score. This
+              &ldquo;total MATK&rdquo; is displayed in-game as
+              &ldquo;MAGIC&rdquo; inside of the &ldquo;DETAIL&rdquo; tab of the
+              &ldquo;CHARACTER STATS&rdquo; window (in the keybinding GUI, this
+              window is listed as &ldquo;ABILITY&rdquo;).
             </p>
 
             <p>
-              [3]: Typically (see e.g.
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html#random()"
-                >in Java</a
-              >), software functions that are intended to return a
-              uniformly-distributed sample from an interval of floating point
-              numbers do so from a nominally
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://mathworld.wolfram.com/Half-ClosedInterval.html"
-                >half-closed interval</a
-              >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
-              closed/included, while the upper &ldquo;half&rdquo; is
-              open/excluded. As a result, an upper range bound that has an
-              asterisk (*) can only be guaranteed to <em>nominally</em> be part
-              of the range, and it may or may not have a nonzero probability of
-              being sampled, depending upon the implementation. For reference,
-              the number of
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format"
-                >single-precision</a
-              >
-              (32-bit, typically <code>float</code> in
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://en.wikipedia.org/wiki/C_(programming_language)"
-                >C</a
-              >)
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://en.wikipedia.org/wiki/IEEE_754"
-                >IEEE 754</a
-              >
-              floating point numbers within
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://en.wikipedia.org/wiki/Unit_interval"
-                >the unit interval</a
-              >
-              is 1,065,353,217 &mdash; this number is only for scale, since
-              precision varies depending on how far away from zero you are, and
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format"
-                >double-precision</a
-              >
-              floating point numbers are common as well &mdash; but the point
-              is that it shouldn&rsquo;t matter much for expected values and
-              variances. It&rsquo;s just that it may (or may not) be impossible
-              to <em>actually witness</em> that asterisked damage value.
+              The mastery is given here as a percentage. Your mastery can never
+              be less than 10%, but it can be higher, if you have one or more
+              relevant mastery skills (&ldquo;relevant&rdquo; because mastery
+              skills typically only apply to certain classes of weapons, e.g.
+              only axes). Most mastery skills increase your mastery up to a
+              total of 60%, but some fourth-job skills can take you up to as
+              high as 90%. Mastery for magical attacks works on a per-spell
+              basis (based on which spell it is and what level it&rsquo;s at),
+              and should be listed in-game within the spell&rsquo;s
+              description.
             </p>
+
+            <p>
+              The &ldquo;Damage multi&rdquo; field under &ldquo;Skill&rdquo;
+              refers to the damage percentage listed in the description of a
+              physical attack; for example, the Power Strike skill has a
+              &ldquo;Damage multi&rdquo; of 260% at max level. The &ldquo;Basic
+              attack&rdquo; only applies to magical attacks and summons, and is
+              generally listed in the skill description as &ldquo;basic
+              attack&rdquo;; for example, the Magic Claw skill has a
+              &ldquo;Basic attack&rdquo; of 40 at max level.
+              &ldquo;Lines&rdquo; refers to how many lines of damage the
+              attacking skill does; for example, this value is 1 for Power
+              Strike and 2 for Magic Claw. It is assumed that attacks with more
+              than one line of damage calculate each line identically, even if
+              the actual <em>outcomes</em> for the various lines may differ due
+              to random chance. This assumption is violated by skills like
+              Barrage.
+            </p>
+
+            <p>
+              Damage multipliers from skills, critical hits, and elemental
+              effects work in tandem. All of these influences combine into a
+              single multiplier that we will here refer to as &ldquo;<strong
+                >the</strong
+              >
+              damage multiplier&rdquo;. This is the number by which you
+              multiply your basic attack damage (for physical attacks, this is
+              your basic attack &mdash; i.e. not using a skill &mdash; with no
+              crits nor elemental effects nor reduction due to WDEF). These
+              sources of damage multiplier (skills, crits, elemental effects)
+              are
+              <strong>additive</strong> in the sense that these multipliers are
+              summed together, and then that sum makes up <em>the</em> damage
+              multiplier.
+              <strong
+                >Note that basic attacks have a &ldquo;skill&rdquo; multiplier
+                of 1</strong
+              >, i.e. as if you were using an attacking skill that said
+              &ldquo;100% damage&rdquo; in the description. For example, say
+              you use the Arrow Blow skill as an archer who has maxed both
+              Arrow Blow (described in-game as &ldquo;Damage 260%&rdquo;) and
+              Critical Shot (described in-game as &ldquo;40% success rate,
+              critical damage 200%&rdquo;). Let&rsquo;s assume that this
+              particular use of Arrow Blow is a crit, and thus we get the
+              benefit of the &ldquo;critical damage 200%&rdquo;. The damage
+              multiplier is the sum of the multipliers from Arrow Blow and
+              Critical Shot: 2.6&nbsp;+&nbsp;2&nbsp;=&nbsp;4.6. Thus, we expect
+              this attack to (again, assuming the monster has 0 WDEF) do 4.6
+              times as much as a non-critical basic attack would. Note that
+              magic attacks work somewhat differently, and (as far as I know)
+              do not use this additive notion of &ldquo;damage
+              multiplier&rdquo;.
+            </p>
+
+            <p>
+              You can select a number of targets greater than one, but note
+              that this does <strong>not</strong> take into account the damage
+              taken by any of said virtual enemies, except for one of them. The
+              ability to select a number of targets is only there for skills
+              like Heal, which change their per-line damage based on the total
+              number of targets. Note that when casting Heal (maximum of 6
+              targets), the caster counts as a target, thus lowering the
+              maximum number of possible enemy targets from 6 to 5. Also note
+              that Heal, unlike most spells, uses the &ldquo;Damage
+              multi&rdquo; rather than the &ldquo;Basic attack&rdquo; (the
+              damage multi is typically 300% at maximum level).
+            </p>
+
+            <p>
+              The in-game description of the Sharp Eyes skill is somewhat
+              misleading. At max level, the skill grants &ldquo;[Critical]
+              Damage + 40%&rdquo;. However, this should probably read
+              &ldquo;+140%&rdquo;, because the actual value that is added to
+              the damage multiplier is 1.4. For those who already have a
+              critical-hit-granting skill (archers,
+              assassins/hermits/nightlords, and situationally
+              marauders/buccaneers), interpreting Sharp Eyes is pretty
+              straightforward: it just adds something to your already-existing
+              critical chance and to your already-existing critical multiplier.
+              For example, an archer with maxed Critical Shot and maxed Sharp
+              Eyes has a 0.4&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.55 probability of
+              critting, and a critical multiplier of
+              2&nbsp;+&nbsp;1.4&nbsp;=&nbsp;3.4. For physical attackers who do
+              <em>not</em> already have a critical-hit-granting skill, being
+              buffed with maxed Sharp Eyes means an overall
+              0&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.15 probability of critting, and
+              a critical multiplier of 1.4; <strong>not</strong> a critical
+              multiplier of 0.4. Note that the value referred to here as the
+              &ldquo;critical multiplier&rdquo; is
+              <strong>additive</strong> and <em>only</em> serves to cumulate
+              into the overall &ldquo;damage multiplier&rdquo;. For more on
+              this, see the previous paragraph. For magical attacks, the
+              probability of critting with maxed Sharp Eyes is also 0.15, but
+              an attack that crits does <strong>not</strong> add 1.4 to the
+              damage multiplier of a non-crit, as you would expect (magical
+              attacks do not use the same notion of &ldquo;damage
+              multiplier&rdquo;). Instead, it simply multiplies the overall
+              damage of the magical attack by a factor of 1.4. Nevertheless, if
+              you want to use the calculator for magical attacks combined with
+              Sharp Eyes, you should set the values in the inputs below as if
+              you were setting them for a physical attacker who has no
+              critical-hit-granting skill of their own.
+            </p>
+
+            <p>
+              &ldquo;Ordinal # of hit&rdquo; refers to the position/index of
+              the particular damaging strike in question, within the ordering
+              of all damaging strikes produced by the attack in question. For
+              example, when using Iron Arrow, the first damaging strike (the
+              one that damages the first monster struck by the arrow) has an
+              ordinal # of 1, the next damaging strike an ordinal # of 2, and
+              so on.
+            </p>
+
+            <p>
+              It is possible for enemies to have negative WDEF values, due to
+              effects like Threaten.
+            </p>
+
+            <p>
+              The &ldquo;Attack with Dark Power&rdquo; in the description of
+              the Panic skills is a probability of the target having Darkness
+              (the status effect that lowers WACC) inflicted on them, and is
+              unrelated to the damage that each skill deals. Both Panic and
+              Coma lack attack periods, because they are combo finishers.
+            </p>
+
+            <p>
+              Venom skills (Venomous Star and Venomous Stab) have their damage
+              calculated for <strong>just the venom</strong> damage over time.
+              Also note that these same skills make use of the &ldquo;Basic
+              attack&rdquo; parameter, as noted in their skill descriptions.
+            </p>
+
+            <p>
+              The damage of the Heaven&rsquo;s Hammer skill is calculated on
+              the server side. As a result, its exact damage formula has
+              remained somewhat elusive. Two versions are given here: the
+              original XiuzSource version, and a &ldquo;corrected&rdquo;
+              version that uses the attacker&rsquo;s mastery to determine the
+              minimum damage. The original XiuzSource version determines the
+              minimum damage by simply multiplying the maximum damage by 0.8.
+            </p>
+
+            <p>
+              The terms &ldquo;expectation&rdquo; and &ldquo;expected&rdquo;
+              are here used in
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Expected_value"
+                >the probability-theoretic sense</a
+              >. The &ldquo;&sigma;&rdquo; symbol refers to
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Standard_deviation"
+                >the standard deviation</a
+              >, which is conveniently in the same units/dimensions as the
+              values themselves. We often talk about the so-called
+              &ldquo;stability&rdquo; of damage, which is essentially a way of
+              talking about the
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Statistical_dispersion"
+                >dispersion</a
+              >
+              of the damage instances, and the standard deviation is one way of
+              quantifying dispersion. However, care must be taken when
+              comparing two separate standard deviations, because standard
+              deviation is an
+              <em>absolute</em> measure of dispersion. As a result, two
+              characters who appear to have roughly the <em>same</em> damage
+              stability, but the magnitude of whose damage outputs &mdash; say,
+              damage per line, for example &mdash; are significantly different,
+              will have damage-per-line distributions with significantly
+              <em>different</em> standard deviations. This is because the
+              standard deviation is expressed in the same dimensions as the
+              values themselves, so it scales up linearly as the values of the
+              distribution are scaled up. To help get a <em>relative</em> (and
+              thus more comparable) measure of damage stability,
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Coefficient_of_variation"
+                >the coefficient of variation</a
+              >
+              (CV) is used. The CV is
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Dimensionless_quantity"
+                >a dimensionless quantity</a
+              >.
+            </p>
+
+            <p>
+              If you see an asterisk (*) on the right-hand side of a damage
+              value (particularly, the upper bound of a range), it means that
+              that value is <em>exactly</em> an integer, before it is sampled
+              from. Damage ranges are <em>virtually</em> intervals of real
+              numbers (actually
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Floating-point_arithmetic"
+                >floating point numbers</a
+              >, of course). To get a particular damage outcome, the interval
+              is sampled from (as a
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Continuous_uniform_distribution"
+                >continuous uniform distribution</a
+              >), the sample is then
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Clamping_(graphics)"
+                >clamped</a
+              >
+              to a minimum of 1, and the result&rsquo;s fractional part is then
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://en.wikipedia.org/wiki/Truncation"
+                >truncated</a
+              >. There&rsquo;s some finer details here about the exact order of
+              operations, but the point is that when a particular bound is
+              <em>exactly</em> an integer, it becomes unclear whether or not it
+              can ever be sampled. This is perhaps a bigger deal than it
+              usually would be, because the fractional parts of the samples are
+              truncated, making a sample of e.g. 2.999 effectively much less
+              (viz. 1 less, instead of 0.001 less) than a sample of 3. If you
+              see an asterisked value, you can effectively just subtract 1 from
+              it. The method here chosen to display these liminal values is
+              largely for completeness.<sup>[3]</sup>
+            </p>
+
+            <details>
+              <summary>Footnotes for &ldquo;You Should Know&rdquo;</summary>
+
+              <p>
+                [1]: This is technically untrue; speeds above 9 are in fact
+                possible, but would require equipping a weapon with a speed
+                above 9 (because there is no way to increase speed values with
+                (de)buffs or similar). Such weapons conventionally do not
+                exist, although see for example the
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://maplelegends.com/lib/equip?id=01322053"
+                  >Golden Mace</a
+                >, which has a speed of 15 (but does not actually exist in
+                MapleLegends as far as I know). As a result, attack period
+                values for speeds above 9 are unknown &mdash; and they may just
+                be the same as for speed 9.
+              </p>
+
+              <p>
+                [2]: Depending on the implementation, this may or may not be
+                exactly correct. In early versions of MapleStory that have
+                pirates (e.g. GMS v62), the client did not have a separate buff
+                opcode for Speed Infusion, so Speed Infusion has to be
+                &ldquo;emulated&rdquo; by using an ordinary Booster buff with
+                twice the magnitude of a normal Booster skill (4 instead of 2).
+                The result is thus usually the same, but for jobs that lack a
+                booster skill of their own, this can be a big boon (&minus;4 to
+                the speed of their weapon when affected by Speed Infusion,
+                instead of the expected &minus;2). Also worth noting here is
+                that many implementations lack a separate opcode for Spell
+                Booster, so Speed Infusion can effectively lower spellcasting
+                speeds beyond the usual &minus;2 of maxed Spell Booster (all
+                the way to &minus;4, potentially). This is another artifact/bug
+                of early pirate implementations, and spellcasting speeds below
+                &minus;2 are not handled by this calculator.
+              </p>
+
+              <p>
+                [3]: Typically (see e.g.
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Math.html#random()"
+                  >in Java</a
+                >), software functions that are intended to return a
+                uniformly-distributed sample from an interval of floating point
+                numbers do so from a nominally
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://mathworld.wolfram.com/Half-ClosedInterval.html"
+                  >half-closed interval</a
+                >; in particular, the lower &ldquo;half&rdquo; (read: bound) is
+                closed/included, while the upper &ldquo;half&rdquo; is
+                open/excluded. As a result, an upper range bound that has an
+                asterisk (*) can only be guaranteed to <em>nominally</em> be
+                part of the range, and it may or may not have a nonzero
+                probability of being sampled, depending upon the
+                implementation. For reference, the number of
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format"
+                  >single-precision</a
+                >
+                (32-bit, typically <code>float</code> in
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/C_(programming_language)"
+                  >C</a
+                >)
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/IEEE_754"
+                  >IEEE 754</a
+                >
+                floating point numbers within
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/Unit_interval"
+                  >the unit interval</a
+                >
+                is 1,065,353,217 &mdash; this number is only for scale, since
+                precision varies depending on how far away from zero you are,
+                and
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format"
+                  >double-precision</a
+                >
+                floating point numbers are common as well &mdash; but the point
+                is that it shouldn&rsquo;t matter much for expected values and
+                variances. It&rsquo;s just that it may (or may not) be
+                impossible to <em>actually witness</em> that asterisked damage
+                value.
+              </p>
+            </details>
           </details>
 
           <a href="#calculator" class="h-anchor"
@@ -625,7 +643,6 @@
                   id="crit-dmg"
                   name="crit-dmg"
                   min="0"
-                  max="300"
                   value="100"
                 />%
               </label>
@@ -742,6 +759,7 @@
                   </optgroup>
 
                   <optgroup label="Marksman">
+                    <option value="3221001">Piercing Arrow</option>
                     <option value="3221005">Frostprey</option>
                   </optgroup>
 
@@ -766,6 +784,10 @@
 
                   <optgroup label="Pirate">
                     <option value="5001002">Somersault Kick</option>
+                  </optgroup>
+
+                  <optgroup label="Buccaneer">
+                    <option value="5121002">Energy Orb</option>
                   </optgroup>
 
                   <optgroup label="Outlaw">
