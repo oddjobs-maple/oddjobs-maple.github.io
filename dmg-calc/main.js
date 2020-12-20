@@ -487,19 +487,63 @@ function main() {
                 minDmgPhysGoodAdjusted,
                 maxDmgPhysBadAdjusted,
             ].map(x => Math.max(x * dmgMultiCrit, 1) * afterModifier);
-        const range = [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x => Math.max(Math.trunc(x), 1));
-        const critRange = [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x => Math.max(Math.trunc(x), 1));
-        rangeOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] === maxDmgPhysGoodNoCrit && range[1] !== 1 ? "*" : ""}`;
-        critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${critRange[1] === maxDmgPhysGoodCrit && critRange[1] !== 1
+        // Lots of special-casing for Barrage, the only goddamn attack that
+        // does this...
+        const [maxDmgNoCritBarrage, maxDmgCritBarrage] = [
+            maxDmgPhysGoodNoCrit,
+            maxDmgPhysGoodCrit,
+        ].map(x => x *
+            (inputData.attack === Attack.Barrage
+                ? afterModBarrage(inputData.skillLines)
+                : 0));
+        const range = inputData.attack === Attack.Barrage
+            ? [
+                Math.max(Math.trunc(minDmgPhysBadNoCrit), 1),
+                Math.max(Math.trunc(maxDmgNoCritBarrage), 1),
+            ]
+            : [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit].map(x => Math.max(Math.trunc(x), 1));
+        const critRange = inputData.attack === Attack.Barrage
+            ? [
+                Math.max(Math.trunc(minDmgPhysBadCrit), 1),
+                Math.max(Math.trunc(maxDmgCritBarrage), 1),
+            ]
+            : [minDmgPhysBadCrit, maxDmgPhysGoodCrit].map(x => Math.max(Math.trunc(x), 1));
+        rangeOutput.textContent = `${range[0]} ~ ${range[1]}${range[1] ===
+            (inputData.attack === Attack.Barrage
+                ? maxDmgNoCritBarrage
+                : maxDmgPhysGoodNoCrit) && range[1] !== 1
             ? "*"
             : ""}`;
-        const combinedRangeTop = inputData.critProb > 0 ? critRange[1] : range[1];
-        totalRangeOutput.textContent = `${range[0] * inputData.skillLines} ~ ${combinedRangeTop * inputData.skillLines}${combinedRangeTop ===
-            (inputData.critProb > 0
-                ? maxDmgPhysGoodCrit
-                : maxDmgPhysGoodNoCrit) && combinedRangeTop !== 1
+        critRangeOutput.textContent = `${critRange[0]} ~ ${critRange[1]}${critRange[1] ===
+            (inputData.attack === Attack.Barrage
+                ? maxDmgCritBarrage
+                : maxDmgPhysGoodCrit) && critRange[1] !== 1
             ? "*"
             : ""}`;
+        const [combinedRangeTop, combinedRangeTopOneLine] = inputData.critProb > 0
+            ? [critRange[1], maxDmgPhysGoodCrit]
+            : [range[1], maxDmgPhysGoodNoCrit];
+        if (inputData.attack === Attack.Barrage) {
+            let totalRangeBottom = range[0] * Math.min(inputData.skillLines, 4);
+            for (let i = 5; i <= inputData.skillLines; ++i) {
+                totalRangeBottom += Math.max(Math.trunc(minDmgPhysBadNoCrit * afterModBarrage(i)), 1);
+            }
+            let totalRangeTop = combinedRangeTop * Math.min(inputData.skillLines, 4);
+            for (let i = 5; i <= inputData.skillLines; ++i) {
+                totalRangeTop += Math.max(Math.trunc(combinedRangeTopOneLine * afterModBarrage(i)), 1);
+            }
+            totalRangeOutput.textContent = `${totalRangeBottom} ~ \
+                                           ${totalRangeTop}${combinedRangeTop === combinedRangeTopOneLine &&
+                combinedRangeTop !== 1
+                ? "*"
+                : ""}`;
+        }
+        else {
+            totalRangeOutput.textContent = `${range[0] * inputData.skillLines} ~ ${combinedRangeTop * inputData.skillLines}${combinedRangeTop === combinedRangeTopOneLine &&
+                combinedRangeTop !== 1
+                ? "*"
+                : ""}`;
+        }
         const [expectedPerHitBadNoCrit, expectedPerHitBadCrit] = [
             truncClampedExpectation(minDmgPhysBadNoCrit, maxDmgPhysBadNoCrit),
             truncClampedExpectation(minDmgPhysBadCrit, maxDmgPhysBadCrit),
@@ -513,8 +557,20 @@ function main() {
         const expectedPerHitGood = critQ * expectedPerHitGoodNoCrit +
             inputData.critProb * expectedPerHitGoodCrit;
         const expectedPerHit = (expectedPerHitBad + expectedPerHitGood) / 2;
-        const expectedPerHitTotal = expectedPerHit * inputData.skillLines;
-        expectedPerHitOutput.textContent = expectedPerHit.toFixed(3);
+        const expectedPerHitTotal = inputData.attack === Attack.Barrage
+            ? (() => {
+                let accum = expectedPerHit * Math.min(inputData.skillLines, 4);
+                for (let i = 5; i <= inputData.skillLines; ++i) {
+                    accum += expectedPerHit * afterModBarrage(i);
+                }
+                return accum;
+            })()
+            : expectedPerHit * inputData.skillLines;
+        expectedPerHitOutput.textContent = (expectedPerHit *
+            (inputData.attack === Attack.Barrage
+                ? barrageEffectiveMulti(inputData.skillLines) /
+                    inputData.skillLines
+                : 1)).toFixed(3);
         expectedPerHitTotalOutput.textContent = expectedPerHitTotal.toFixed(3);
         // The "mainVariance" in the following variable names is intended to
         // indicate that this is a variance against the expectation across
@@ -543,15 +599,27 @@ function main() {
             cvPerHitOutput.classList.remove("error");
             sdPerHitTotalOutput.classList.remove("error");
             cvPerHitTotalOutput.classList.remove("error");
-            const sdPerHit = Math.sqrt(variancePerHit);
+            const sdPerHit = Math.sqrt(inputData.attack === Attack.Barrage
+                ? variancePerHit *
+                    (barrageEffectiveMulti(inputData.skillLines) /
+                        inputData.skillLines)
+                : variancePerHit);
             // This is mathematically valid because the damage/outcome of each
-            // hit is independent of the damage of any other hit, thus implying
-            // uncorrelatedness.  Furthermore, this implies that the variance
-            // of the sum of hits is the sum of the variance of said hits (see
-            // the Bienaymé formula/identity).
-            sdPerHitTotal = Math.sqrt(variancePerHit * inputData.skillLines);
+            // line is independent of the damage of any other line, thus
+            // implying uncorrelatedness.  Furthermore, this implies that the
+            // variance of the sum of lines is the sum of the variance of said
+            // lines (see the Bienaymé formula/identity).
+            sdPerHitTotal = Math.sqrt(variancePerHit *
+                (inputData.attack === Attack.Barrage
+                    ? barrageEffectiveMulti(inputData.skillLines)
+                    : inputData.skillLines));
             sdPerHitOutput.textContent = sdPerHit.toFixed(3);
-            cvPerHitOutput.textContent = (sdPerHit / expectedPerHit).toFixed(5);
+            cvPerHitOutput.textContent = (sdPerHit /
+                (expectedPerHit *
+                    (inputData.attack === Attack.Barrage
+                        ? barrageEffectiveMulti(inputData.skillLines) /
+                            inputData.skillLines
+                        : 1))).toFixed(5);
             sdPerHitTotalOutput.textContent = sdPerHitTotal.toFixed(3);
             cvPerHitTotalOutput.textContent = (sdPerHitTotal / expectedPerHitTotal).toFixed(5);
         }
@@ -575,10 +643,10 @@ function main() {
                 sdDpsOutput.classList.remove("error");
                 cvDpsOutput.classList.remove("error");
                 // This is mathematically valid because the damage/outcome of
-                // each hit is independent of the damage of any other hit, thus
-                // implying uncorrelatedness.  Furthermore, this implies that
-                // the variance of the sum of hits is the sum of the variance
-                // of said hits (see the Bienaymé formula/identity).
+                // each line is independent of the damage of any other line,
+                // thus implying uncorrelatedness.  Furthermore, this implies
+                // that the variance of the sum of lines is the sum of the
+                // variance of said lines (see the Bienaymé formula/identity).
                 const sdDps = Math.sqrt(attackHz) *
                     sdPerHitTotal; /*
               = sqrt(attackHz) * sqrt(variancePerHitTotal)
@@ -1098,6 +1166,13 @@ function main() {
             warnings.push("The ordinal # of your hit is greater than the total number \
                 of enemies being targeted.");
         }
+        if (inputData.attack === Attack.Barrage) {
+            warnings.push("You\u{2019}re attacking with Barrage; the attack period (and \
+                thus DPS value) is based on the spamming of solely Barrage. \
+                The projected DPS will thus be less than that of a \
+                hypothetical buccaneer, who would be attacking in between \
+                Barrages.");
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1191,6 +1266,12 @@ function afterModPhys(inputData) {
         default:
             return 1;
     }
+}
+function afterModBarrage(ord) {
+    return 2 ** Math.max(ord - 4, 0);
+}
+function barrageEffectiveMulti(lines) {
+    return Math.min(lines + 1, 4) + 2 ** Math.max(lines - 3, 0) - 2;
 }
 function caModifier(inputData) {
     if (!inputData.caActive) {

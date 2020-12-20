@@ -74,6 +74,7 @@ export enum Attack {
     VenomousStab = 4220005,
     SomersaultKick = 5001002,
     EnergyOrb = 5121002,
+    Barrage = 5121007,
     Octopus = 5211001,
     Gaviota = 5211002,
     WrathOfTheOctopi = 5220002,

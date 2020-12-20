@@ -357,6 +357,8 @@ export function attackPeriod(wepType, speed, attack) {
                     return;
             }
         }
+        case Attack.Barrage:
+            return 3240;
         case Attack.Octopus:
         case Attack.Gaviota:
         case Attack.WrathOfTheOctopi:
@@ -567,6 +569,8 @@ export function attackName(attack) {
             return "Somersault Kick";
         case Attack.EnergyOrb:
             return "Energy Orb";
+        case Attack.Barrage:
+            return "Barrage";
         case Attack.Octopus:
             return "Octopus";
         case Attack.Gaviota:
@@ -1003,6 +1007,10 @@ export const ATTACK_REQS = new Map([
         [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
     ],
     [
+        Attack.Barrage,
+        [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
+    ],
+    [
         Attack.Octopus,
         [
             new Set([Class.Pirate2nd]),
@@ -1134,6 +1142,7 @@ export const ATTACK_LINES = new Map([
     [Attack.VenomousStab, [1, 1, 1]],
     [Attack.SomersaultKick, [1, 1, 6]],
     [Attack.EnergyOrb, [1, 1, 6]],
+    [Attack.Barrage, [6, 6, 1]],
     [Attack.Octopus, [1, 1, 1]],
     [Attack.Gaviota, [1, 1, 6]],
     [Attack.WrathOfTheOctopi, [1, 1, 1]],

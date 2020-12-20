@@ -73,6 +73,7 @@ export var Attack;
     Attack[Attack["VenomousStab"] = 4220005] = "VenomousStab";
     Attack[Attack["SomersaultKick"] = 5001002] = "SomersaultKick";
     Attack[Attack["EnergyOrb"] = 5121002] = "EnergyOrb";
+    Attack[Attack["Barrage"] = 5121007] = "Barrage";
     Attack[Attack["Octopus"] = 5211001] = "Octopus";
     Attack[Attack["Gaviota"] = 5211002] = "Gaviota";
     Attack[Attack["WrathOfTheOctopi"] = 5220002] = "WrathOfTheOctopi";
