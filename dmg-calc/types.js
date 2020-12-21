@@ -85,8 +85,11 @@ export var Attack;
     Attack[Attack["BurstFire"] = 5210000] = "BurstFire";
     Attack[Attack["Octopus"] = 5211001] = "Octopus";
     Attack[Attack["Gaviota"] = 5211002] = "Gaviota";
+    Attack[Attack["HomingBeacon"] = 5211006] = "HomingBeacon";
     Attack[Attack["WrathOfTheOctopi"] = 5220002] = "WrathOfTheOctopi";
+    Attack[Attack["RapidFire"] = 5221004] = "RapidFire";
     Attack[Attack["BattleshipCannon"] = 5221007] = "BattleshipCannon";
+    Attack[Attack["BattleshipTorpedo"] = 5221008] = "BattleshipTorpedo";
 })(Attack || (Attack = {}));
 export var Spell;
 (function (Spell) {

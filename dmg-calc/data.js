@@ -305,6 +305,7 @@ export function attackPeriod(wepType, speed, attack) {
             }
         }
         case Attack.Hurricane:
+        case Attack.RapidFire:
             return 120;
         case Attack.Phoenix:
         case Attack.Frostprey:
@@ -452,6 +453,23 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.Gaviota:
         case Attack.WrathOfTheOctopi:
             return 1530;
+        case Attack.HomingBeacon:
+        case Attack.BattleshipTorpedo: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 720;
+                case 3 /* Faster3 */:
+                    return 780;
+                case 4 /* Fast4 */:
+                    return 840;
+                case 5 /* Fast5 */:
+                    return 900;
+                case 6 /* Normal */:
+                    return 960;
+                default:
+                    return;
+            }
+        }
         case Attack.BattleshipCannon: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -700,10 +718,16 @@ export function attackName(attack) {
             return "Octopus";
         case Attack.Gaviota:
             return "Gaviota";
+        case Attack.HomingBeacon:
+            return "Homing Beacon";
         case Attack.WrathOfTheOctopi:
             return "Wrath of the Octopi";
+        case Attack.RapidFire:
+            return "Rapid Fire";
         case Attack.BattleshipCannon:
             return "Battleship Cannon";
+        case Attack.BattleshipTorpedo:
+            return "Battleship Torpedo";
     }
 }
 export function spellName(spell) {
@@ -1257,6 +1281,10 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.HomingBeacon,
+        [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
+    ],
+    [
         Attack.WrathOfTheOctopi,
         [
             new Set([Class.Pirate2nd]),
@@ -1283,7 +1311,15 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.RapidFire,
+        [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Gun])],
+    ],
+    [
         Attack.BattleshipCannon,
+        [new Set([Class.Pirate2nd]), 121, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.BattleshipTorpedo,
         [new Set([Class.Pirate2nd]), 121, new Set([WeaponType.Gun])],
     ],
 ]);
@@ -1356,8 +1392,11 @@ export const ATTACK_LINES = new Map([
     [Attack.BurstFire, [3, 3, 1]],
     [Attack.Octopus, [1, 1, 1]],
     [Attack.Gaviota, [1, 1, 6]],
+    [Attack.HomingBeacon, [1, 1, 1]],
     [Attack.WrathOfTheOctopi, [1, 1, 1]],
+    [Attack.RapidFire, [1, 1, 1]],
     [Attack.BattleshipCannon, [3, 4, 1]],
+    [Attack.BattleshipTorpedo, [1, 1, 6]],
 ]);
 /**
  * The first two numbers of the 3-tuple represent the minimum and maximum

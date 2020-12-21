@@ -86,8 +86,11 @@ export enum Attack {
     BurstFire = 5210000,
     Octopus = 5211001,
     Gaviota = 5211002,
+    HomingBeacon = 5211006,
     WrathOfTheOctopi = 5220002,
+    RapidFire = 5221004,
     BattleshipCannon = 5221007,
+    BattleshipTorpedo = 5221008,
 }
 
 export enum Spell {
