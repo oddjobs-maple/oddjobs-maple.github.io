@@ -282,6 +282,7 @@ function main() {
                     case Attack.VenomousStab:
                         return minDmgVenom(inputData);
                     case Attack.SomersaultKick:
+                    case Attack.AerialStrike:
                         return minDmgSomersaultKick(inputData);
                     default:
                         return minDmgPhys(inputData, false);
@@ -322,6 +323,7 @@ function main() {
                     case Attack.VenomousStab:
                         return maxDmgVenom(inputData);
                     case Attack.SomersaultKick:
+                    case Attack.AerialStrike:
                         return maxDmgSomersaultKick(inputData);
                     default:
                         return maxDmgPhys(inputData, true);
@@ -348,6 +350,7 @@ function main() {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                     case Attack.SomersaultKick:
+                    case Attack.AerialStrike:
                         return minDmgPhysBad;
                     case Attack.Panic:
                     case Attack.Coma:
@@ -380,6 +383,7 @@ function main() {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                     case Attack.SomersaultKick:
+                    case Attack.AerialStrike:
                         return maxDmgPhysGood;
                     case Attack.Panic:
                     case Attack.Coma:
@@ -970,8 +974,8 @@ function main() {
                     if (inputData.wepType === WeaponType.Claw) {
                         warnings.push("Your damage multi \u{2260}100%, but \
                             you\u{2019}re a pirate using a claw. \
-                            Claws\u{2019} interaction with Somersault Kick is \
-                            poorly understood.");
+                            Claws\u{2019} interaction with Somersault \
+                            Kick/Aerial Strike is poorly understood.");
                     }
                 }
                 break;
@@ -1092,9 +1096,11 @@ function main() {
                 warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but your number of targets >${maxTargets}.`);
             }
         }
-        if (inputData.attack === Attack.SomersaultKick) {
-            if (inputData.wepType !== WeaponType.Knuckler &&
-                inputData.wepType !== WeaponType.None) {
+        if (inputData.attack === Attack.SomersaultKick ||
+            inputData.attack === Attack.AerialStrike) {
+            if (inputData.attack === Attack.SomersaultKick &&
+                inputData.wepType !== WeaponType.None &&
+                inputData.wepType !== WeaponType.Knuckler) {
                 warnings.push("You\u{2019}re attacking with Somersault Kick, and have a \
                     weapon equipped that isn\u{2019}t a knuckler; the attack \
                     period is given on a best-effort basis that may or may \
@@ -1105,7 +1111,7 @@ function main() {
                 case WeaponType.Crossbow:
                 case WeaponType.Claw:
                 case WeaponType.Gun:
-                    warnings.push(`You\u{2019}re using Somersault Kick with ${indefinite(weaponTypeName(inputData.wepType))} equipped; the damage calculation is done on a \
+                    warnings.push(`You\u{2019}re using ${attackName(inputData.attack)} with ${indefinite(weaponTypeName(inputData.wepType))} equipped; the damage calculation is done on a \
                         best-effort basis that may or may not be accurate.`);
                     break;
                 default:
@@ -1166,19 +1172,35 @@ function main() {
             warnings.push("The ordinal # of your hit is greater than the total number \
                 of enemies being targeted.");
         }
-        if (inputData.attack === Attack.Barrage) {
-            warnings.push("You\u{2019}re attacking with Barrage; the attack period (and \
-                thus DPS value) is based on the spamming of solely Barrage. \
-                The projected DPS will thus be less than that of a \
-                hypothetical buccaneer, who would be attacking in between \
-                Barrages.");
+        function delayWarn(jobName) {
+            const atkName = attackName(inputData.attack);
+            warnings.push(`You\u{2019}re attacking with ${atkName}; the attack period \
+                (and thus DPS value) is based on the spamming of solely \
+                ${atkName}. The projected DPS will thus be less than that of \
+                a hypothetical ${jobName}, who would be attacking in between \
+                ${atkName}s.`);
         }
-        if (inputData.attack === Attack.BoomerangStep) {
-            warnings.push("You\u{2019}re attacking with Boomerang Step; the attack \
-                period (and thus DPS value) is based on the spamming of \
-                solely Boomerang Step. The projected DPS will thus be less \
-                than that of a hypothetical shadower, who would be attacking \
-                in between Boomerang Steps.");
+        switch (inputData.attack) {
+            case Attack.BoomerangStep:
+                delayWarn("shadower");
+                break;
+            case Attack.Barrage:
+                delayWarn("buccaneer");
+                break;
+            case Attack.RecoilShot:
+                delayWarn("gunslinger");
+                break;
+            case Attack.Flamethrower:
+            case Attack.IceSplitter:
+                delayWarn("outlaw");
+                break;
+            case Attack.AerialStrike:
+                delayWarn("corsair");
+                break;
+        }
+        if (inputData.attack === Attack.Flamethrower) {
+            warnings.push("The damage calculation used here for Flamethrower does not \
+                take into account the flaming/burning damage over time.");
         }
         /*======== Remove old warnings display ========*/
         {
@@ -1397,7 +1419,8 @@ function minDmgVenom(inputData) {
         inputData.skillBasicAtk);
 }
 /**
- * Somersault Kick always "stabs".
+ * Somersault Kick always "stabs".  The same logic applies to Aerial Strike, so
+ * this function is used for it as well.
  */
 function maxDmgSomersaultKick(inputData) {
     switch (inputData.wepType) {
@@ -1414,7 +1437,8 @@ function maxDmgSomersaultKick(inputData) {
     }
 }
 /**
- * Somersault Kick always "stabs".
+ * Somersault Kick always "stabs".  The same logic applies to Aerial Strike, so
+ * this function is used for it as well.
  */
 function minDmgSomersaultKick(inputData) {
     switch (inputData.wepType) {

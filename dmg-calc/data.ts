@@ -474,10 +474,17 @@ export function attackPeriod(
                     return;
             }
         }
+        case Attack.RecoilShot:
+            return 2310;
         case Attack.Octopus:
         case Attack.Gaviota:
         case Attack.WrathOfTheOctopi:
             return 1530;
+        case Attack.Flamethrower:
+        case Attack.IceSplitter:
+            return 1050;
+        case Attack.AerialStrike:
+            return 5000;
         case Attack.HomingBeacon:
         case Attack.BattleshipTorpedo: {
             switch (speed) {
@@ -743,16 +750,24 @@ export function attackName(attack: Attack): string {
             return "Invisible Shot";
         case Attack.BlankShot:
             return "Blank Shot";
+        case Attack.RecoilShot:
+            return "Recoil Shot";
         case Attack.BurstFire:
             return "Burst Fire";
         case Attack.Octopus:
             return "Octopus";
         case Attack.Gaviota:
             return "Gaviota";
+        case Attack.Flamethrower:
+            return "Flamethrower";
+        case Attack.IceSplitter:
+            return "Ice Splitter";
         case Attack.HomingBeacon:
             return "Homing Beacon";
         case Attack.WrathOfTheOctopi:
             return "Wrath of the Octopi";
+        case Attack.AerialStrike:
+            return "Aerial Strike";
         case Attack.RapidFire:
             return "Rapid Fire";
         case Attack.BattleshipCannon:
@@ -1262,6 +1277,10 @@ export const ATTACK_REQS: Map<
         [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
     ],
     [
+        Attack.RecoilShot,
+        [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
+    ],
+    [
         Attack.BurstFire,
         [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
     ],
@@ -1318,11 +1337,45 @@ export const ATTACK_REQS: Map<
         ],
     ],
     [
+        Attack.Flamethrower,
+        [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.IceSplitter,
+        [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
+    ],
+    [
         Attack.HomingBeacon,
         [new Set([Class.Pirate2nd]), 70, new Set([WeaponType.Gun])],
     ],
     [
         Attack.WrathOfTheOctopi,
+        [
+            new Set([Class.Pirate2nd]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.AerialStrike,
         [
             new Set([Class.Pirate2nd]),
             120,
@@ -1429,11 +1482,15 @@ export const ATTACK_LINES: Map<Attack, [number, number, number]> = new Map([
     [Attack.Barrage, [6, 6, 1]],
     [Attack.InvisibleShot, [1, 1, 3]],
     [Attack.BlankShot, [1, 1, 3]],
+    [Attack.RecoilShot, [1, 1, 1]],
     [Attack.BurstFire, [3, 3, 1]],
     [Attack.Octopus, [1, 1, 1]],
     [Attack.Gaviota, [1, 1, 6]],
+    [Attack.Flamethrower, [1, 1, 6]],
+    [Attack.IceSplitter, [1, 1, 6]],
     [Attack.HomingBeacon, [1, 1, 1]],
     [Attack.WrathOfTheOctopi, [1, 1, 1]],
+    [Attack.AerialStrike, [1, 1, 15]],
     [Attack.RapidFire, [1, 1, 1]],
     [Attack.BattleshipCannon, [3, 4, 1]],
     [Attack.BattleshipTorpedo, [1, 1, 6]],
