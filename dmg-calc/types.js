@@ -56,6 +56,8 @@ export var Attack;
     Attack[Attack["Panic"] = 1111003] = "Panic";
     Attack[Attack["Coma"] = 1111005] = "Coma";
     Attack[Attack["Rush"] = 1121006] = "Rush";
+    Attack[Attack["Brandish"] = 1121008] = "Brandish";
+    Attack[Attack["Blast"] = 1221009] = "Blast";
     Attack[Attack["HeavensHammerXiuz"] = 1221011] = "HeavensHammerXiuz";
     Attack[Attack["HeavensHammerXiuzCorrected"] = 1221111] = "HeavensHammerXiuzCorrected";
     Attack[Attack["CrusherHigh"] = 1311001] = "CrusherHigh";

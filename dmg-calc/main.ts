@@ -472,6 +472,7 @@ function main(): void {
                     case Attack.VenomousStab:
                         return minDmgVenom(inputData);
                     case Attack.Rush:
+                    case Attack.Blast:
                     case Attack.CrusherHigh:
                     case Attack.CrusherLow:
                     case Attack.SomersaultKick:
@@ -518,6 +519,7 @@ function main(): void {
                     case Attack.VenomousStab:
                         return maxDmgVenom(inputData);
                     case Attack.Rush:
+                    case Attack.Blast:
                     case Attack.CrusherHigh:
                     case Attack.CrusherLow:
                     case Attack.SomersaultKick:
@@ -535,6 +537,7 @@ function main(): void {
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
                     case Attack.Rush:
+                    case Attack.Blast:
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
                     case Attack.CrusherHigh:
@@ -572,6 +575,7 @@ function main(): void {
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
                     case Attack.Rush:
+                    case Attack.Blast:
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
                     case Attack.CrusherHigh:
@@ -2181,7 +2185,7 @@ function minDmgVenom(inputData: InputData): number {
 
 /**
  * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
- * Crusher, and Rush, so this function is used for those as well.
+ * Crusher, Rush, and Blast, so this function is used for those as well.
  */
 function maxDmgSomersaultKick(inputData: InputData): number {
     switch (inputData.wepType) {
@@ -2200,7 +2204,7 @@ function maxDmgSomersaultKick(inputData: InputData): number {
 
 /**
  * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
- * Crusher, and Rush, so this function is used for those as well.
+ * Crusher, Rush, and Blast, so this function is used for those as well.
  */
 function minDmgSomersaultKick(inputData: InputData): number {
     switch (inputData.wepType) {

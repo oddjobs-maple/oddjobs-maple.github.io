@@ -57,6 +57,8 @@ export enum Attack {
     Panic = 1111003,
     Coma = 1111005,
     Rush = 1121006,
+    Brandish = 1121008,
+    Blast = 1221009,
     HeavensHammerXiuz = 1221011,
     HeavensHammerXiuzCorrected = 1221111,
     CrusherHigh = 1311001,

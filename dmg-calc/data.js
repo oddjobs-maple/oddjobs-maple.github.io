@@ -286,6 +286,27 @@ export function attackPeriod(wepType, speed, attack) {
             return;
         case Attack.Rush:
             return 1770;
+        case Attack.Brandish:
+        case Attack.Blast: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 630;
+                case 3 /* Faster3 */:
+                    return 690;
+                case 4 /* Fast4 */:
+                    return 750;
+                case 5 /* Fast5 */:
+                    return 810;
+                case 6 /* Normal */:
+                    return 840;
+                case 7 /* Slow7 */:
+                    return 900;
+                case 8 /* Slow8 */:
+                    return 960;
+                default:
+                    return;
+            }
+        }
         case Attack.CrusherHigh: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -788,6 +809,10 @@ export function attackName(attack) {
             return "Coma";
         case Attack.Rush:
             return "Rush";
+        case Attack.Brandish:
+            return "Brandish";
+        case Attack.Blast:
+            return "Blast";
         case Attack.HeavensHammerXiuz:
             return "Heaven\u{2019}s Hammer (original Xiuz)";
         case Attack.HeavensHammerXiuzCorrected:
@@ -1120,6 +1145,32 @@ export const ATTACK_REQS = new Map([
                 WeaponType.Claw,
                 WeaponType.Knuckler,
                 WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
+        Attack.Brandish,
+        [
+            new Set([Class.Warrior]),
+            120,
+            new Set([
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+            ]),
+        ],
+    ],
+    [
+        Attack.Blast,
+        [
+            new Set([Class.Warrior]),
+            120,
+            new Set([
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedMace,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedMace,
             ]),
         ],
     ],
@@ -1693,6 +1744,8 @@ export const ATTACK_LINES = new Map([
     [Attack.Panic, [1, 1, 1]],
     [Attack.Coma, [1, 1, 6]],
     [Attack.Rush, [1, 1, 10]],
+    [Attack.Brandish, [2, 2, 3]],
+    [Attack.Blast, [1, 1, 1]],
     [Attack.HeavensHammerXiuz, [1, 1, 15]],
     [Attack.HeavensHammerXiuzCorrected, [1, 1, 15]],
     [Attack.CrusherHigh, [3, 3, 3]],
