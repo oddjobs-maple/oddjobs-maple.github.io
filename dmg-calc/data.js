@@ -362,6 +362,23 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.BoomerangStep:
             return 1950;
+        case Attack.FlashFist:
+        case Attack.EnergyDrain: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 450;
+                case 3 /* Faster3 */:
+                    return 510;
+                case 4 /* Fast4 */:
+                    return 540;
+                case 5 /* Fast5 */:
+                    return 570;
+                case 6 /* Normal */:
+                    return 600;
+                default:
+                    return;
+            }
+        }
         // Assuming (probably incorrectly) that all weapons use Somersault Kick
         // at the same speed as knucklers.
         case Attack.SomersaultKick: {
@@ -398,6 +415,30 @@ export function attackPeriod(wepType, speed, attack) {
                     return;
             }
         }
+        case Attack.BackspinBlow:
+            return 1980;
+        case Attack.DoubleUppercut:
+            return 2160;
+        case Attack.EnergyBlast:
+            return 1140;
+        case Attack.Shockwave: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 1500;
+                case 3 /* Faster3 */:
+                    return 1620;
+                case 4 /* Fast4 */:
+                    return 1740;
+                case 5 /* Fast5 */:
+                    return 1860;
+                case 6 /* Normal */:
+                    return 1980;
+                default:
+                    return;
+            }
+        }
+        case Attack.DragonStrike:
+            return 2250;
         case Attack.EnergyOrb: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -414,6 +455,24 @@ export function attackPeriod(wepType, speed, attack) {
                     return;
             }
         }
+        case Attack.Demolition: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 2340;
+                case 3 /* Faster3 */:
+                    return 2550;
+                case 4 /* Fast4 */:
+                    return 2730;
+                case 5 /* Fast5 */:
+                    return 2940;
+                case 6 /* Normal */:
+                    return 3120;
+                default:
+                    return;
+            }
+        }
+        case Attack.Snatch:
+            return 1320;
         case Attack.Barrage:
             return 3240;
         case Attack.InvisibleShot: {
@@ -707,12 +766,30 @@ export function attackName(attack) {
             return "Savage Blow";
         case Attack.BoomerangStep:
             return "Boomerang Step";
+        case Attack.FlashFist:
+            return "Flash Fist";
         case Attack.SomersaultKick:
             return "Somersault Kick";
         case Attack.DoubleShot:
             return "Double Shot";
+        case Attack.BackspinBlow:
+            return "Backspin Blow";
+        case Attack.DoubleUppercut:
+            return "Double Uppercut";
+        case Attack.EnergyDrain:
+            return "Energy Drain";
+        case Attack.EnergyBlast:
+            return "Energy Blast";
+        case Attack.Shockwave:
+            return "Shockwave";
+        case Attack.DragonStrike:
+            return "Dragon Strike";
         case Attack.EnergyOrb:
             return "Energy Orb";
+        case Attack.Demolition:
+            return "Demolition";
+        case Attack.Snatch:
+            return "Snatch";
         case Attack.Barrage:
             return "Barrage";
         case Attack.InvisibleShot:
@@ -1190,6 +1267,14 @@ export const ATTACK_REQS = new Map([
         [new Set([Class.Rogue]), 120, new Set([WeaponType.Dagger])],
     ],
     [
+        Attack.FlashFist,
+        [
+            new Set([Class.Pirate, Class.Pirate2nd]),
+            10,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
         Attack.SomersaultKick,
         [
             new Set([Class.Pirate, Class.Pirate2nd]),
@@ -1224,12 +1309,84 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.BackspinBlow,
+        [
+            new Set([Class.Pirate2nd]),
+            30,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.DoubleUppercut,
+        [
+            new Set([Class.Pirate2nd]),
+            30,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.EnergyDrain,
+        [
+            new Set([Class.Pirate2nd]),
+            71,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.EnergyBlast,
+        [
+            new Set([Class.Pirate2nd]),
+            71,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.Shockwave,
+        [
+            new Set([Class.Pirate2nd]),
+            71,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.DragonStrike,
+        [
+            new Set([Class.Pirate2nd]),
+            120,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
         Attack.EnergyOrb,
-        [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
+        [
+            new Set([Class.Pirate2nd]),
+            120,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.Demolition,
+        [
+            new Set([Class.Pirate2nd]),
+            121,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
+    ],
+    [
+        Attack.Snatch,
+        [
+            new Set([Class.Pirate2nd]),
+            121,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
     ],
     [
         Attack.Barrage,
-        [new Set([Class.Pirate2nd]), 120, new Set([WeaponType.Knuckler])],
+        [
+            new Set([Class.Pirate2nd]),
+            120,
+            new Set([WeaponType.None, WeaponType.Knuckler]),
+        ],
     ],
     [
         Attack.InvisibleShot,
@@ -1436,9 +1593,18 @@ export const ATTACK_LINES = new Map([
     [Attack.NinjaStorm, [1, 1, 6]],
     [Attack.SavageBlow, [4, 6, 1]],
     [Attack.BoomerangStep, [2, 2, 4]],
+    [Attack.FlashFist, [1, 1, 1]],
     [Attack.SomersaultKick, [1, 1, 6]],
     [Attack.DoubleShot, [2, 2, 1]],
+    [Attack.BackspinBlow, [1, 1, 3]],
+    [Attack.DoubleUppercut, [2, 2, 1]],
+    [Attack.EnergyDrain, [1, 1, 1]],
+    [Attack.EnergyBlast, [1, 1, 4]],
+    [Attack.Shockwave, [1, 1, 6]],
+    [Attack.DragonStrike, [1, 1, 6]],
     [Attack.EnergyOrb, [1, 1, 6]],
+    [Attack.Demolition, [8, 8, 1]],
+    [Attack.Snatch, [1, 1, 6]],
     [Attack.Barrage, [6, 6, 1]],
     [Attack.InvisibleShot, [1, 1, 3]],
     [Attack.BlankShot, [1, 1, 3]],

@@ -1181,9 +1181,21 @@ function main() {
                 ${atkName}s.`);
         }
         switch (inputData.attack) {
+            case Attack.NinjaStorm:
+                delayWarn("nightlord");
+                break;
             case Attack.BoomerangStep:
                 delayWarn("shadower");
                 break;
+            case Attack.BackspinBlow:
+            case Attack.DoubleUppercut:
+                delayWarn("brawler");
+                break;
+            case Attack.EnergyBlast:
+                delayWarn("marauder");
+                break;
+            case Attack.DragonStrike:
+            case Attack.Snatch:
             case Attack.Barrage:
                 delayWarn("buccaneer");
                 break;
