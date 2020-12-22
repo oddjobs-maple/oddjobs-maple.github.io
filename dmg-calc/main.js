@@ -260,6 +260,8 @@ function main() {
                         return minDmgHhXiuz(inputData);
                     case Attack.HeavensHammerXiuzCorrected:
                         return minDmgPhys(inputData, true);
+                    case Attack.Fury:
+                        return minDmgFury(inputData);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
                     // Massive hack to make Arrow Bomb easier to work with...
@@ -281,6 +283,9 @@ function main() {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                         return minDmgVenom(inputData);
+                    case Attack.Rush:
+                    case Attack.CrusherHigh:
+                    case Attack.CrusherLow:
                     case Attack.SomersaultKick:
                     case Attack.AerialStrike:
                         return minDmgSomersaultKick(inputData);
@@ -301,6 +306,8 @@ function main() {
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
                         return maxDmgPhys(inputData, true);
+                    case Attack.Fury:
+                        return maxDmgFury(inputData);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
                     // Massive hack to make Arrow Bomb easier to work with...
@@ -322,6 +329,9 @@ function main() {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                         return maxDmgVenom(inputData);
+                    case Attack.Rush:
+                    case Attack.CrusherHigh:
+                    case Attack.CrusherLow:
                     case Attack.SomersaultKick:
                     case Attack.AerialStrike:
                         return maxDmgSomersaultKick(inputData);
@@ -336,8 +346,12 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
+                    case Attack.Rush:
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
+                    case Attack.CrusherHigh:
+                    case Attack.CrusherLow:
+                    case Attack.Fury:
                     case Attack.DragonRoar:
                     case Attack.Phoenix:
                     case Attack.Frostprey:
@@ -369,8 +383,12 @@ function main() {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
                     case Attack.ClawPunch:
+                    case Attack.Rush:
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
+                    case Attack.CrusherHigh:
+                    case Attack.CrusherLow:
+                    case Attack.Fury:
                     case Attack.DragonRoar:
                     case Attack.Phoenix:
                     case Attack.Frostprey:
@@ -1370,6 +1388,28 @@ function minDmgCaFinisher(inputData, goodAnim) {
 function minDmgHhXiuz(inputData) {
     return maxDmgPhys(inputData, true) * 0.8;
 }
+/**
+ * Fury always "swings".
+ */
+function maxDmgFury(inputData) {
+    switch (inputData.wepType) {
+        case WeaponType.Spear:
+            return maxDmgPhys(inputData, false);
+        default:
+            return maxDmgPhys(inputData, true);
+    }
+}
+/**
+ * Fury always "swings".
+ */
+function minDmgFury(inputData) {
+    switch (inputData.wepType) {
+        case WeaponType.Spear:
+            return minDmgPhys(inputData, false);
+        default:
+            return minDmgPhys(inputData, true);
+    }
+}
 function maxDmgDragonRoar(inputData) {
     return (((inputData.stats.str * 4 + inputData.stats.dex) *
         effectiveWatk(inputData)) /
@@ -1431,8 +1471,8 @@ function minDmgVenom(inputData) {
         inputData.skillBasicAtk);
 }
 /**
- * Somersault Kick always "stabs".  The same logic applies to Aerial Strike, so
- * this function is used for it as well.
+ * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
+ * Crusher, and Rush, so this function is used for those as well.
  */
 function maxDmgSomersaultKick(inputData) {
     switch (inputData.wepType) {
@@ -1449,8 +1489,8 @@ function maxDmgSomersaultKick(inputData) {
     }
 }
 /**
- * Somersault Kick always "stabs".  The same logic applies to Aerial Strike, so
- * this function is used for it as well.
+ * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
+ * Crusher, and Rush, so this function is used for those as well.
  */
 function minDmgSomersaultKick(inputData) {
     switch (inputData.wepType) {

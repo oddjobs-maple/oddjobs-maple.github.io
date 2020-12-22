@@ -284,6 +284,68 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.HeavensHammerXiuz:
         case Attack.HeavensHammerXiuzCorrected:
             return;
+        case Attack.Rush:
+            return 1770;
+        case Attack.CrusherHigh: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 810;
+                case 3 /* Faster3 */:
+                    return 870;
+                case 4 /* Fast4 */:
+                    return 930;
+                case 5 /* Fast5 */:
+                    return 990;
+                case 6 /* Normal */:
+                    return 1050;
+                case 7 /* Slow7 */:
+                    return 1140;
+                case 8 /* Slow8 */:
+                    return 1200;
+                case 9 /* Slower */:
+                    return 1260;
+            }
+        }
+        case Attack.CrusherLow: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 690;
+                case 3 /* Faster3 */:
+                    return 750;
+                case 4 /* Fast4 */:
+                    return 810;
+                case 5 /* Fast5 */:
+                    return 870;
+                case 6 /* Normal */:
+                    return 900;
+                case 7 /* Slow7 */:
+                    return 960;
+                case 8 /* Slow8 */:
+                    return 1020;
+                case 9 /* Slower */:
+                    return 1080;
+            }
+        }
+        case Attack.Fury: {
+            switch (speed) {
+                case 2 /* Faster2 */:
+                    return 600;
+                case 3 /* Faster3 */:
+                    return 660;
+                case 4 /* Fast4 */:
+                    return 720;
+                case 5 /* Fast5 */:
+                    return 750;
+                case 6 /* Normal */:
+                    return 810;
+                case 7 /* Slow7 */:
+                    return 870;
+                case 8 /* Slow8 */:
+                    return 900;
+                case 9 /* Slower */:
+                    return 960;
+            }
+        }
         case Attack.DragonRoar: {
             switch (speed) {
                 case 2 /* Faster2 */:
@@ -724,10 +786,18 @@ export function attackName(attack) {
             return "Panic";
         case Attack.Coma:
             return "Coma";
+        case Attack.Rush:
+            return "Rush";
         case Attack.HeavensHammerXiuz:
             return "Heaven\u{2019}s Hammer (original Xiuz)";
         case Attack.HeavensHammerXiuzCorrected:
             return "Heaven\u{2019}s Hammer (corrected Xiuz)";
+        case Attack.CrusherHigh:
+            return "Crusher (lvl 16~30)";
+        case Attack.CrusherLow:
+            return "Crusher (lvl 1~15)";
+        case Attack.Fury:
+            return "Fury";
         case Attack.DragonRoar:
             return "Dragon Roar";
         case Attack.PowerKnockBack:
@@ -1028,6 +1098,32 @@ export const ATTACK_REQS = new Map([
         ],
     ],
     [
+        Attack.Rush,
+        [
+            new Set([Class.Warrior]),
+            120,
+            new Set([
+                WeaponType.None,
+                WeaponType.OneHandedSword,
+                WeaponType.OneHandedAxe,
+                WeaponType.OneHandedMace,
+                WeaponType.Dagger,
+                WeaponType.Wand,
+                WeaponType.Staff,
+                WeaponType.TwoHandedSword,
+                WeaponType.TwoHandedAxe,
+                WeaponType.TwoHandedMace,
+                WeaponType.Spear,
+                WeaponType.Polearm,
+                WeaponType.Bow,
+                WeaponType.Crossbow,
+                WeaponType.Claw,
+                WeaponType.Knuckler,
+                WeaponType.Gun,
+            ]),
+        ],
+    ],
+    [
         Attack.HeavensHammerXiuz,
         [
             new Set([Class.Warrior]),
@@ -1077,6 +1173,30 @@ export const ATTACK_REQS = new Map([
                 WeaponType.Knuckler,
                 WeaponType.Gun,
             ]),
+        ],
+    ],
+    [
+        Attack.CrusherHigh,
+        [
+            new Set([Class.Warrior]),
+            75,
+            new Set([WeaponType.Spear, WeaponType.Polearm]),
+        ],
+    ],
+    [
+        Attack.CrusherLow,
+        [
+            new Set([Class.Warrior]),
+            70,
+            new Set([WeaponType.Spear, WeaponType.Polearm]),
+        ],
+    ],
+    [
+        Attack.Fury,
+        [
+            new Set([Class.Warrior]),
+            70,
+            new Set([WeaponType.Spear, WeaponType.Polearm]),
         ],
     ],
     [
@@ -1572,8 +1692,12 @@ export const ATTACK_LINES = new Map([
     [Attack.ClawPunch, [1, 1, 1]],
     [Attack.Panic, [1, 1, 1]],
     [Attack.Coma, [1, 1, 6]],
+    [Attack.Rush, [1, 1, 10]],
     [Attack.HeavensHammerXiuz, [1, 1, 15]],
     [Attack.HeavensHammerXiuzCorrected, [1, 1, 15]],
+    [Attack.CrusherHigh, [3, 3, 3]],
+    [Attack.CrusherLow, [2, 2, 3]],
+    [Attack.Fury, [1, 1, 6]],
     [Attack.DragonRoar, [1, 1, 6]],
     [Attack.PowerKnockBack, [1, 1, 6]],
     [Attack.ArrowBombImpact, [1, 1, 1]],
