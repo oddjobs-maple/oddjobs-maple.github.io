@@ -1242,6 +1242,10 @@ function main() {
             warnings.push("The damage calculation used here for Flamethrower does not \
                 take into account the flaming/burning damage over time.");
         }
+        if (inputData.echo !== 0 && inputData.echo !== 4 / 100) {
+            warnings.push("You have specified a nonzero value for Echo of Hero that is \
+                not exactly 4%.");
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");

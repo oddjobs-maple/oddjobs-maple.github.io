@@ -1859,6 +1859,13 @@ function main(): void {
             );
         }
 
+        if (inputData.echo !== 0 && inputData.echo !== 4 / 100) {
+            warnings.push(
+                "You have specified a nonzero value for Echo of Hero that is \
+                not exactly 4%.",
+            );
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
