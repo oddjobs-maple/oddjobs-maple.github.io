@@ -158,6 +158,7 @@ export class InputData {
         public stats: Stats,
         public totalWatk: number,
         public totalMatk: number,
+        public echo: number,
         public mastery: number,
         public skillDmgMulti: number,
         public skillBasicAtk: number,

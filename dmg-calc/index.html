@@ -141,10 +141,11 @@
               <strong>and</strong> equipment <strong>and</strong> buffs.
               Likewise, total WATK is the sum of all WATK from your equipment
               (including both your weapon, and your other equips), plus WATK
-              from skills, plus WATK from buffs. Total MATK is defined
-              similarly to total WATK, but it should be noted that it should
-              also include the MATK that is due to your total INT score. This
-              &ldquo;total MATK&rdquo; is displayed in-game as
+              from skills, plus WATK from buffs (except Echo of Hero, which,
+              for convenience, can be entered separately). Total MATK is
+              defined similarly to total WATK, but it should be noted that it
+              should also include the MATK that is due to your total INT score.
+              This &ldquo;total MATK&rdquo; is displayed in-game as
               &ldquo;MAGIC&rdquo; inside of the &ldquo;DETAIL&rdquo; tab of the
               &ldquo;CHARACTER STATS&rdquo; window (in the keybinding GUI, this
               window is listed as &ldquo;ABILITY&rdquo;).
@@ -558,6 +559,17 @@
                   name="total-matk"
                   min="4"
                   value="4"
+                />
+              </label>
+
+              <label for="echo">
+                Echo of Hero
+                <input
+                  type="number"
+                  id="echo"
+                  name="echo"
+                  min="0"
+                  value="0"
                 />
               </label>
             </fieldset>

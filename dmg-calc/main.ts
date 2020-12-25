@@ -68,6 +68,7 @@ function main(): void {
     const totalMatkInput = document.getElementById(
         "total-matk",
     ) as HTMLInputElement;
+    const echoInput = document.getElementById("echo") as HTMLInputElement;
 
     const masteryInput = document.getElementById(
         "mastery",
@@ -235,6 +236,11 @@ function main(): void {
             totalMatk = 0;
         }
         totalMatkInput.value = "" + totalMatk;
+        let echo = Math.max(parseInt(echoInput.value, 10), 0);
+        if (!Number.isFinite(echo)) {
+            echo = 0;
+        }
+        echoInput.value = "" + echo;
 
         let mastery = Math.min(
             Math.max(parseInt(masteryInput.value, 10), 10),
@@ -392,6 +398,7 @@ function main(): void {
             new Stats(str, dex, int, luk),
             totalWatk,
             totalMatk,
+            echo / 100,
             mastery / 100,
             skillDmgMulti / 100,
             skillBasicAtk,
@@ -2222,18 +2229,19 @@ function minDmgSomersaultKick(inputData: InputData): number {
 }
 
 function maxDmgMagic(inputData: InputData): number {
+    const matk = effectiveMatk(inputData);
+
     return (
-        ((inputData.totalMatk ** 2 / 1000 + inputData.totalMatk) / 30 +
-            inputData.stats.int / 200) *
+        ((matk ** 2 / 1000 + matk) / 30 + inputData.stats.int / 200) *
         inputData.skillBasicAtk
     );
 }
 
 function minDmgMagic(inputData: InputData): number {
+    const matk = effectiveMatk(inputData);
+
     return (
-        ((inputData.totalMatk ** 2 / 1000 +
-            inputData.totalMatk * inputData.mastery * 0.9) /
-            30 +
+        ((matk ** 2 / 1000 + matk * inputData.mastery * 0.9) / 30 +
             inputData.stats.int / 200) *
         inputData.skillBasicAtk
     );
@@ -2255,7 +2263,7 @@ function healTargetMulti(enemyCount: number): number {
 function maxDmgHeal(inputData: InputData): number {
     return (
         (((inputData.stats.int * 1.2 + inputData.stats.luk) *
-            inputData.totalMatk) /
+            effectiveMatk(inputData)) /
             1000) *
         healTargetMulti(inputData.enemyCount) *
         inputData.skillDmgMulti
@@ -2265,7 +2273,7 @@ function maxDmgHeal(inputData: InputData): number {
 function minDmgHeal(inputData: InputData): number {
     return (
         (((inputData.stats.int * 0.3 + inputData.stats.luk) *
-            inputData.totalMatk) /
+            effectiveMatk(inputData)) /
             1000) *
         healTargetMulti(inputData.enemyCount) *
         inputData.skillDmgMulti
@@ -2312,15 +2320,21 @@ function effectiveWatk(inputData: InputData): number {
     if (inputData.wepType === WeaponType.None) {
         switch (inputData.clazz) {
             case Class.Pirate:
-            case Class.Pirate2nd:
-                return Math.min(
+            case Class.Pirate2nd: {
+                const fistsWatk = Math.min(
                     Math.trunc((2 * inputData.level + 31) / 3),
                     31,
                 );
+                return fistsWatk + fistsWatk * inputData.echo;
+            }
             default:
                 return 0;
         }
     }
 
-    return inputData.totalWatk;
+    return inputData.totalWatk + inputData.totalWatk * inputData.echo;
+}
+
+function effectiveMatk(inputData: InputData): number {
+    return inputData.totalMatk + inputData.totalMatk * inputData.echo;
 }

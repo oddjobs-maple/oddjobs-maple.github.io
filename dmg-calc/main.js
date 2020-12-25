@@ -36,6 +36,7 @@ function main() {
     const lukInput = document.getElementById("luk");
     const totalWatkInput = document.getElementById("total-watk");
     const totalMatkInput = document.getElementById("total-matk");
+    const echoInput = document.getElementById("echo");
     const masteryInput = document.getElementById("mastery");
     const skillDmgMultiInput = document.getElementById("skill-dmg-multi");
     const skillBasicAtkInput = document.getElementById("skill-basic-atk");
@@ -116,6 +117,11 @@ function main() {
             totalMatk = 0;
         }
         totalMatkInput.value = "" + totalMatk;
+        let echo = Math.max(parseInt(echoInput.value, 10), 0);
+        if (!Number.isFinite(echo)) {
+            echo = 0;
+        }
+        echoInput.value = "" + echo;
         let mastery = Math.min(Math.max(parseInt(masteryInput.value, 10), 10), 90);
         if (!Number.isFinite(mastery)) {
             mastery = 10;
@@ -234,7 +240,7 @@ function main() {
             hitOrd = 1;
         }
         hitOrdInput.value = "" + hitOrd;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -1511,14 +1517,13 @@ function minDmgSomersaultKick(inputData) {
     }
 }
 function maxDmgMagic(inputData) {
-    return (((inputData.totalMatk ** 2 / 1000 + inputData.totalMatk) / 30 +
-        inputData.stats.int / 200) *
+    const matk = effectiveMatk(inputData);
+    return (((matk ** 2 / 1000 + matk) / 30 + inputData.stats.int / 200) *
         inputData.skillBasicAtk);
 }
 function minDmgMagic(inputData) {
-    return (((inputData.totalMatk ** 2 / 1000 +
-        inputData.totalMatk * inputData.mastery * 0.9) /
-        30 +
+    const matk = effectiveMatk(inputData);
+    return (((matk ** 2 / 1000 + matk * inputData.mastery * 0.9) / 30 +
         inputData.stats.int / 200) *
         inputData.skillBasicAtk);
 }
@@ -1535,14 +1540,14 @@ function healTargetMulti(enemyCount) {
 }
 function maxDmgHeal(inputData) {
     return ((((inputData.stats.int * 1.2 + inputData.stats.luk) *
-        inputData.totalMatk) /
+        effectiveMatk(inputData)) /
         1000) *
         healTargetMulti(inputData.enemyCount) *
         inputData.skillDmgMulti);
 }
 function minDmgHeal(inputData) {
     return ((((inputData.stats.int * 0.3 + inputData.stats.luk) *
-        inputData.totalMatk) /
+        effectiveMatk(inputData)) /
         1000) *
         healTargetMulti(inputData.enemyCount) *
         inputData.skillDmgMulti);
@@ -1575,11 +1580,16 @@ function effectiveWatk(inputData) {
     if (inputData.wepType === WeaponType.None) {
         switch (inputData.clazz) {
             case Class.Pirate:
-            case Class.Pirate2nd:
-                return Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31);
+            case Class.Pirate2nd: {
+                const fistsWatk = Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31);
+                return fistsWatk + fistsWatk * inputData.echo;
+            }
             default:
                 return 0;
         }
     }
-    return inputData.totalWatk;
+    return inputData.totalWatk + inputData.totalWatk * inputData.echo;
+}
+function effectiveMatk(inputData) {
+    return inputData.totalMatk + inputData.totalMatk * inputData.echo;
 }
