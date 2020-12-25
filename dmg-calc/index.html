@@ -836,6 +836,7 @@
 
                   <optgroup label="Gunslinger">
                     <option value="5201001">Invisible Shot</option>
+                    <option value="5201002">Grenade</option>
                     <option value="5201004">Blank Shot</option>
                     <option value="5201006">Recoil Shot</option>
                   </optgroup>
@@ -930,20 +931,82 @@
               </label>
             </fieldset>
 
-            <fieldset>
-              <legend>Elemental stuff</legend>
+            <details>
+              <summary>Elemental</summary>
 
-              <label for="ele-amp">
-                Element Amplification
-                <input
-                  type="number"
-                  id="ele-amp"
-                  name="ele-amp"
-                  min="100"
-                  value="100"
-                />%
-              </label>
-            </fieldset>
+              <fieldset>
+                <legend>Elemental stuff</legend>
+
+                <label for="ele-amp">
+                  Element Amplification
+                  <input
+                    type="number"
+                    id="ele-amp"
+                    name="ele-amp"
+                    min="100"
+                    value="100"
+                  />%
+                </label>
+
+                <fieldset>
+                  <legend>Elemental charge</legend>
+
+                  <label for="no-ele-charge">
+                    None
+                    <input
+                      type="radio"
+                      id="no-ele-charge"
+                      name="ele-charge"
+                      value="no-ele-charge"
+                      checked
+                    />
+                  </label>
+
+                  <label for="holy-ele-charge">
+                    Holy
+                    <input
+                      type="radio"
+                      id="holy-ele-charge"
+                      name="ele-charge"
+                      value="holy-ele-charge"
+                    />
+                  </label>
+
+                  <label for="other-ele-charge">
+                    Other
+                    <input
+                      type="radio"
+                      id="other-ele-charge"
+                      name="ele-charge"
+                      value="other-ele-charge"
+                    />
+                  </label>
+
+                  <label for="ele-charge-dmg">
+                    Charge dmg
+                    <input
+                      type="number"
+                      id="ele-charge-dmg"
+                      name="ele-charge-dmg"
+                      min="100"
+                      value="100"
+                    />%
+                  </label>
+
+                  <label for="ele-charge-level">
+                    Charge skill level
+                    <input
+                      type="number"
+                      id="ele-charge-level"
+                      name="ele-charge-level"
+                      min="1"
+                      max="30"
+                      value="1"
+                    />
+                  </label>
+                </fieldset>
+              </fieldset>
+            </details>
 
             <details>
               <summary>Combo attack</summary>

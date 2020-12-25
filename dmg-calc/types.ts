@@ -97,6 +97,7 @@ export enum Attack {
     Snatch = 5121005,
     Barrage = 5121007,
     InvisibleShot = 5201001,
+    Grenade = 5201002,
     BlankShot = 5201004,
     RecoilShot = 5201006,
     BurstFire = 5210000,
@@ -153,6 +154,12 @@ export const enum Speed {
     Slower = 9,
 }
 
+export const enum ChargeType {
+    None,
+    Holy,
+    Other,
+}
+
 export class InputData {
     public constructor(
         public stats: Stats,
@@ -173,6 +180,9 @@ export class InputData {
         public speed: Speed,
         public spellBooster: number,
         public eleAmp: number,
+        public eleChargeType: ChargeType,
+        public eleChargeDmg: number,
+        public eleChargeLevel: number,
         public caActive: boolean,
         public caDmg: number,
         public caLevel: number,

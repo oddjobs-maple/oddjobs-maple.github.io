@@ -27,6 +27,7 @@ import {
     attackName,
     attackPeriod,
     BAD_WEPS,
+    chargeTypeFromValue,
     className,
     isHolySpell,
     JOB_LVL_REQS,
@@ -41,6 +42,7 @@ import {
 import { truncClampedExpectation, truncClampedVariance } from "./math.js";
 import {
     Attack,
+    ChargeType,
     Class,
     InputData,
     Speed,
@@ -105,6 +107,17 @@ function main(): void {
     ) as HTMLInputElement;
 
     const eleAmpInput = document.getElementById("ele-amp") as HTMLInputElement;
+    const eleChargeInputs = Array.from(
+        document.getElementsByName(
+            "ele-charge",
+        ) as NodeListOf<HTMLInputElement>,
+    );
+    const eleChargeDmgInput = document.getElementById(
+        "ele-charge-dmg",
+    ) as HTMLInputElement;
+    const eleChargeLevelInput = document.getElementById(
+        "ele-charge-level",
+    ) as HTMLInputElement;
 
     const caActiveInput = document.getElementById(
         "ca-active",
@@ -333,6 +346,44 @@ function main(): void {
             eleAmp = 100;
         }
         eleAmpInput.value = "" + eleAmp;
+        const eleChargeType: ChargeType = (() => {
+            let eleChargeType: ChargeType | undefined = undefined;
+            for (const eleChargeInput of eleChargeInputs) {
+                if (eleChargeInput.checked) {
+                    eleChargeType = chargeTypeFromValue(eleChargeInput.value);
+                    break;
+                }
+            }
+
+            if (eleChargeType === undefined) {
+                eleChargeInputs.forEach(inp => (inp.checked = false));
+
+                const noEleChargeInput = document.getElementById(
+                    "no-ele-charge",
+                ) as HTMLInputElement;
+                noEleChargeInput.checked = true;
+
+                return ChargeType.None;
+            }
+
+            return eleChargeType;
+        })();
+        let eleChargeDmg = Math.max(
+            parseInt(eleChargeDmgInput.value, 10),
+            100,
+        );
+        if (!Number.isFinite(eleChargeDmg)) {
+            eleChargeDmg = 100;
+        }
+        eleChargeDmgInput.value = "" + eleChargeDmg;
+        let eleChargeLevel = Math.min(
+            Math.max(parseInt(eleChargeLevelInput.value, 10), 1),
+            30,
+        );
+        if (!Number.isFinite(eleChargeLevel)) {
+            eleChargeLevel = 1;
+        }
+        eleChargeLevelInput.value = "" + eleChargeLevel;
 
         const caActive = caActiveInput.checked;
         let caDmg = Math.max(parseInt(caDmgInput.value, 10), 100);
@@ -413,6 +464,9 @@ function main(): void {
             speed,
             spellBooster,
             eleAmp / 100,
+            eleChargeType,
+            eleChargeDmg / 100,
+            eleChargeLevel,
             caActive,
             caDmg,
             caLevel,
@@ -439,6 +493,7 @@ function main(): void {
 
     function recalculatePhys(inputData: InputData, critQ: number): void {
         const caMod = caModifier(inputData);
+        const eleChargeMod = eleChargeModifier(inputData);
 
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
@@ -536,7 +591,7 @@ function main(): void {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ].map(dmg => dmg * caMod);
+        ].map(dmg => dmg * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -614,7 +669,7 @@ function main(): void {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ].map(dmg => dmg * caMod);
+        ].map(dmg => dmg * caMod * eleChargeMod);
 
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
@@ -1866,6 +1921,69 @@ function main(): void {
             );
         }
 
+        switch (inputData.eleChargeType) {
+            case ChargeType.None: {
+                if (inputData.eleChargeDmg !== 1) {
+                    warnings.push(
+                        "You have no elemental charge, but your elemental \
+                        charge damage \u{2260}100%.",
+                    );
+                }
+                break;
+            }
+            case ChargeType.Holy: {
+                if (
+                    1 + (inputData.level - 120) * 3 <
+                    inputData.eleChargeLevel
+                ) {
+                    warnings.push(
+                        `You have level ${inputData.eleChargeLevel} \
+                        Holy/Divine Charge selected, but you aren\u{2019}t a \
+                        high enough level to have that much fourth job SP.`,
+                    );
+                }
+                if (inputData.eleChargeLevel > 20) {
+                    warnings.push("You have a Holy/Divine Charge level >20.");
+                }
+                break;
+            }
+            case ChargeType.Other: {
+                if (
+                    1 + (inputData.level - 70) * 3 <
+                    inputData.eleChargeLevel
+                ) {
+                    warnings.push(
+                        `You have a level ${inputData.eleChargeLevel} \
+                        non-Holy/Divine Charge selected, but you \
+                        aren\u{2019}t a high enough level to have that much \
+                        third job SP.`,
+                    );
+                }
+                break;
+            }
+        }
+        if (inputData.eleChargeType !== ChargeType.None) {
+            if (inputData.clazz !== Class.Warrior) {
+                warnings.push(
+                    "You have an elemental charge selected, but you\u{2019}re \
+                    not a warrior.",
+                );
+            }
+            switch (inputData.wepType) {
+                case WeaponType.OneHandedSword:
+                case WeaponType.OneHandedMace:
+                case WeaponType.TwoHandedSword:
+                case WeaponType.TwoHandedMace:
+                    break;
+                default:
+                    warnings.push(
+                        "You have an elemental charge selected, but \
+                        you\u{2019}re not using a sword nor a blunt weapon.",
+                    );
+                    break;
+            }
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -1926,6 +2044,8 @@ function main(): void {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        eleChargeDmgInput,
+        eleChargeLevelInput,
         caActiveInput,
         caDmgInput,
         caLevelInput,
@@ -1938,6 +2058,12 @@ function main(): void {
         hitOrdInput,
     ]) {
         input.addEventListener("change", recalculate);
+    }
+
+    for (const eleChargeInput of eleChargeInputs) {
+        eleChargeInput.addEventListener("change", () =>
+            eleChargeInput.checked ? recalculate() : undefined,
+        );
     }
 
     recalculate();
@@ -2020,6 +2146,51 @@ function caModifier(inputData: InputData): number {
     }
 
     return (inputData.caDmg + 20 + (inputData.caOrbs - 5) * 4) / 100;
+}
+
+function eleChargeModifier(inputData: InputData): number {
+    switch (inputData.eleChargeType) {
+        case ChargeType.None:
+            return 1;
+        case ChargeType.Holy: {
+            if (inputData.eleSus === 1) {
+                return inputData.eleChargeDmg;
+            } else if (inputData.eleSus === 0) {
+                return 0;
+            } else if (inputData.eleSus < 1) {
+                return (
+                    (inputData.eleChargeDmg *
+                        (80 - inputData.eleChargeLevel * 1.5)) /
+                    100
+                );
+            }
+
+            return (
+                (inputData.eleChargeDmg *
+                    (120 + inputData.eleChargeLevel * 1.5)) /
+                100
+            );
+        }
+        case ChargeType.Other: {
+            if (inputData.eleSus === 1) {
+                return inputData.eleChargeDmg;
+            } else if (inputData.eleSus === 0) {
+                return 0;
+            } else if (inputData.eleSus < 1) {
+                return (
+                    (inputData.eleChargeDmg *
+                        (95 - inputData.eleChargeLevel * 1.5)) /
+                    100
+                );
+            }
+
+            return (
+                (inputData.eleChargeDmg *
+                    (105 + inputData.eleChargeLevel * 1.5)) /
+                100
+            );
+        }
+    }
 }
 
 function maxDmgBowWhack(inputData: InputData): number {

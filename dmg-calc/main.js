@@ -20,7 +20,7 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { ATTACK_LINES, ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
+import { ATTACK_LINES, ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, chargeTypeFromValue, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
 import { truncClampedExpectation, truncClampedVariance } from "./math.js";
 import { Attack, Class, InputData, Spell, Stats, WeaponType, } from "./types.js";
 import { indefinite } from "./util.js";
@@ -51,6 +51,9 @@ function main() {
     const speedInput = document.getElementById("speed");
     const spellBoosterInput = document.getElementById("spell-booster");
     const eleAmpInput = document.getElementById("ele-amp");
+    const eleChargeInputs = Array.from(document.getElementsByName("ele-charge"));
+    const eleChargeDmgInput = document.getElementById("ele-charge-dmg");
+    const eleChargeLevelInput = document.getElementById("ele-charge-level");
     const caActiveInput = document.getElementById("ca-active");
     const caDmgInput = document.getElementById("ca-dmg");
     const caLevelInput = document.getElementById("ca-level");
@@ -193,6 +196,32 @@ function main() {
             eleAmp = 100;
         }
         eleAmpInput.value = "" + eleAmp;
+        const eleChargeType = (() => {
+            let eleChargeType = undefined;
+            for (const eleChargeInput of eleChargeInputs) {
+                if (eleChargeInput.checked) {
+                    eleChargeType = chargeTypeFromValue(eleChargeInput.value);
+                    break;
+                }
+            }
+            if (eleChargeType === undefined) {
+                eleChargeInputs.forEach(inp => (inp.checked = false));
+                const noEleChargeInput = document.getElementById("no-ele-charge");
+                noEleChargeInput.checked = true;
+                return 0 /* None */;
+            }
+            return eleChargeType;
+        })();
+        let eleChargeDmg = Math.max(parseInt(eleChargeDmgInput.value, 10), 100);
+        if (!Number.isFinite(eleChargeDmg)) {
+            eleChargeDmg = 100;
+        }
+        eleChargeDmgInput.value = "" + eleChargeDmg;
+        let eleChargeLevel = Math.min(Math.max(parseInt(eleChargeLevelInput.value, 10), 1), 30);
+        if (!Number.isFinite(eleChargeLevel)) {
+            eleChargeLevel = 1;
+        }
+        eleChargeLevelInput.value = "" + eleChargeLevel;
         const caActive = caActiveInput.checked;
         let caDmg = Math.max(parseInt(caDmgInput.value, 10), 100);
         if (!Number.isFinite(caDmg)) {
@@ -240,7 +269,7 @@ function main() {
             hitOrd = 1;
         }
         hitOrdInput.value = "" + hitOrd;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -251,6 +280,7 @@ function main() {
     }
     function recalculatePhys(inputData, critQ) {
         const caMod = caModifier(inputData);
+        const eleChargeMod = eleChargeModifier(inputData);
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
                 switch (inputData.attack) {
@@ -347,7 +377,7 @@ function main() {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ].map(dmg => dmg * caMod);
+        ].map(dmg => dmg * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -425,7 +455,7 @@ function main() {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ].map(dmg => dmg * caMod);
+        ].map(dmg => dmg * caMod * eleChargeMod);
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
                 case Attack.HeavensHammerXiuz:
@@ -1246,6 +1276,54 @@ function main() {
             warnings.push("You have specified a nonzero value for Echo of Hero that is \
                 not exactly 4%.");
         }
+        switch (inputData.eleChargeType) {
+            case 0 /* None */: {
+                if (inputData.eleChargeDmg !== 1) {
+                    warnings.push("You have no elemental charge, but your elemental \
+                        charge damage \u{2260}100%.");
+                }
+                break;
+            }
+            case 1 /* Holy */: {
+                if (1 + (inputData.level - 120) * 3 <
+                    inputData.eleChargeLevel) {
+                    warnings.push(`You have level ${inputData.eleChargeLevel} \
+                        Holy/Divine Charge selected, but you aren\u{2019}t a \
+                        high enough level to have that much fourth job SP.`);
+                }
+                if (inputData.eleChargeLevel > 20) {
+                    warnings.push("You have a Holy/Divine Charge level >20.");
+                }
+                break;
+            }
+            case 2 /* Other */: {
+                if (1 + (inputData.level - 70) * 3 <
+                    inputData.eleChargeLevel) {
+                    warnings.push(`You have a level ${inputData.eleChargeLevel} \
+                        non-Holy/Divine Charge selected, but you \
+                        aren\u{2019}t a high enough level to have that much \
+                        third job SP.`);
+                }
+                break;
+            }
+        }
+        if (inputData.eleChargeType !== 0 /* None */) {
+            if (inputData.clazz !== Class.Warrior) {
+                warnings.push("You have an elemental charge selected, but you\u{2019}re \
+                    not a warrior.");
+            }
+            switch (inputData.wepType) {
+                case WeaponType.OneHandedSword:
+                case WeaponType.OneHandedMace:
+                case WeaponType.TwoHandedSword:
+                case WeaponType.TwoHandedMace:
+                    break;
+                default:
+                    warnings.push("You have an elemental charge selected, but \
+                        you\u{2019}re not using a sword nor a blunt weapon.");
+                    break;
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1297,6 +1375,8 @@ function main() {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        eleChargeDmgInput,
+        eleChargeLevelInput,
         caActiveInput,
         caDmgInput,
         caLevelInput,
@@ -1309,6 +1389,9 @@ function main() {
         hitOrdInput,
     ]) {
         input.addEventListener("change", recalculate);
+    }
+    for (const eleChargeInput of eleChargeInputs) {
+        eleChargeInput.addEventListener("change", () => eleChargeInput.checked ? recalculate() : undefined);
     }
     recalculate();
 }
@@ -1357,6 +1440,44 @@ function caModifier(inputData) {
             100);
     }
     return (inputData.caDmg + 20 + (inputData.caOrbs - 5) * 4) / 100;
+}
+function eleChargeModifier(inputData) {
+    switch (inputData.eleChargeType) {
+        case 0 /* None */:
+            return 1;
+        case 1 /* Holy */: {
+            if (inputData.eleSus === 1) {
+                return inputData.eleChargeDmg;
+            }
+            else if (inputData.eleSus === 0) {
+                return 0;
+            }
+            else if (inputData.eleSus < 1) {
+                return ((inputData.eleChargeDmg *
+                    (80 - inputData.eleChargeLevel * 1.5)) /
+                    100);
+            }
+            return ((inputData.eleChargeDmg *
+                (120 + inputData.eleChargeLevel * 1.5)) /
+                100);
+        }
+        case 2 /* Other */: {
+            if (inputData.eleSus === 1) {
+                return inputData.eleChargeDmg;
+            }
+            else if (inputData.eleSus === 0) {
+                return 0;
+            }
+            else if (inputData.eleSus < 1) {
+                return ((inputData.eleChargeDmg *
+                    (95 - inputData.eleChargeLevel * 1.5)) /
+                    100);
+            }
+            return ((inputData.eleChargeDmg *
+                (105 + inputData.eleChargeLevel * 1.5)) /
+                100);
+        }
+    }
 }
 function maxDmgBowWhack(inputData) {
     return (((inputData.stats.dex * 3.4 + inputData.stats.str) *

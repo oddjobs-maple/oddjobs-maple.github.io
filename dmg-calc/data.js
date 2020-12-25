@@ -20,7 +20,7 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { Attack, Class, Spell, WeaponType } from "./types.js";
+import { Attack, Class, Spell, WeaponType, } from "./types.js";
 export function primaryStat(stats, wepType, goodAnim, clazz) {
     switch (wepType) {
         case WeaponType.None: {
@@ -283,6 +283,7 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.Coma:
         case Attack.HeavensHammerXiuz:
         case Attack.HeavensHammerXiuzCorrected:
+        case Attack.Grenade:
             return;
         case Attack.Rush:
             return 1770;
@@ -889,6 +890,8 @@ export function attackName(attack) {
             return "Barrage";
         case Attack.InvisibleShot:
             return "Invisible Shot";
+        case Attack.Grenade:
+            return "Grenade";
         case Attack.BlankShot:
             return "Blank Shot";
         case Attack.RecoilShot:
@@ -953,6 +956,18 @@ export function spellName(spell) {
             return "Bahamut";
         case Spell.Genesis:
             return "Genesis";
+    }
+}
+export function chargeTypeFromValue(val) {
+    switch (val) {
+        case "no-ele-charge":
+            return 0 /* None */;
+        case "holy-ele-charge":
+            return 1 /* Holy */;
+        case "other-ele-charge":
+            return 2 /* Other */;
+        default:
+            return;
     }
 }
 export const BAD_WEPS = new Map([
@@ -1561,6 +1576,10 @@ export const ATTACK_REQS = new Map([
     ],
     [
         Attack.InvisibleShot,
+        [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.Grenade,
         [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
     ],
     [

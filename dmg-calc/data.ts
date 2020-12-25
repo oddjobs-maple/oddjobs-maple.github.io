@@ -21,7 +21,15 @@
  * this page.
  */
 
-import { Attack, Class, Speed, Spell, Stats, WeaponType } from "./types.js";
+import {
+    Attack,
+    ChargeType,
+    Class,
+    Speed,
+    Spell,
+    Stats,
+    WeaponType,
+} from "./types.js";
 
 export function primaryStat(
     stats: Stats,
@@ -306,6 +314,7 @@ export function attackPeriod(
         case Attack.Coma:
         case Attack.HeavensHammerXiuz:
         case Attack.HeavensHammerXiuzCorrected:
+        case Attack.Grenade:
             return;
         case Attack.Rush:
             return 1770;
@@ -920,6 +929,8 @@ export function attackName(attack: Attack): string {
             return "Barrage";
         case Attack.InvisibleShot:
             return "Invisible Shot";
+        case Attack.Grenade:
+            return "Grenade";
         case Attack.BlankShot:
             return "Blank Shot";
         case Attack.RecoilShot:
@@ -985,6 +996,19 @@ export function spellName(spell: Spell): string {
             return "Bahamut";
         case Spell.Genesis:
             return "Genesis";
+    }
+}
+
+export function chargeTypeFromValue(val: string): ChargeType | undefined {
+    switch (val) {
+        case "no-ele-charge":
+            return ChargeType.None;
+        case "holy-ele-charge":
+            return ChargeType.Holy;
+        case "other-ele-charge":
+            return ChargeType.Other;
+        default:
+            return;
     }
 }
 
@@ -1598,6 +1622,10 @@ export const ATTACK_REQS: Map<
     ],
     [
         Attack.InvisibleShot,
+        [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
+    ],
+    [
+        Attack.Grenade,
         [new Set([Class.Pirate2nd]), 30, new Set([WeaponType.Gun])],
     ],
     [
