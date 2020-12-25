@@ -1278,6 +1278,7 @@ function main() {
         lukInput,
         totalWatkInput,
         totalMatkInput,
+        echoInput,
         masteryInput,
         skillDmgMultiInput,
         skillBasicAtkInput,

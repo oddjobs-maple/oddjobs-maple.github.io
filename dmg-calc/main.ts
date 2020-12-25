@@ -1904,6 +1904,7 @@ function main(): void {
         lukInput,
         totalWatkInput,
         totalMatkInput,
+        echoInput,
         masteryInput,
         skillDmgMultiInput,
         skillBasicAtkInput,
