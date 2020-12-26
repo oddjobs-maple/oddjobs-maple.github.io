@@ -111,6 +111,7 @@ function main(): void {
     const eleBoostInput = document.getElementById(
         "ele-boost",
     ) as HTMLInputElement;
+    const eleWepInput = document.getElementById("ele-wep") as HTMLInputElement;
     const eleChargeInputs = Array.from(
         document.getElementsByName(
             "ele-charge",
@@ -355,6 +356,11 @@ function main(): void {
             eleBoost = 0;
         }
         eleBoostInput.value = "" + eleBoost;
+        let eleWep = Math.max(parseInt(eleWepInput.value, 10), 0);
+        if (!Number.isFinite(eleWep)) {
+            eleWep = 0;
+        }
+        eleWepInput.value = "" + eleWep;
         const eleChargeType: ChargeType = (() => {
             let eleChargeType: ChargeType | undefined = undefined;
             for (const eleChargeInput of eleChargeInputs) {
@@ -474,6 +480,7 @@ function main(): void {
             spellBooster,
             eleAmp / 100,
             eleBoost / 100,
+            eleWep / 100,
             eleChargeType,
             eleChargeDmg / 100,
             eleChargeLevel,
@@ -1061,6 +1068,9 @@ function main(): void {
     }
 
     function recalculateMagic(inputData: InputData, critQ: number): void {
+        const eleWepBonus =
+            1 + (isHolySpell(inputData.spell) ? 0 : inputData.eleWep);
+
         const [minDmg, maxDmg] = [
             (() => {
                 switch (inputData.spell) {
@@ -1071,6 +1081,7 @@ function main(): void {
                 }
             })() *
                 inputData.eleAmp *
+                eleWepBonus *
                 inputData.eleSus,
             (() => {
                 switch (inputData.spell) {
@@ -1081,6 +1092,7 @@ function main(): void {
                 }
             })() *
                 inputData.eleAmp *
+                eleWepBonus *
                 inputData.eleSus,
         ];
 
@@ -2013,6 +2025,34 @@ function main(): void {
             }
         }
 
+        if (inputData.eleWep !== 0) {
+            if (
+                inputData.wepType !== WeaponType.Wand &&
+                inputData.wepType !== WeaponType.Staff
+            ) {
+                warnings.push(
+                    "You are getting a nonzero elemental bonus from your \
+                    weapon, but you aren\u{2019}t wielding a wand nor a \
+                    staff.",
+                );
+            } else if (inputData.clazz !== Class.Magician) {
+                warnings.push(
+                    `You\u{2019}re using an Elemental ${
+                        inputData.wepType === WeaponType.Wand
+                            ? "Wand"
+                            : "Staff"
+                    }, but you\u{2019}re not a magician.`,
+                );
+            }
+
+            if (inputData.eleWep !== 25 / 100) {
+                warnings.push(
+                    "Your Elemental Wand/Staff is giving an elemental bonus \
+                    \u{2260}25%.",
+                );
+            }
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -2074,6 +2114,7 @@ function main(): void {
         spellBoosterInput,
         eleAmpInput,
         eleBoostInput,
+        eleWepInput,
         eleChargeDmgInput,
         eleChargeLevelInput,
         caActiveInput,

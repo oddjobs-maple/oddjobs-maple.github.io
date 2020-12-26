@@ -128,9 +128,11 @@ export var Spell;
     Spell[Spell["ChainLightning"] = 2221006] = "ChainLightning";
     Spell[Spell["Blizzard"] = 2221007] = "Blizzard";
     Spell[Spell["Heal"] = 2301002] = "Heal";
+    Spell[Spell["HolyArrow"] = 2301005] = "HolyArrow";
     Spell[Spell["ShiningRay"] = 2311004] = "ShiningRay";
     Spell[Spell["SummonDragon"] = 2311006] = "SummonDragon";
     Spell[Spell["Bahamut"] = 2321003] = "Bahamut";
+    Spell[Spell["AngelRay"] = 2321007] = "AngelRay";
     Spell[Spell["Genesis"] = 2321008] = "Genesis";
 })(Spell || (Spell = {}));
 export var Class;
@@ -144,7 +146,7 @@ export var Class;
     Class[Class["Pirate2nd"] = 510] = "Pirate2nd";
 })(Class || (Class = {}));
 export class InputData {
-    constructor(stats, totalWatk, totalMatk, echo, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, eleBoost, eleChargeType, eleChargeDmg, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd) {
+    constructor(stats, totalWatk, totalMatk, echo, mastery, skillDmgMulti, skillBasicAtk, skillLines, critProb, critDmg, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp, eleBoost, eleWep, eleChargeType, eleChargeDmg, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd) {
         this.stats = stats;
         this.totalWatk = totalWatk;
         this.totalMatk = totalMatk;
@@ -164,6 +166,7 @@ export class InputData {
         this.spellBooster = spellBooster;
         this.eleAmp = eleAmp;
         this.eleBoost = eleBoost;
+        this.eleWep = eleWep;
         this.eleChargeType = eleChargeType;
         this.eleChargeDmg = eleChargeDmg;
         this.eleChargeLevel = eleChargeLevel;

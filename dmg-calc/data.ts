@@ -139,7 +139,9 @@ export function magicAttackPeriod(
     speed: Speed,
 ): number | undefined {
     switch (spell) {
-        case Spell.Other: {
+        case Spell.Other:
+        case Spell.HolyArrow:
+        case Spell.AngelRay: {
             switch (spellBooster) {
                 case -2:
                     return 720;
@@ -783,9 +785,11 @@ export function attackIsElemental(attack: Attack): boolean {
 export function isHolySpell(spell: Spell): boolean {
     switch (spell) {
         case Spell.Heal:
+        case Spell.HolyArrow:
         case Spell.ShiningRay:
         case Spell.SummonDragon:
         case Spell.Bahamut:
+        case Spell.AngelRay:
         case Spell.Genesis:
             return true;
         default:
@@ -1008,12 +1012,16 @@ export function spellName(spell: Spell): string {
             return "Blizzard";
         case Spell.Heal:
             return "Heal";
+        case Spell.HolyArrow:
+            return "Holy Arrow";
         case Spell.ShiningRay:
             return "Shining Ray";
         case Spell.SummonDragon:
             return "Summon Dragon";
         case Spell.Bahamut:
             return "Bahamut";
+        case Spell.AngelRay:
+            return "Angel Ray";
         case Spell.Genesis:
             return "Genesis";
     }
@@ -1809,9 +1817,11 @@ export const SPELL_LVL_REQS: Map<Spell, number> = new Map([
     [Spell.ChainLightning, 120],
     [Spell.Blizzard, 120],
     [Spell.Heal, 30],
+    [Spell.HolyArrow, 30],
     [Spell.ShiningRay, 70],
     [Spell.SummonDragon, 70],
     [Spell.Bahamut, 120],
+    [Spell.AngelRay, 120],
     [Spell.Genesis, 120],
 ]);
 
@@ -1913,8 +1923,10 @@ export const SPELL_LINES: Map<Spell, [number, number, number]> = new Map([
     [Spell.ChainLightning, [1, 1, 6]],
     [Spell.Blizzard, [1, 1, 15]],
     [Spell.Heal, [1, 1, 5]],
+    [Spell.HolyArrow, [1, 1, 1]],
     [Spell.ShiningRay, [1, 1, 6]],
     [Spell.SummonDragon, [1, 1, 1]],
     [Spell.Bahamut, [1, 1, 3]],
+    [Spell.AngelRay, [1, 1, 1]],
     [Spell.Genesis, [1, 1, 15]],
 ]);

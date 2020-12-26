@@ -114,7 +114,9 @@ export function secondaryStat(stats, wepType, clazz) {
  */
 export function magicAttackPeriod(spellBooster, spell, speed) {
     switch (spell) {
-        case Spell.Other: {
+        case Spell.Other:
+        case Spell.HolyArrow:
+        case Spell.AngelRay: {
             switch (spellBooster) {
                 case -2:
                     return 720;
@@ -746,9 +748,11 @@ export function attackIsElemental(attack) {
 export function isHolySpell(spell) {
     switch (spell) {
         case Spell.Heal:
+        case Spell.HolyArrow:
         case Spell.ShiningRay:
         case Spell.SummonDragon:
         case Spell.Bahamut:
+        case Spell.AngelRay:
         case Spell.Genesis:
             return true;
         default:
@@ -967,12 +971,16 @@ export function spellName(spell) {
             return "Blizzard";
         case Spell.Heal:
             return "Heal";
+        case Spell.HolyArrow:
+            return "Holy Arrow";
         case Spell.ShiningRay:
             return "Shining Ray";
         case Spell.SummonDragon:
             return "Summon Dragon";
         case Spell.Bahamut:
             return "Bahamut";
+        case Spell.AngelRay:
+            return "Angel Ray";
         case Spell.Genesis:
             return "Genesis";
     }
@@ -1761,9 +1769,11 @@ export const SPELL_LVL_REQS = new Map([
     [Spell.ChainLightning, 120],
     [Spell.Blizzard, 120],
     [Spell.Heal, 30],
+    [Spell.HolyArrow, 30],
     [Spell.ShiningRay, 70],
     [Spell.SummonDragon, 70],
     [Spell.Bahamut, 120],
+    [Spell.AngelRay, 120],
     [Spell.Genesis, 120],
 ]);
 export const JOB_LVL_REQS = new Map([
@@ -1862,8 +1872,10 @@ export const SPELL_LINES = new Map([
     [Spell.ChainLightning, [1, 1, 6]],
     [Spell.Blizzard, [1, 1, 15]],
     [Spell.Heal, [1, 1, 5]],
+    [Spell.HolyArrow, [1, 1, 1]],
     [Spell.ShiningRay, [1, 1, 6]],
     [Spell.SummonDragon, [1, 1, 1]],
     [Spell.Bahamut, [1, 1, 3]],
+    [Spell.AngelRay, [1, 1, 1]],
     [Spell.Genesis, [1, 1, 15]],
 ]);

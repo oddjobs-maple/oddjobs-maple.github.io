@@ -52,6 +52,7 @@ function main() {
     const spellBoosterInput = document.getElementById("spell-booster");
     const eleAmpInput = document.getElementById("ele-amp");
     const eleBoostInput = document.getElementById("ele-boost");
+    const eleWepInput = document.getElementById("ele-wep");
     const eleChargeInputs = Array.from(document.getElementsByName("ele-charge"));
     const eleChargeDmgInput = document.getElementById("ele-charge-dmg");
     const eleChargeLevelInput = document.getElementById("ele-charge-level");
@@ -202,6 +203,11 @@ function main() {
             eleBoost = 0;
         }
         eleBoostInput.value = "" + eleBoost;
+        let eleWep = Math.max(parseInt(eleWepInput.value, 10), 0);
+        if (!Number.isFinite(eleWep)) {
+            eleWep = 0;
+        }
+        eleWepInput.value = "" + eleWep;
         const eleChargeType = (() => {
             let eleChargeType = undefined;
             for (const eleChargeInput of eleChargeInputs) {
@@ -275,7 +281,7 @@ function main() {
             hitOrd = 1;
         }
         hitOrdInput.value = "" + hitOrd;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, eleBoost / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, eleBoost / 100, eleWep / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -741,6 +747,7 @@ function main() {
         }
     }
     function recalculateMagic(inputData, critQ) {
+        const eleWepBonus = 1 + (isHolySpell(inputData.spell) ? 0 : inputData.eleWep);
         const [minDmg, maxDmg] = [
             (() => {
                 switch (inputData.spell) {
@@ -751,6 +758,7 @@ function main() {
                 }
             })() *
                 inputData.eleAmp *
+                eleWepBonus *
                 inputData.eleSus,
             (() => {
                 switch (inputData.spell) {
@@ -761,6 +769,7 @@ function main() {
                 }
             })() *
                 inputData.eleAmp *
+                eleWepBonus *
                 inputData.eleSus,
         ];
         const [minDmgNoCrit, maxDmgNoCrit] = adjustRangeForMdef(inputData, [
@@ -1342,6 +1351,23 @@ function main() {
                 warnings.push("Your Elemental Boost \u{2260}0%, but your level <120.");
             }
         }
+        if (inputData.eleWep !== 0) {
+            if (inputData.wepType !== WeaponType.Wand &&
+                inputData.wepType !== WeaponType.Staff) {
+                warnings.push("You are getting a nonzero elemental bonus from your \
+                    weapon, but you aren\u{2019}t wielding a wand nor a \
+                    staff.");
+            }
+            else if (inputData.clazz !== Class.Magician) {
+                warnings.push(`You\u{2019}re using an Elemental ${inputData.wepType === WeaponType.Wand
+                    ? "Wand"
+                    : "Staff"}, but you\u{2019}re not a magician.`);
+            }
+            if (inputData.eleWep !== 25 / 100) {
+                warnings.push("Your Elemental Wand/Staff is giving an elemental bonus \
+                    \u{2260}25%.");
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1394,6 +1420,7 @@ function main() {
         spellBoosterInput,
         eleAmpInput,
         eleBoostInput,
+        eleWepInput,
         eleChargeDmgInput,
         eleChargeLevelInput,
         caActiveInput,

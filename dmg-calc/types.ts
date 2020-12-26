@@ -129,9 +129,11 @@ export enum Spell {
     ChainLightning = 2221006,
     Blizzard = 2221007,
     Heal = 2301002,
+    HolyArrow = 2301005,
     ShiningRay = 2311004,
     SummonDragon = 2311006,
     Bahamut = 2321003,
+    AngelRay = 2321007,
     Genesis = 2321008,
 }
 
@@ -183,6 +185,7 @@ export class InputData {
         public spellBooster: number,
         public eleAmp: number,
         public eleBoost: number,
+        public eleWep: number,
         public eleChargeType: ChargeType,
         public eleChargeDmg: number,
         public eleChargeLevel: number,
