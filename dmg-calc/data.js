@@ -728,6 +728,21 @@ export function attackPeriod(wepType, speed, attack) {
         }
     }
 }
+export function attackIsElemental(attack) {
+    switch (attack) {
+        case Attack.Inferno:
+        case Attack.Blizzard:
+        case Attack.Phoenix:
+        case Attack.Frostprey:
+        case Attack.VenomousStar:
+        case Attack.VenomousStab:
+        case Attack.Flamethrower:
+        case Attack.IceSplitter:
+            return true;
+        default:
+            return false;
+    }
+}
 export function isHolySpell(spell) {
     switch (spell) {
         case Spell.Heal:
@@ -834,6 +849,10 @@ export function attackName(attack) {
             return "Arrow Bomb (splash)";
         case Attack.IronArrow:
             return "Iron Arrow";
+        case Attack.Inferno:
+            return "Inferno";
+        case Attack.Blizzard:
+            return "Blizzard";
         case Attack.Hurricane:
             return "Hurricane";
         case Attack.Phoenix:
@@ -1311,6 +1330,11 @@ export const ATTACK_REQS = new Map([
         Attack.IronArrow,
         [new Set([Class.Archer]), 30, new Set([WeaponType.Crossbow])],
     ],
+    [Attack.Inferno, [new Set([Class.Archer]), 70, new Set([WeaponType.Bow])]],
+    [
+        Attack.Blizzard,
+        [new Set([Class.Archer]), 70, new Set([WeaponType.Crossbow])],
+    ],
     [
         Attack.Hurricane,
         [new Set([Class.Archer]), 120, new Set([WeaponType.Bow])],
@@ -1775,6 +1799,8 @@ export const ATTACK_LINES = new Map([
     [Attack.ArrowBombImpact, [1, 1, 1]],
     [Attack.ArrowBombSplash, [1, 1, 5]],
     [Attack.IronArrow, [1, 1, 6]],
+    [Attack.Inferno, [1, 1, 6]],
+    [Attack.Blizzard, [1, 1, 6]],
     [Attack.Hurricane, [1, 1, 1]],
     [Attack.Phoenix, [1, 1, 4]],
     [Attack.Frostprey, [1, 1, 4]],

@@ -24,6 +24,7 @@
 import {
     ATTACK_LINES,
     ATTACK_REQS,
+    attackIsElemental,
     attackName,
     attackPeriod,
     BAD_WEPS,
@@ -107,6 +108,9 @@ function main(): void {
     ) as HTMLInputElement;
 
     const eleAmpInput = document.getElementById("ele-amp") as HTMLInputElement;
+    const eleBoostInput = document.getElementById(
+        "ele-boost",
+    ) as HTMLInputElement;
     const eleChargeInputs = Array.from(
         document.getElementsByName(
             "ele-charge",
@@ -346,6 +350,11 @@ function main(): void {
             eleAmp = 100;
         }
         eleAmpInput.value = "" + eleAmp;
+        let eleBoost = Math.max(parseInt(eleBoostInput.value, 10), 0);
+        if (!Number.isFinite(eleBoost)) {
+            eleBoost = 0;
+        }
+        eleBoostInput.value = "" + eleBoost;
         const eleChargeType: ChargeType = (() => {
             let eleChargeType: ChargeType | undefined = undefined;
             for (const eleChargeInput of eleChargeInputs) {
@@ -464,6 +473,7 @@ function main(): void {
             speed,
             spellBooster,
             eleAmp / 100,
+            eleBoost / 100,
             eleChargeType,
             eleChargeDmg / 100,
             eleChargeLevel,
@@ -494,6 +504,7 @@ function main(): void {
     function recalculatePhys(inputData: InputData, critQ: number): void {
         const caMod = caModifier(inputData);
         const eleChargeMod = eleChargeModifier(inputData);
+        const eleSus = attackEffectiveEleSus(inputData);
 
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
@@ -591,7 +602,7 @@ function main(): void {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ].map(dmg => dmg * caMod * eleChargeMod);
+        ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -669,7 +680,7 @@ function main(): void {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ].map(dmg => dmg * caMod * eleChargeMod);
+        ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
 
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
@@ -1907,10 +1918,14 @@ function main(): void {
                 break;
         }
 
-        if (inputData.attack === Attack.Flamethrower) {
+        if (
+            inputData.attack === Attack.Flamethrower ||
+            inputData.attack === Attack.Inferno
+        ) {
             warnings.push(
-                "The damage calculation used here for Flamethrower does not \
-                take into account the flaming/burning damage over time.",
+                `The damage calculation used here for ${inputData.attack} \
+                does not take into account the flaming/burning damage over \
+                time.`,
             );
         }
 
@@ -1984,6 +1999,20 @@ function main(): void {
             }
         }
 
+        if (inputData.eleBoost !== 0) {
+            if (inputData.clazz !== Class.Pirate2nd) {
+                warnings.push(
+                    "Your Elemental Boost \u{2260}0%, but you\u{2019}re not a \
+                    \u{2265}2\u{207f}\u{1d48} job pirate.",
+                );
+            }
+            if (inputData.level < 120) {
+                warnings.push(
+                    "Your Elemental Boost \u{2260}0%, but your level <120.",
+                );
+            }
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -2044,6 +2073,7 @@ function main(): void {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        eleBoostInput,
         eleChargeDmgInput,
         eleChargeLevelInput,
         caActiveInput,
@@ -2070,7 +2100,22 @@ function main(): void {
 }
 
 function dmgMulti(inputData: InputData, crit: boolean): number {
-    return inputData.skillDmgMulti + (crit ? inputData.critDmg : 0);
+    return (
+        inputData.skillDmgMulti +
+        (crit ? inputData.critDmg : 0) +
+        (inputData.attack === Attack.Flamethrower ||
+        inputData.attack === Attack.IceSplitter
+            ? inputData.eleBoost
+            : 0)
+    );
+}
+
+function attackEffectiveEleSus(inputData: InputData): number {
+    if (!attackIsElemental(inputData.attack)) {
+        return 1;
+    }
+
+    return inputData.eleSus;
 }
 
 function maxDmgPhys(inputData: InputData, goodAnim: boolean): number {

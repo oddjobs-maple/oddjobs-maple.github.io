@@ -20,7 +20,7 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { ATTACK_LINES, ATTACK_REQS, attackName, attackPeriod, BAD_WEPS, chargeTypeFromValue, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
+import { ATTACK_LINES, ATTACK_REQS, attackIsElemental, attackName, attackPeriod, BAD_WEPS, chargeTypeFromValue, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
 import { truncClampedExpectation, truncClampedVariance } from "./math.js";
 import { Attack, Class, InputData, Spell, Stats, WeaponType, } from "./types.js";
 import { indefinite } from "./util.js";
@@ -51,6 +51,7 @@ function main() {
     const speedInput = document.getElementById("speed");
     const spellBoosterInput = document.getElementById("spell-booster");
     const eleAmpInput = document.getElementById("ele-amp");
+    const eleBoostInput = document.getElementById("ele-boost");
     const eleChargeInputs = Array.from(document.getElementsByName("ele-charge"));
     const eleChargeDmgInput = document.getElementById("ele-charge-dmg");
     const eleChargeLevelInput = document.getElementById("ele-charge-level");
@@ -196,6 +197,11 @@ function main() {
             eleAmp = 100;
         }
         eleAmpInput.value = "" + eleAmp;
+        let eleBoost = Math.max(parseInt(eleBoostInput.value, 10), 0);
+        if (!Number.isFinite(eleBoost)) {
+            eleBoost = 0;
+        }
+        eleBoostInput.value = "" + eleBoost;
         const eleChargeType = (() => {
             let eleChargeType = undefined;
             for (const eleChargeInput of eleChargeInputs) {
@@ -269,7 +275,7 @@ function main() {
             hitOrd = 1;
         }
         hitOrdInput.value = "" + hitOrd;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, attack, spell, speed, spellBooster, eleAmp / 100, eleBoost / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -281,6 +287,7 @@ function main() {
     function recalculatePhys(inputData, critQ) {
         const caMod = caModifier(inputData);
         const eleChargeMod = eleChargeModifier(inputData);
+        const eleSus = attackEffectiveEleSus(inputData);
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
                 switch (inputData.attack) {
@@ -377,7 +384,7 @@ function main() {
                         return maxDmgPhys(inputData, true);
                 }
             })(),
-        ].map(dmg => dmg * caMod * eleChargeMod);
+        ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
                 switch (inputData.attack) {
@@ -455,7 +462,7 @@ function main() {
                         return maxDmgPhys(inputData, false);
                 }
             })(),
-        ].map(dmg => dmg * caMod * eleChargeMod);
+        ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
         const [minDmgPhysBadAdjusted, maxDmgPhysGoodAdjusted] = (() => {
             switch (inputData.attack) {
                 case Attack.HeavensHammerXiuz:
@@ -1268,9 +1275,11 @@ function main() {
                 delayWarn("corsair");
                 break;
         }
-        if (inputData.attack === Attack.Flamethrower) {
-            warnings.push("The damage calculation used here for Flamethrower does not \
-                take into account the flaming/burning damage over time.");
+        if (inputData.attack === Attack.Flamethrower ||
+            inputData.attack === Attack.Inferno) {
+            warnings.push(`The damage calculation used here for ${inputData.attack} \
+                does not take into account the flaming/burning damage over \
+                time.`);
         }
         if (inputData.echo !== 0 && inputData.echo !== 4 / 100) {
             warnings.push("You have specified a nonzero value for Echo of Hero that is \
@@ -1324,6 +1333,15 @@ function main() {
                     break;
             }
         }
+        if (inputData.eleBoost !== 0) {
+            if (inputData.clazz !== Class.Pirate2nd) {
+                warnings.push("Your Elemental Boost \u{2260}0%, but you\u{2019}re not a \
+                    \u{2265}2\u{207f}\u{1d48} job pirate.");
+            }
+            if (inputData.level < 120) {
+                warnings.push("Your Elemental Boost \u{2260}0%, but your level <120.");
+            }
+        }
         /*======== Remove old warnings display ========*/
         {
             const warningsElem = document.getElementById("warnings");
@@ -1375,6 +1393,7 @@ function main() {
         speedInput,
         spellBoosterInput,
         eleAmpInput,
+        eleBoostInput,
         eleChargeDmgInput,
         eleChargeLevelInput,
         caActiveInput,
@@ -1396,7 +1415,18 @@ function main() {
     recalculate();
 }
 function dmgMulti(inputData, crit) {
-    return inputData.skillDmgMulti + (crit ? inputData.critDmg : 0);
+    return (inputData.skillDmgMulti +
+        (crit ? inputData.critDmg : 0) +
+        (inputData.attack === Attack.Flamethrower ||
+            inputData.attack === Attack.IceSplitter
+            ? inputData.eleBoost
+            : 0));
+}
+function attackEffectiveEleSus(inputData) {
+    if (!attackIsElemental(inputData.attack)) {
+        return 1;
+    }
+    return inputData.eleSus;
 }
 function maxDmgPhys(inputData, goodAnim) {
     return (((primaryStat(inputData.stats, inputData.wepType, goodAnim, inputData.clazz) +
