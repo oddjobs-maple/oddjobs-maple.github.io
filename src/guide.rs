@@ -20,7 +20,7 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
         <div id="main-nav-inner">
           <div id="main-nav-pullout"><span>&#x25b6;</span></div>
 
-          <a href="../index.html" class="nav-h"
+          <a href="../" class="nav-h"
             >Oddjobs
             <br />
             <img
@@ -31,7 +31,7 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
 
           <ul class="nav-list">
             <li>
-              <a href="../index.html">Home</a>
+              <a href="../">Home</a>
             </li>
             <li>
               <a href="../join-on-up.html">Join On Up</a>
@@ -40,13 +40,13 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="../odd-jobs.html">Odd Jobs</a>
             </li>
             <li class="active">
-              <a href="./index.html">Guides</a>
+              <a href="./">Guides</a>
             </li>
             <li>
-              <a href="../dmg-calc/index.html">Damage Calc</a>
+              <a href="../dmg-calc/">Damage Calc</a>
             </li>
             <li>
-              <a href="../archive/index.html">Archive</a>
+              <a href="../archive/">Archive</a>
             </li>
             <li>
               <a href="../source.html" data-jslicense="1">Source</a>
@@ -95,7 +95,7 @@ static PREAMBLE1: &[u8] = br##"</title>
         <div id="main-nav-inner">
           <div id="main-nav-pullout"><span>&#x25b6;</span></div>
 
-          <a href="../../index.html" class="nav-h"
+          <a href="../../" class="nav-h"
             >Oddjobs
             <br />
             <img
@@ -106,7 +106,7 @@ static PREAMBLE1: &[u8] = br##"</title>
 
           <ul class="nav-list">
             <li>
-              <a href="../../index.html">Home</a>
+              <a href="../../">Home</a>
             </li>
             <li>
               <a href="../../join-on-up.html">Join On Up</a>
@@ -115,13 +115,13 @@ static PREAMBLE1: &[u8] = br##"</title>
               <a href="../../odd-jobs.html">Odd Jobs</a>
             </li>
             <li class="active">
-              <a href="../index.html">Guides</a>
+              <a href="../">Guides</a>
             </li>
             <li>
-              <a href="../../dmg-calc/index.html">Damage Calc</a>
+              <a href="../../dmg-calc/">Damage Calc</a>
             </li>
             <li>
-              <a href="../../archive/index.html">Archive</a>
+              <a href="../../archive/">Archive</a>
             </li>
             <li>
               <a href="../../source.html" data-jslicense="1">Source</a>
@@ -162,7 +162,7 @@ pub fn render_index<P: AsRef<Path>, W: Write>(input_dir_path: P, out: &mut W) {
         {
             write!(
                 out,
-                r##"            <li><a href="./{}/index.html">"##,
+                r##"            <li><a href="./{}/">"##,
                 dir_entry_name,
             )
             .unwrap();
@@ -383,9 +383,9 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
 
                     if level == 1 {
                         out.write_all(
-                            br##"<a href="../index.html"
-                                 class="go-back">&#x2190;&nbsp;Back to
-                                 Guides&nbsp;&#x2190;</a></header><main>"##,
+                            br##"<a href="../"
+                                     class="go-back">&#x2190;&nbsp;Back to
+                                     Guides&nbsp;&#x2190;</a></header><main>"##,
                         )
                         .unwrap();
                     } else {

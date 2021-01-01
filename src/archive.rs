@@ -42,7 +42,7 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
         <div id="main-nav-inner">
           <div id="main-nav-pullout"><span>&#x25b6;</span></div>
 
-          <a href="../index.html" class="nav-h"
+          <a href="../" class="nav-h"
             >Oddjobs
             <br />
             <img
@@ -53,7 +53,7 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
 
           <ul class="nav-list">
             <li>
-              <a href="../index.html">Home</a>
+              <a href="../">Home</a>
             </li>
             <li>
               <a href="../join-on-up.html">Join On Up</a>
@@ -62,13 +62,13 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="../odd-jobs.html">Odd Jobs</a>
             </li>
             <li>
-              <a href="../guides/index.html">Guides</a>
+              <a href="../guides/">Guides</a>
             </li>
             <li>
-              <a href="../dmg-calc/index.html">Damage Calc</a>
+              <a href="../dmg-calc/">Damage Calc</a>
             </li>
             <li class="active">
-              <a href="./index.html">Archive</a>
+              <a href="./">Archive</a>
             </li>
             <li>
               <a href="../source.html" data-jslicense="1">Source</a>
@@ -103,9 +103,9 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
           </p>
 
           <ul>
-            <li><a href="./medium/index.html">Browse by medium</a></li>
-            <li><a href="./subject/index.html">Browse by subject matter</a></li>
-            <li><a href="./domain/index.html">Browse by internet domain</a></li>
+            <li><a href="./medium/">Browse by medium</a></li>
+            <li><a href="./subject/">Browse by subject matter</a></li>
+            <li><a href="./domain/">Browse by internet domain</a></li>
           </ul>
 
           <!-- The HTML below this comment is automatically generated from a
@@ -139,7 +139,7 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
         <div id="main-nav-inner">
           <div id="main-nav-pullout"><span>&#x25b6;</span></div>
 
-          <a href="../../index.html" class="nav-h"
+          <a href="../../" class="nav-h"
             >Oddjobs
             <br />
             <img
@@ -150,7 +150,7 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
 
           <ul class="nav-list">
             <li>
-              <a href="../../index.html">Home</a>
+              <a href="../../">Home</a>
             </li>
             <li>
               <a href="../../join-on-up.html">Join On Up</a>
@@ -159,13 +159,13 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
               <a href="../../odd-jobs.html">Odd Jobs</a>
             </li>
             <li>
-              <a href="../../guides/index.html">Guides</a>
+              <a href="../../guides/">Guides</a>
             </li>
             <li>
-              <a href="../../dmg-calc/index.html">Damage Calc</a>
+              <a href="../../dmg-calc/">Damage Calc</a>
             </li>
             <li class="active">
-              <a href="../index.html">Archive</a>
+              <a href="../">Archive</a>
             </li>
             <li>
               <a href="../../source.html" data-jslicense="1">Source</a>
@@ -177,7 +177,7 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
       <div id="content">
         <header>
           <h1>Browse archive by {{ singular }}</h1>
-          <a href="../index.html" class="go-back">&#x2190;&nbsp;Back to main
+          <a href="../" class="go-back">&#x2190;&nbsp;Back to main
           archive&nbsp;&#x2190;</a>
         </header>
 
@@ -221,7 +221,7 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
         <div id="main-nav-inner">
           <div id="main-nav-pullout"><span>&#x25b6;</span></div>
 
-          <a href="../../../index.html" class="nav-h"
+          <a href="../../../" class="nav-h"
             >Oddjobs
             <br />
             <img
@@ -232,7 +232,7 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
 
           <ul class="nav-list">
             <li>
-              <a href="../../../index.html">Home</a>
+              <a href="../../../">Home</a>
             </li>
             <li>
               <a href="../../../join-on-up.html">Join On Up</a>
@@ -241,13 +241,13 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
               <a href="../../../odd-jobs.html">Odd Jobs</a>
             </li>
             <li>
-              <a href="../../../guides/index.html">Guides</a>
+              <a href="../../../guides/">Guides</a>
             </li>
             <li>
-              <a href="../../../dmg-calc/index.html">Damage Calc</a>
+              <a href="../../../dmg-calc/">Damage Calc</a>
             </li>
             <li class="active">
-              <a href="../../index.html">Archive</a>
+              <a href="../../">Archive</a>
             </li>
             <li>
               <a href="../../../source.html" data-jslicense="1">Source</a>
@@ -259,7 +259,7 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
       <div id="content">
         <header>
           <h1>Archive entries including the {{ singular }}: {{ item }}</h1>
-          <a href="../index.html" class="go-back">&#x2190;&nbsp;Back to
+          <a href="../" class="go-back">&#x2190;&nbsp;Back to
           browsing by {{ singular }}&nbsp;&#x2190;</a>
         </header>
 
@@ -345,7 +345,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             for (singular_slug, singular) in plural_sorted {
                 write!(
                     plural_index,
-                    r##"<li><a href="./{}/index.html">{}</a></li>"##,
+                    r##"<li><a href="./{}/">{}</a></li>"##,
                     singular_slug, singular,
                 )
                 .unwrap();
@@ -424,8 +424,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
             for (singular_slug, singular) in plural_sorted {
                 write!(
                     plural_index,
-                    r##"<li><a
-                        href="./{}/index.html"><code>{}</code></a></li>"##,
+                    r##"<li><a href="./{}/"><code>{}</code></a></li>"##,
                     singular_slug, singular,
                 )
                 .unwrap();
