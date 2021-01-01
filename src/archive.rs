@@ -275,7 +275,7 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
 
           <p>
             This page only contains entries whose {{ singular }} matches
-            {{ item }}.
+            &ldquo;{{ item }}&rdquo;.
           </p>
 
           <!-- The HTML below this comment is automatically generated from a
