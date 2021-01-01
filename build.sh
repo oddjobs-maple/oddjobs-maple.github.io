@@ -17,6 +17,8 @@ do
     cp "$2"/"$s"/*.png ./guides/"$s"/
 done
 
+./target/debug/oddjobs_renderer "$3" > ./archive/index.html
+
 cd ./dmg-calc/
 tsc
 cd ..

@@ -279,6 +279,8 @@ li {
 
 abbr[title] {
     border-bottom: none;
+    text-decoration: underline;
+    text-decoration: underline dotted;
     text-decoration: underline dotted var(--white);
 }
 
@@ -759,4 +761,24 @@ ul.nav-list > li.active {
 
 .plain-ul {
     list-style-type: disc;
+}
+
+.inline-ul {
+    display: inline;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.inline-ul > li {
+    display: inline;
+}
+
+.inline-ul > li::after {
+    content: ', ';
+}
+
+.inline-ul > li:last-child::after {
+    content: '';
 }

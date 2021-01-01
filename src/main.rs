@@ -2,6 +2,7 @@
 #![deny(clippy::all)]
 #![deny(deprecated)]
 
+mod archive;
 mod guide;
 mod odd_jobs;
 mod util;
@@ -40,6 +41,8 @@ fn main() {
         || input_filename.ends_with(".markdown")
     {
         guide::render(input_filename, &mut stdout);
+    } else if input_filename.ends_with(".toml") {
+        archive::render(input_filename, &mut stdout);
     } else if Path::new(&input_filename).is_dir() {
         guide::render_index(input_filename, &mut stdout);
     } else {
