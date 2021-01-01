@@ -93,7 +93,10 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             (any version thereof). Some videos are also included, but note that
             archival for videos is a tad bit more difficult (just due to sheer
             size, mostly), so most or all videos are left not-properly-archived
-            (generally just raw YouTube URLs).
+            (generally just raw YouTube URLs). The data presented here are
+            rendered to this HTML from a single TOML file; see <a
+            href="https://codeberg.org/oddjobs/odd-jobbed_archive"
+            >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
 
           <p>
@@ -188,7 +191,10 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
             (any version thereof). Some videos are also included, but note that
             archival for videos is a tad bit more difficult (just due to sheer
             size, mostly), so most or all videos are left not-properly-archived
-            (generally just raw YouTube URLs).
+            (generally just raw YouTube URLs). The data presented here are
+            rendered to this HTML from a single TOML file; see <a
+            href="https://codeberg.org/oddjobs/odd-jobbed_archive"
+            >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
 
           <p>
@@ -270,7 +276,10 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
             (any version thereof). Some videos are also included, but note that
             archival for videos is a tad bit more difficult (just due to sheer
             size, mostly), so most or all videos are left not-properly-archived
-            (generally just raw YouTube URLs).
+            (generally just raw YouTube URLs). The data presented here are
+            rendered to this HTML from a single TOML file; see <a
+            href="https://codeberg.org/oddjobs/odd-jobbed_archive"
+            >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
 
           <p>
