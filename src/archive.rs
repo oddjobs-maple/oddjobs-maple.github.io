@@ -95,6 +95,7 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             size, mostly), so most or all videos are left not-properly-archived
             (generally just raw YouTube URLs). The data presented here are
             rendered to this HTML from a single TOML file; see <a
+            target="_blank" rel="noopener noreferrer"
             href="https://codeberg.org/oddjobs/odd-jobbed_archive"
             >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
@@ -193,6 +194,7 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
             size, mostly), so most or all videos are left not-properly-archived
             (generally just raw YouTube URLs). The data presented here are
             rendered to this HTML from a single TOML file; see <a
+            target="_blank" rel="noopener noreferrer"
             href="https://codeberg.org/oddjobs/odd-jobbed_archive"
             >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
@@ -278,6 +280,7 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
             size, mostly), so most or all videos are left not-properly-archived
             (generally just raw YouTube URLs). The data presented here are
             rendered to this HTML from a single TOML file; see <a
+            target="_blank" rel="noopener noreferrer"
             href="https://codeberg.org/oddjobs/odd-jobbed_archive"
             >https://codeberg.org/oddjobs/odd-jobbed_archive</a>.
           </p>
