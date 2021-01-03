@@ -384,8 +384,8 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     if level == 1 {
                         out.write_all(
                             br##"<a href="../"
-                                     class="go-back">&#x2190;&nbsp;Back to
-                                     Guides&nbsp;&#x2190;</a></header><main>"##,
+                                 class="go-back">&#x2190;&nbsp;Back to
+                                 Guides&nbsp;&#x2190;</a></header><main>"##,
                         )
                         .unwrap();
                     } else {

@@ -140,8 +140,7 @@
 
             <p>
               Stats (STR, DEX, INT, LUK) are total stat values, after base
-              stats
-              <strong>and</strong> equipment <strong>and</strong> buffs.
+              stats <strong>and</strong> equipment <strong>and</strong> buffs.
               Likewise, total WATK is the sum of all WATK from your equipment
               (including both your weapon, and your other equips), plus WATK
               from skills, plus WATK from buffs (except Echo of Hero, which,
@@ -178,11 +177,7 @@
               &ldquo;Basic attack&rdquo; of 40 at max level.
               &ldquo;Lines&rdquo; refers to how many lines of damage the
               attacking skill does; for example, this value is 1 for Power
-              Strike and 2 for Magic Claw. It is assumed that attacks with more
-              than one line of damage calculate each line identically, even if
-              the actual <em>outcomes</em> for the various lines may differ due
-              to random chance. This assumption is violated by skills like
-              Barrage.
+              Strike and 2 for Magic Claw.
             </p>
 
             <p>
@@ -196,10 +191,9 @@
               your basic attack &mdash; i.e. not using a skill &mdash; with no
               crits nor elemental effects nor reduction due to WDEF). These
               sources of damage multiplier (skills, crits, elemental effects)
-              are
-              <strong>additive</strong> in the sense that these multipliers are
-              summed together, and then that sum makes up <em>the</em> damage
-              multiplier.
+              are <strong>additive</strong> in the sense that these multipliers
+              are summed together, and then that sum makes up
+              <em>the</em> damage multiplier.
               <strong
                 >Note that basic attacks have a &ldquo;skill&rdquo; multiplier
                 of 1</strong
@@ -208,16 +202,98 @@
               you use the Arrow Blow skill as an archer who has maxed both
               Arrow Blow (described in-game as &ldquo;Damage 260%&rdquo;) and
               Critical Shot (described in-game as &ldquo;40% success rate,
-              critical damage 200%&rdquo;). Let&rsquo;s assume that this
-              particular use of Arrow Blow is a crit, and thus we get the
-              benefit of the &ldquo;critical damage 200%&rdquo;. The damage
-              multiplier is the sum of the multipliers from Arrow Blow and
-              Critical Shot: 2.6&nbsp;+&nbsp;2&nbsp;=&nbsp;4.6. Thus, we expect
-              this attack to (again, assuming the monster has 0 WDEF) do 4.6
-              times as much as a non-critical basic attack would. Note that
-              magic attacks work somewhat differently, and (as far as I know)
-              do not use this additive notion of &ldquo;damage
+              critical damage 200%&rdquo;, although the critical damage is
+              actually 100 percentage points lower than described, i.e. 100%;
+              see below). Let&rsquo;s assume that this particular use of Arrow
+              Blow is a crit, and thus we get the benefit of the
+              &ldquo;critical damage 200%&rdquo; (again, really 100%; see
+              below). The damage multiplier is the sum of the multipliers from
+              Arrow Blow and Critical Shot: 2.6&nbsp;+&nbsp;1&nbsp;=&nbsp;3.6.
+              Thus, we expect this attack to (again, assuming the monster has 0
+              WDEF) do 3.6 times as much as a non-critical basic attack would.
+              Note that magic attacks work somewhat differently, and (as far as
+              I know) do not use this additive notion of &ldquo;damage
               multiplier&rdquo;.
+            </p>
+
+            <p>
+              The descriptions of skills that have to do with critical hits are
+              typically misleading. Below is a list of these skills and what
+              they <em>actually</em> add to the damage multiplier:
+            </p>
+
+            <ul>
+              <li>
+                Critical Shot: 100 percentage points lower than described
+                in-game; at max level, the description reads
+                &ldquo;200%&rdquo;, but it only adds 100 percentage points to
+                your damage multiplier.
+              </li>
+              <li>Critical Throw: Same as for Critical Shot.</li>
+              <li>
+                Stun Mastery: The in-game description is mostly correct (60
+                extra percentage points added to the damage multiplier when
+                Stun Mastery is at its maximum level), but this skill interacts
+                bizarrely with Sharp Eyes: when the marauder/buccaneer is
+                affected by Sharp Eyes, Stun Mastery acts as if it granted 100
+                more percentage points than it actually does, viz. 160 at max
+                level. This extra 100 percentage points is
+                <strong
+                  >in addition to all of the percentage points contributed by
+                  Sharp Eyes</strong
+                >, which is 140 such points when Sharp Eyes is at its maximum
+                level (see below).
+              </li>
+              <li>
+                Sharp Eyes: 100 percentage points higher than described
+                in-game; at max level, the description reads
+                &ldquo;+40%&rdquo;, but it actually adds 140 percentage points
+                to your damage multiplier. This also, for unknown reasons,
+                interacts strangely with Stun Mastery (see above). Sharp Eyes
+                in particular is a source of confusion (especially because it
+                can be applied to characters of any class/job), so the
+                paragraph immediately below is dedicated to it.
+              </li>
+            </ul>
+
+            <p>
+              The in-game description of the Sharp Eyes skill is somewhat
+              misleading. At max level, the skill grants &ldquo;[Critical]
+              Damage + 40%&rdquo;. However, this should probably read
+              &ldquo;+140%&rdquo;, because the actual value that is added to
+              the damage multiplier is 1.4 (140 percentage points). For archers
+              and assassins/hermits/nightlords, interpreting Sharp Eyes is
+              pretty straightforward: it just adds something to your
+              already-existing critical chance and to your already-existing
+              critical multiplier. For example, an archer with maxed Critical
+              Shot and maxed Sharp Eyes has a
+              0.4&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.55 probability of critting,
+              and a critical multiplier of 1&nbsp;+&nbsp;1.4&nbsp;=&nbsp;2.4.
+              For marauders/buccaneers with Stun Mastery, Sharp Eyes works
+              confusingly: it effectively adds 2.4 (instead of 1.4) to the
+              critical multiplier of critical hits on stunned monsters. Stun
+              Mastery&rsquo;s critical multiplier at max level is 0.6, so with
+              Sharp Eyes it is increased to 0.6 + 2.4 = 3.0. For physical
+              attackers who do
+              <em>not</em> already have a critical-hit-granting skill, being
+              buffed with maxed Sharp Eyes means an overall
+              0&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.15 probability of critting, and
+              a critical multiplier of 1.4; <strong>not</strong> a critical
+              multiplier of 0.4. Note that the value referred to here as the
+              &ldquo;critical multiplier&rdquo; is
+              <strong>additive</strong> and <em>only</em> serves to cumulate
+              into the overall &ldquo;damage multiplier&rdquo;. For more on
+              this, see above. For magical attacks, the probability of critting
+              with maxed Sharp Eyes is also 0.15, but an attack that crits does
+              <strong>not</strong> add 1.4 to the damage multiplier of a
+              non-crit, as you would expect (magical attacks do not use the
+              same notion of &ldquo;damage multiplier&rdquo;). Instead, it
+              simply multiplies the overall damage of the magical attack by a
+              factor of 1.4. Nevertheless, if you want to use the calculator
+              for magical attacks combined with Sharp Eyes, you should set the
+              values in the inputs below as if you were setting them for a
+              physical attacker who has no critical-hit-granting skill of their
+              own.
             </p>
 
             <p>
@@ -232,42 +308,6 @@
               that Heal, unlike most spells, uses the &ldquo;Damage
               multi&rdquo; rather than the &ldquo;Basic attack&rdquo; (the
               damage multi is typically 300% at maximum level).
-            </p>
-
-            <p>
-              The in-game description of the Sharp Eyes skill is somewhat
-              misleading. At max level, the skill grants &ldquo;[Critical]
-              Damage + 40%&rdquo;. However, this should probably read
-              &ldquo;+140%&rdquo;, because the actual value that is added to
-              the damage multiplier is 1.4. For those who already have a
-              critical-hit-granting skill (archers,
-              assassins/hermits/nightlords, and situationally
-              marauders/buccaneers), interpreting Sharp Eyes is pretty
-              straightforward: it just adds something to your already-existing
-              critical chance and to your already-existing critical multiplier.
-              For example, an archer with maxed Critical Shot and maxed Sharp
-              Eyes has a 0.4&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.55 probability of
-              critting, and a critical multiplier of
-              2&nbsp;+&nbsp;1.4&nbsp;=&nbsp;3.4. For physical attackers who do
-              <em>not</em> already have a critical-hit-granting skill, being
-              buffed with maxed Sharp Eyes means an overall
-              0&nbsp;+&nbsp;0.15&nbsp;=&nbsp;0.15 probability of critting, and
-              a critical multiplier of 1.4; <strong>not</strong> a critical
-              multiplier of 0.4. Note that the value referred to here as the
-              &ldquo;critical multiplier&rdquo; is
-              <strong>additive</strong> and <em>only</em> serves to cumulate
-              into the overall &ldquo;damage multiplier&rdquo;. For more on
-              this, see the previous paragraph. For magical attacks, the
-              probability of critting with maxed Sharp Eyes is also 0.15, but
-              an attack that crits does <strong>not</strong> add 1.4 to the
-              damage multiplier of a non-crit, as you would expect (magical
-              attacks do not use the same notion of &ldquo;damage
-              multiplier&rdquo;). Instead, it simply multiplies the overall
-              damage of the magical attack by a factor of 1.4. Nevertheless, if
-              you want to use the calculator for magical attacks combined with
-              Sharp Eyes, you should set the values in the inputs below as if
-              you were setting them for a physical attacker who has no
-              critical-hit-granting skill of their own.
             </p>
 
             <p>
