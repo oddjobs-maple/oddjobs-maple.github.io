@@ -75,6 +75,14 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="./archive/">Archive</a>
             </li>
             <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://oddjobs.flarum.cloud/"
+                >Forum</a
+              >
+            </li>
+            <li>
               <a href="./source.html" data-jslicense="1">Source</a>
             </li>
           </ul>

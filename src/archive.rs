@@ -71,6 +71,14 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="./">Archive</a>
             </li>
             <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://oddjobs.flarum.cloud/"
+                >Forum</a
+              >
+            </li>
+            <li>
               <a href="../source.html" data-jslicense="1">Source</a>
             </li>
           </ul>
@@ -172,6 +180,14 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
               <a href="../">Archive</a>
             </li>
             <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://oddjobs.flarum.cloud/"
+                >Forum</a
+              >
+            </li>
+            <li>
               <a href="../../source.html" data-jslicense="1">Source</a>
             </li>
           </ul>
@@ -256,6 +272,14 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
             </li>
             <li class="active">
               <a href="../../">Archive</a>
+            </li>
+            <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://oddjobs.flarum.cloud/"
+                >Forum</a
+              >
             </li>
             <li>
               <a href="../../../source.html" data-jslicense="1">Source</a>
