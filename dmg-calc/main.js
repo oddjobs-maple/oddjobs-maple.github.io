@@ -1764,8 +1764,9 @@ function effectiveWatk(inputData) {
         switch (inputData.clazz) {
             case Class.Pirate:
             case Class.Pirate2nd: {
-                const fistsWatk = Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31);
-                return fistsWatk + fistsWatk * inputData.echo;
+                const totalWatk = inputData.totalWatk +
+                    Math.min(Math.trunc((2 * inputData.level + 31) / 3), 31);
+                return totalWatk + totalWatk * inputData.echo;
             }
             default:
                 return 0;
