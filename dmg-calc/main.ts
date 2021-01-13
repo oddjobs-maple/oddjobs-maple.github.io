@@ -100,6 +100,9 @@ function main(): void {
     const weaponTypeInput = document.getElementById(
         "weapon-type",
     ) as HTMLSelectElement;
+    const goodAnimProbInput = document.getElementById(
+        "good-anim-prob",
+    ) as HTMLInputElement;
     const attackInput = document.getElementById("attack") as HTMLSelectElement;
     const spellInput = document.getElementById("spell") as HTMLSelectElement;
     const speedInput = document.getElementById("speed") as HTMLSelectElement;
@@ -322,6 +325,14 @@ function main(): void {
             wepType = 30;
         }
         weaponTypeInput.value = "" + wepType;
+        let goodAnimProb = Math.min(
+            Math.max(parseFloat(goodAnimProbInput.value), 0),
+            100,
+        );
+        if (!Number.isFinite(goodAnimProb)) {
+            goodAnimProb = 50;
+        }
+        goodAnimProbInput.value = "" + goodAnimProb;
         let attack = parseInt(attackInput.value, 10);
         if (!Number.isFinite(attack) || !(attack in Attack)) {
             attack = 0;
@@ -474,6 +485,7 @@ function main(): void {
             clazz,
             level,
             wepType,
+            goodAnimProb / 100,
             attack,
             spell,
             speed,
@@ -509,12 +521,16 @@ function main(): void {
     }
 
     function recalculatePhys(inputData: InputData, critQ: number): void {
+        const badAnimProb = 1 - inputData.goodAnimProb;
+
         const caMod = caModifier(inputData);
         const eleChargeMod = eleChargeModifier(inputData);
         const eleSus = attackEffectiveEleSus(inputData);
 
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
+                const goodAnim = inputData.goodAnimProb >= 1;
+
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
@@ -523,7 +539,7 @@ function main(): void {
                         return minDmgClawPunch(inputData);
                     case Attack.Panic:
                     case Attack.Coma:
-                        return minDmgCaFinisher(inputData, false);
+                        return minDmgCaFinisher(inputData, goodAnim);
                     case Attack.HeavensHammerXiuz:
                         return minDmgHhXiuz(inputData);
                     case Attack.HeavensHammerXiuzCorrected:
@@ -559,10 +575,12 @@ function main(): void {
                     case Attack.AerialStrike:
                         return minDmgSomersaultKick(inputData);
                     default:
-                        return minDmgPhys(inputData, false);
+                        return minDmgPhys(inputData, goodAnim);
                 }
             })(),
             (() => {
+                const goodAnim = inputData.goodAnimProb > 0;
+
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
@@ -571,7 +589,7 @@ function main(): void {
                         return maxDmgClawPunch(inputData);
                     case Attack.Panic:
                     case Attack.Coma:
-                        return maxDmgCaFinisher(inputData, true);
+                        return maxDmgCaFinisher(inputData, goodAnim);
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
                         return maxDmgPhys(inputData, true);
@@ -606,12 +624,16 @@ function main(): void {
                     case Attack.AerialStrike:
                         return maxDmgSomersaultKick(inputData);
                     default:
-                        return maxDmgPhys(inputData, true);
+                        return maxDmgPhys(inputData, goodAnim);
                 }
             })(),
         ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
+                if (inputData.goodAnimProb <= 0) {
+                    return minDmgPhysBad;
+                }
+
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
@@ -650,6 +672,10 @@ function main(): void {
                 }
             })(),
             (() => {
+                if (inputData.goodAnimProb >= 1) {
+                    return maxDmgPhysGood;
+                }
+
                 switch (inputData.attack) {
                     case Attack.BowWhack:
                     case Attack.PowerKnockBack:
@@ -902,7 +928,9 @@ function main(): void {
         const expectedPerHitGood =
             critQ * expectedPerHitGoodNoCrit +
             inputData.critProb * expectedPerHitGoodCrit;
-        const expectedPerHit = (expectedPerHitBad + expectedPerHitGood) / 2;
+        const expectedPerHit =
+            expectedPerHitBad * badAnimProb +
+            expectedPerHitGood * inputData.goodAnimProb;
         const expectedPerHitTotal =
             inputData.attack === Attack.Barrage
                 ? (() => {
@@ -963,7 +991,10 @@ function main(): void {
                     critQ * mainVariancePerHitGoodNoCrit +
                     inputData.critProb * mainVariancePerHitGoodCrit;
 
-                return (mainVariancePerHitBad + mainVariancePerHitGood) / 2;
+                return (
+                    mainVariancePerHitBad * badAnimProb +
+                    mainVariancePerHitGood * inputData.goodAnimProb
+                );
             }
 
             return;
@@ -2053,6 +2084,59 @@ function main(): void {
             }
         }
 
+        switch (inputData.wepType) {
+            case WeaponType.Polearm: {
+                if (inputData.goodAnimProb !== 60 / 100) {
+                    warnings.push(
+                        "You\u{2019}re using a polearm, but your good \
+                        animation probability \u{2260}60%. It is currently \
+                        suspected that the actual probability is 60% in \
+                        pre-BB GMS.",
+                    );
+                }
+                break;
+            }
+            case WeaponType.Spear: {
+                if (inputData.goodAnimProb !== 40 / 100) {
+                    warnings.push(
+                        "You\u{2019}re using a spear, but your good \
+                        animation probability \u{2260}40%. It is currently \
+                        suspected that the actual probability is 40% in \
+                        pre-BB GMS.",
+                    );
+                }
+                break;
+            }
+            case WeaponType.OneHandedAxe:
+            case WeaponType.TwoHandedAxe:
+            case WeaponType.OneHandedMace:
+            case WeaponType.TwoHandedMace:
+            case WeaponType.Wand:
+            case WeaponType.Staff: {
+                if (inputData.goodAnimProb <= 0) {
+                    warnings.push(
+                        `You\u{2019}re using ${indefinite(
+                            weaponTypeName(inputData.wepType),
+                        )}, but your good animation probability is 0%. This \
+                        is known to not be the true probability in pre-BB \
+                        GMS.`,
+                    );
+                }
+                if (inputData.goodAnimProb >= 1) {
+                    warnings.push(
+                        `You\u{2019}re using ${indefinite(
+                            weaponTypeName(inputData.wepType),
+                        )}, but your good animation probability is 100%. This \
+                        is known to not be the true probability in pre-BB \
+                        GMS.`,
+                    );
+                }
+                break;
+            }
+            default:
+                break;
+        }
+
         /*======== Remove old warnings display ========*/
 
         {
@@ -2108,6 +2192,7 @@ function main(): void {
         classInput,
         levelInput,
         weaponTypeInput,
+        goodAnimProbInput,
         attackInput,
         spellInput,
         speedInput,

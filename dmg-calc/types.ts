@@ -179,6 +179,7 @@ export class InputData {
         public clazz: Class,
         public level: number,
         public wepType: WeaponType,
+        public goodAnimProb: number,
         public attack: Attack,
         public spell: Spell,
         public speed: Speed,

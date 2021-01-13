@@ -112,14 +112,6 @@
             targets.
           </p>
 
-          <p>
-            We assume that, for weapons with &ldquo;good&rdquo; and
-            &ldquo;bad&rdquo; animations (e.g. stabbing and swinging,
-            respectively, for spears), there is a &frac12; probability that the
-            animation is &ldquo;good&rdquo;, and a &frac12; probability that
-            the animation is &ldquo;bad&rdquo;.
-          </p>
-
           <p>We assume that there is no particular damage cap.</p>
 
           <a href="#you-should-know" class="h-anchor"
@@ -303,6 +295,48 @@
               physical attacker who has no critical-hit-granting skill of their
               own.
             </p>
+
+            <p>
+              &ldquo;Good anim probability&rdquo; refers to the probability of
+              your melee attack having a &ldquo;good&rdquo; (read: higher
+              primary stat multiplier) animation, given that you&rsquo;re basic
+              attacking or using a skill that animates similarly (e.g. Power
+              Strike). This value is ignored whenever you&rsquo;re attacking
+              with a skill that always uses a certain animation, e.g.
+              Somersault Kick, which always stabs (i.e. never swings). This
+              value is also ignored whenever you&rsquo;re attacking with a
+              weapon that does not distinguish between &ldquo;good&rdquo; and
+              &ldquo;bad&rdquo; animations, e.g. swords and daggers. The only
+              weapon types that distinguish between &ldquo;good&rdquo; and
+              &ldquo;bad&rdquo; animations are:
+            </p>
+
+            <ul>
+              <li>
+                Polearms: swings are good, stabs are bad. Good anim probability
+                is suspected to be 60%.
+              </li>
+              <li>
+                Spears: stabs are good, swings are bad. Good anim probability
+                is suspected to be 40%.
+              </li>
+              <li>
+                Axes: swings are good, stabs are bad. Good anim probability is
+                unknown.
+              </li>
+              <li>
+                Blunt weapons: swings are good, stabs are bad. Good anim
+                probability is unknown.
+              </li>
+              <li>
+                Wands: swings are good, stabs are bad. Good anim probability is
+                unknown.
+              </li>
+              <li>
+                Staves: swings are good, stabs are bad. Good anim probability
+                is unknown.
+              </li>
+            </ul>
 
             <p>
               You can select a number of targets greater than one, but note
@@ -770,6 +804,19 @@
                     <option value="49">Gun</option>
                   </optgroup>
                 </select>
+              </label>
+
+              <label for="good-anim-prob">
+                Good anim probability
+                <input
+                  type="number"
+                  id="good-anim-prob"
+                  name="good-anim-prob"
+                  min="0"
+                  max="100"
+                  step="0.001"
+                  value="50"
+                />%
               </label>
 
               <label for="attack">
