@@ -521,7 +521,28 @@ function main(): void {
     }
 
     function recalculatePhys(inputData: InputData, critQ: number): void {
-        const badAnimProb = 1 - inputData.goodAnimProb;
+        const goodAnimProb = (() => {
+            switch (inputData.attack) {
+                case Attack.Rush:
+                case Attack.CrusherLow:
+                case Attack.CrusherHigh:
+                case Attack.SomersaultKick:
+                case Attack.AerialStrike:
+                    return swingProbToGoodAnimProb(inputData, 0);
+                case Attack.Brandish:
+                    return 0.5;
+                case Attack.Blast:
+                    return swingProbToGoodAnimProb(inputData, 0.6);
+                case Attack.HeavensHammerXiuz:
+                case Attack.HeavensHammerXiuzCorrected:
+                    return 1;
+                case Attack.Fury:
+                    return swingProbToGoodAnimProb(inputData, 1);
+                default:
+                    return inputData.goodAnimProb;
+            }
+        })();
+        const badAnimProb = 1 - goodAnimProb;
 
         const caMod = caModifier(inputData);
         const eleChargeMod = eleChargeModifier(inputData);
@@ -529,7 +550,7 @@ function main(): void {
 
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
-                const goodAnim = inputData.goodAnimProb >= 1;
+                const goodAnim = goodAnimProb >= 1;
 
                 switch (inputData.attack) {
                     case Attack.BowWhack:
@@ -544,8 +565,6 @@ function main(): void {
                         return minDmgHhXiuz(inputData);
                     case Attack.HeavensHammerXiuzCorrected:
                         return minDmgPhys(inputData, true);
-                    case Attack.Fury:
-                        return minDmgFury(inputData);
                     case Attack.DragonRoar:
                         return minDmgDragonRoar(inputData);
                     // Massive hack to make Arrow Bomb easier to work with...
@@ -567,19 +586,12 @@ function main(): void {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                         return minDmgVenom(inputData);
-                    case Attack.Rush:
-                    case Attack.Blast:
-                    case Attack.CrusherHigh:
-                    case Attack.CrusherLow:
-                    case Attack.SomersaultKick:
-                    case Attack.AerialStrike:
-                        return minDmgSomersaultKick(inputData);
                     default:
                         return minDmgPhys(inputData, goodAnim);
                 }
             })(),
             (() => {
-                const goodAnim = inputData.goodAnimProb > 0;
+                const goodAnim = goodAnimProb > 0;
 
                 switch (inputData.attack) {
                     case Attack.BowWhack:
@@ -593,8 +605,6 @@ function main(): void {
                     case Attack.HeavensHammerXiuz:
                     case Attack.HeavensHammerXiuzCorrected:
                         return maxDmgPhys(inputData, true);
-                    case Attack.Fury:
-                        return maxDmgFury(inputData);
                     case Attack.DragonRoar:
                         return maxDmgDragonRoar(inputData);
                     // Massive hack to make Arrow Bomb easier to work with...
@@ -616,13 +626,6 @@ function main(): void {
                     case Attack.VenomousStar:
                     case Attack.VenomousStab:
                         return maxDmgVenom(inputData);
-                    case Attack.Rush:
-                    case Attack.Blast:
-                    case Attack.CrusherHigh:
-                    case Attack.CrusherLow:
-                    case Attack.SomersaultKick:
-                    case Attack.AerialStrike:
-                        return maxDmgSomersaultKick(inputData);
                     default:
                         return maxDmgPhys(inputData, goodAnim);
                 }
@@ -630,7 +633,7 @@ function main(): void {
         ].map(dmg => dmg * eleSus * caMod * eleChargeMod);
         const [minDmgPhysGood, maxDmgPhysBad] = [
             (() => {
-                if (inputData.goodAnimProb <= 0) {
+                if (goodAnimProb <= 0) {
                     return minDmgPhysBad;
                 }
 
@@ -672,7 +675,7 @@ function main(): void {
                 }
             })(),
             (() => {
-                if (inputData.goodAnimProb >= 1) {
+                if (goodAnimProb >= 1) {
                     return maxDmgPhysGood;
                 }
 
@@ -930,7 +933,7 @@ function main(): void {
             inputData.critProb * expectedPerHitGoodCrit;
         const expectedPerHit =
             expectedPerHitBad * badAnimProb +
-            expectedPerHitGood * inputData.goodAnimProb;
+            expectedPerHitGood * goodAnimProb;
         const expectedPerHitTotal =
             inputData.attack === Attack.Barrage
                 ? (() => {
@@ -993,7 +996,7 @@ function main(): void {
 
                 return (
                     mainVariancePerHitBad * badAnimProb +
-                    mainVariancePerHitGood * inputData.goodAnimProb
+                    mainVariancePerHitGood * goodAnimProb
                 );
             }
 
@@ -2107,12 +2110,23 @@ function main(): void {
                 }
                 break;
             }
+            case WeaponType.Wand:
+            case WeaponType.Staff: {
+                if (inputData.goodAnimProb !== 1) {
+                    warnings.push(
+                        `You\u{2019}re using ${indefinite(
+                            weaponTypeName(inputData.wepType),
+                        )}, but your good animation probability \u{2260}100%.
+                        It is currently suspected that the actual probability
+                        is 100% in pre-BB GMS.`,
+                    );
+                }
+                break;
+            }
             case WeaponType.OneHandedAxe:
             case WeaponType.TwoHandedAxe:
             case WeaponType.OneHandedMace:
-            case WeaponType.TwoHandedMace:
-            case WeaponType.Wand:
-            case WeaponType.Staff: {
+            case WeaponType.TwoHandedMace: {
                 if (inputData.goodAnimProb <= 0) {
                     warnings.push(
                         `You\u{2019}re using ${indefinite(
@@ -2425,30 +2439,6 @@ function minDmgHhXiuz(inputData: InputData): number {
     return maxDmgPhys(inputData, true) * 0.8;
 }
 
-/**
- * Fury always "swings".
- */
-function maxDmgFury(inputData: InputData): number {
-    switch (inputData.wepType) {
-        case WeaponType.Spear:
-            return maxDmgPhys(inputData, false);
-        default:
-            return maxDmgPhys(inputData, true);
-    }
-}
-
-/**
- * Fury always "swings".
- */
-function minDmgFury(inputData: InputData): number {
-    switch (inputData.wepType) {
-        case WeaponType.Spear:
-            return minDmgPhys(inputData, false);
-        default:
-            return minDmgPhys(inputData, true);
-    }
-}
-
 function maxDmgDragonRoar(inputData: InputData): number {
     return (
         ((inputData.stats.str * 4 + inputData.stats.dex) *
@@ -2540,11 +2530,10 @@ function minDmgVenom(inputData: InputData): number {
     );
 }
 
-/**
- * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
- * Crusher, Rush, and Blast, so this function is used for those as well.
- */
-function maxDmgSomersaultKick(inputData: InputData): number {
+function swingProbToGoodAnimProb(
+    inputData: InputData,
+    swingProb: number,
+): number {
     switch (inputData.wepType) {
         case WeaponType.OneHandedAxe:
         case WeaponType.OneHandedMace:
@@ -2553,28 +2542,9 @@ function maxDmgSomersaultKick(inputData: InputData): number {
         case WeaponType.TwoHandedAxe:
         case WeaponType.TwoHandedMace:
         case WeaponType.Polearm:
-            return maxDmgPhys(inputData, false);
+            return swingProb;
         default:
-            return maxDmgPhys(inputData, true);
-    }
-}
-
-/**
- * Somersault Kick always "stabs".  The same logic applies to Aerial Strike,
- * Crusher, Rush, and Blast, so this function is used for those as well.
- */
-function minDmgSomersaultKick(inputData: InputData): number {
-    switch (inputData.wepType) {
-        case WeaponType.OneHandedAxe:
-        case WeaponType.OneHandedMace:
-        case WeaponType.Wand:
-        case WeaponType.Staff:
-        case WeaponType.TwoHandedAxe:
-        case WeaponType.TwoHandedMace:
-        case WeaponType.Polearm:
-            return minDmgPhys(inputData, false);
-        default:
-            return minDmgPhys(inputData, true);
+            return 1 - swingProb;
     }
 }
 
