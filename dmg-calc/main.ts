@@ -305,7 +305,7 @@ function main(): void {
         critProbInput.value = "" + critProb;
         let critDmg = Math.max(parseInt(critDmgInput.value, 10), 0);
         if (!Number.isFinite(critDmg)) {
-            critDmg = 100;
+            critDmg = 0;
         }
         critDmgInput.value = "" + critDmg;
 
@@ -330,7 +330,7 @@ function main(): void {
             100,
         );
         if (!Number.isFinite(goodAnimProb)) {
-            goodAnimProb = 50;
+            goodAnimProb = 60;
         }
         goodAnimProbInput.value = "" + goodAnimProb;
         let attack = parseInt(attackInput.value, 10);

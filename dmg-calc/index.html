@@ -602,22 +602,38 @@
               <legend>Stats</legend>
 
               <label for="str">
-                STR
+                <abbr
+                  class="help"
+                  title="Total STR; the sum of base STR, STR from equipment, buffs, etc."
+                  >STR</abbr
+                >
                 <input type="number" id="str" name="str" min="4" value="4" />
               </label>
 
               <label for="dex">
-                DEX
+                <abbr
+                  class="help"
+                  title="Total DEX; the sum of base DEX, DEX from equipment, buffs, etc."
+                  >DEX</abbr
+                >
                 <input type="number" id="dex" name="dex" min="4" value="4" />
               </label>
 
               <label for="int">
-                INT
+                <abbr
+                  class="help"
+                  title="Total INT; the sum of base INT, INT from equipment, buffs, etc."
+                  >INT</abbr
+                >
                 <input type="number" id="int" name="int" min="4" value="4" />
               </label>
 
               <label for="luk">
-                LUK
+                <abbr
+                  class="help"
+                  title="Total LUK; the sum of base LUK, LUK from equipment, buffs, etc."
+                  >LUK</abbr
+                >
                 <input type="number" id="luk" name="luk" min="4" value="4" />
               </label>
             </fieldset>
@@ -626,7 +642,11 @@
               <legend>Attack stats</legend>
 
               <label for="total-watk">
-                Total WATK
+                <abbr
+                  class="help"
+                  title="Total weapon attack, not including WATK from Echo of Hero; the sum of WATK from equipment, WATK buffs, and ammunition. This also does not include WATK from bare hands (no weapon equipped)."
+                  >Total WATK</abbr
+                >
                 <input
                   type="number"
                   id="total-watk"
@@ -637,7 +657,11 @@
               </label>
 
               <label for="total-matk">
-                Total MATK
+                <abbr
+                  class="help"
+                  title="Total MATK (total magic attack; TMA), not including MATK from Echo of Hero; the sum of WATK from total INT score, equipment, and MATK buffs."
+                  >Total MATK</abbr
+                >
                 <input
                   type="number"
                   id="total-matk"
@@ -648,7 +672,11 @@
               </label>
 
               <label for="echo">
-                Echo of Hero
+                <abbr
+                  class="help"
+                  title="Perfectange points of (W/M)ATK increase due to Echo of Hero. This is 0% if you&rsquo;re not affected by Echo of Hero, and generally 4% otherwise. Also note that because this is specified separately from (W/M)ATK, the (W/M)ATK bonuses from Echo of Hero are not included in the (W/M)ATK values that are input directly into the calculator."
+                  >Echo of Hero</abbr
+                >
                 <input
                   type="number"
                   id="echo"
@@ -660,7 +688,11 @@
             </fieldset>
 
             <label for="mastery">
-              Mastery
+              <abbr
+                class="help"
+                title="This &ldquo;Mastery&rdquo; value applies to both physical and magical attacks. For physical attacks, it is 10% by default (but can be increased by a relevant skill; usually up to 60%, although higher values are possible). For magical attacks, the mastery is given by the description of the spell, at the particular skill level that you&rsquo;re casting the spell at."
+                >Mastery</abbr
+              >
               <input
                 type="number"
                 id="mastery"
@@ -676,7 +708,11 @@
               <legend>Skill</legend>
 
               <label for="skill-dmg-multi">
-                Damage multi
+                <abbr
+                  class="help"
+                  title="The percentage of damage that your attacking skill deals; this is in the skill&rsquo;s description, and is particular to each level of each skill. If you&rsquo;re basic attacking (i.e. not using a skill), this is just 100%. Because Heal&rsquo;s damage is expressed as a damage percentage, Heal is the only magical spell that this value applies to."
+                  >Damage multi</abbr
+                >
                 <input
                   type="number"
                   id="skill-dmg-multi"
@@ -687,7 +723,11 @@
               </label>
 
               <label for="skill-basic-atk">
-                Basic attack
+                <abbr
+                  class="help"
+                  title="The basic attack usually only applies to spells. The basic attack of a spell is listed in the spell&rsquo;s description, for the particular level of the spell that you&rsquo;re using. It also applies to summons (even physical-attacking ones), but the idea is much the same. The only spell that this doesn&rsquo;t apply to is Heal, which uses the &ldquo;Damage multi&rdquo; value instead."
+                  >Basic attack</abbr
+                >
                 <input
                   type="number"
                   id="skill-basic-atk"
@@ -698,7 +738,11 @@
               </label>
 
               <label for="skill-lines">
-                Lines
+                <abbr
+                  class="help"
+                  title="The number of lines (i.e. displayed damage numbers) of damage that your attack deals. This applies to both physical and magical attacks (for example, Magic Claw has 2 lines)."
+                  >Lines</abbr
+                >
                 <input
                   type="number"
                   id="skill-lines"
@@ -713,7 +757,11 @@
               <legend>Critical hits</legend>
 
               <label for="crit-prob">
-                Critical chance
+                <abbr
+                  class="help"
+                  title="The probability that any given line of damage is a critical hit, expressed as a percentage. This applies to both physical and magical attacks (magical attacks can crit due to Sharp Eyes)."
+                  >Critical chance</abbr
+                >
                 <input
                   type="number"
                   id="crit-prob"
@@ -725,13 +773,17 @@
               </label>
 
               <label for="crit-dmg">
-                Critical multi
+                <abbr
+                  class="help"
+                  title="The number of percentage points added to your damage multiplier, in the case that a particular line of damage is a critical hit. For Critical Shot and Critical Throw, this value is 100 percentage points fewer than what is listed in-game. For Sharp Eyes (which stacks with other sources of &ldquo;Critical multi&rdquo;), this value is 100 points greater than what is listed in-game. Also, if both Stun Mastery and Sharp Eyes apply, this value is yet another 100 points greater than what is listed in-game (in addition to the extra 100 points that Sharp Eyes already gives). Stun Mastery otherwise works as advertised."
+                  >Critical multi</abbr
+                >
                 <input
                   type="number"
                   id="crit-dmg"
                   name="crit-dmg"
                   min="0"
-                  value="100"
+                  value="0"
                 />%
               </label>
             </fieldset>
@@ -740,7 +792,11 @@
               <legend>Character</legend>
 
               <label for="class">
-                Class
+                <abbr
+                  class="help"
+                  title="Which of the 6 archetypes your character&rsquo;s job falls into. Note that the number of options here is actually 7, because pirates are treated differently after second job advancement than they are during first job."
+                  >Class</abbr
+                >
                 <select name="class" id="class">
                   <option value="0" selected>Beginner</option>
                   <option value="100">Warrior</option>
@@ -753,7 +809,9 @@
               </label>
 
               <label for="level">
-                Level
+                <abbr class="help" title="Your player character&rsquo;s level."
+                  >Level</abbr
+                >
                 <input
                   type="number"
                   id="level"
@@ -769,7 +827,11 @@
               <legend>Weapon</legend>
 
               <label for="weapon-type">
-                Type
+                <abbr
+                  class="help"
+                  title="The type of weapon that you have equipped. Note that while &ldquo;no weapon at all&rdquo; is an option, it is only possible to attack this way if you are some kind of pirate."
+                  >Type</abbr
+                >
                 <select name="weapon-type" id="weapon-type">
                   <option value="0">[no weapon]</option>
 
@@ -807,7 +869,11 @@
               </label>
 
               <label for="good-anim-prob">
-                Good anim probability
+                <abbr
+                  class="help"
+                  title="The probability of getting a &ldquo;good&rdquo; attack animation each time you basic attack. This value can apply even if you aren&rsquo;t actually basic attacking, although it is totally irrelevant for magical attacks. Most weapon types either don&rsquo;t have a distinction between &ldquo;good&rdquo; and &ldquo;bad&rdquo; animations, or they consider swinging animations to be &ldquo;good&rdquo;. The exception to this is spears, which consider swings to be &ldquo;bad&rdquo; and stabs (thrusts) to be &ldquo;good&rdquo;."
+                  >Good anim probability</abbr
+                >
                 <input
                   type="number"
                   id="good-anim-prob"
@@ -815,12 +881,16 @@
                   min="0"
                   max="100"
                   step="0.001"
-                  value="50"
+                  value="60"
                 />%
               </label>
 
               <label for="attack">
-                Attack
+                <abbr
+                  class="help"
+                  title="The physical attacking skill that you are using. Basic attacks fall under &ldquo;[other]&rdquo; (except for special basic attacks: bow whacks, claw punches, and pistol-whips), along with many actual attacking skills. Note that physical-attacking summons (e.g. Frostprey) are included here as well."
+                  >Attack</abbr
+                >
                 <select name="attack" id="attack">
                   <option value="0" selected>[other]</option>
                   <option value="-1">[bow whack]</option>
@@ -967,7 +1037,11 @@
               </label>
 
               <label for="spell">
-                Spell
+                <abbr
+                  class="help"
+                  title="The spell that you are casting. If this doesn&rsquo;t apply, just leave it at the default &ldquo;[other]&rdquo;."
+                  >Spell</abbr
+                >
                 <select name="spell" id="spell">
                   <option value="0">[other]</option>
 
@@ -1013,7 +1087,11 @@
               </label>
 
               <label for="speed">
-                Speed
+                <abbr
+                  class="help"
+                  title="The speed category of your weapon, after being adjusted by buffs. This value can never be lower than 2, so lower values are clamped to just 2. It is often (but not always) necessary to use out-of-game information to get the speed category of your weapon, because the game uses ambiguous names like &ldquo;Fast&rdquo;. Ordinary Booster skills reduce your speed category by 2. Spell Booster, depending on your implementation, may have a similar effect (reducing by 1 category at earlier levels of Spell Booster, and 2 at later levels), although it only works with wands and staves. Speed Infusion reduces by 4 categories (or, again depending on implementation, it may instead stack with other Booster skills and reduce by just 2)."
+                  >Speed</abbr
+                >
                 <select name="speed" id="speed">
                   <option value="2">2 (Faster)</option>
                   <option value="3">3 (Faster)</option>
@@ -1027,7 +1105,11 @@
               </label>
 
               <label for="spell-booster">
-                Spell booster
+                <abbr
+                  class="help"
+                  title="The amount that your spellcasting speed category is reduced by, due to buffs. This is &minus;1 at earlier levels of Spell Booster (&lt;11), and &minus;2 at later levels. This only applies to magical attacks."
+                  >Spell booster</abbr
+                >
                 <input
                   type="number"
                   id="spell-booster"
@@ -1046,7 +1128,11 @@
                 <legend>Elemental stuff</legend>
 
                 <label for="ele-amp">
-                  Element Amplification
+                  <abbr
+                    class="help"
+                    title="The percentage that your magic damage is multiplied by, according to the description of your level of Element Amplification. If you don&rsquo;t have Element Amplification, this is just 100%."
+                    >Element Amplification</abbr
+                  >
                   <input
                     type="number"
                     id="ele-amp"
@@ -1057,7 +1143,11 @@
                 </label>
 
                 <label for="ele-boost">
-                  Elemental Boost
+                  <abbr
+                    class="help"
+                    title="The percentage of damage added to your attacks (only applies when using Flamethrower and/or Ice Splitter) due to the corsair skill, Elemental Boost. This value can be found in the description of the level of the skill that you have. Note that this is unrelated to the &ldquo;dot damage&rdquo; increase granted by the same skill."
+                    >Elemental Boost</abbr
+                  >
                   <input
                     type="number"
                     id="ele-boost"
@@ -1068,7 +1158,11 @@
                 </label>
 
                 <label for="ele-wep">
-                  Elemental Wand/Staff
+                  <abbr
+                    class="help"
+                    title="How much your current weapon amplifies the element of the spell that you are currently casting. This only applies when using an Elemental Wand or Elemental Staff in conjunction with a spell of the same element, in which case this should be 25%."
+                    >Elemental Wand/Staff</abbr
+                  >
                   <input
                     type="number"
                     id="ele-wep"
@@ -1082,7 +1176,11 @@
                   <legend>Elemental charge</legend>
 
                   <label for="no-ele-charge">
-                    None
+                    <abbr
+                      class="help"
+                      title="No (white knight/paladin) elemental charge is active."
+                      >None</abbr
+                    >
                     <input
                       type="radio"
                       id="no-ele-charge"
@@ -1093,7 +1191,11 @@
                   </label>
 
                   <label for="holy-ele-charge">
-                    Holy
+                    <abbr
+                      class="help"
+                      title="One of the paladin (fourth job) elemental charges is active."
+                      >Holy</abbr
+                    >
                     <input
                       type="radio"
                       id="holy-ele-charge"
@@ -1103,7 +1205,11 @@
                   </label>
 
                   <label for="other-ele-charge">
-                    Other
+                    <abbr
+                      class="help"
+                      title="One of the white knight (third job) elemental charges is active."
+                      >Other</abbr
+                    >
                     <input
                       type="radio"
                       id="other-ele-charge"
@@ -1113,7 +1219,11 @@
                   </label>
 
                   <label for="ele-charge-dmg">
-                    Charge dmg
+                    <abbr
+                      class="help"
+                      title="The damage multiplier, as listed in the current skill level&rsquo;s description, of the active elemental charge. Expressed as a percentage."
+                      >Charge dmg</abbr
+                    >
                     <input
                       type="number"
                       id="ele-charge-dmg"
@@ -1124,7 +1234,11 @@
                   </label>
 
                   <label for="ele-charge-level">
-                    Charge skill level
+                    <abbr
+                      class="help"
+                      title="The skill level of the elemental charge that is currently active."
+                      >Charge skill level</abbr
+                    >
                     <input
                       type="number"
                       id="ele-charge-level"
@@ -1145,12 +1259,18 @@
                 <legend>(Advanced) combo attack</legend>
 
                 <label for="ca-active">
-                  Active
+                  <abbr class="help" title="Is (Advanced) Combo Attack active?"
+                    >Active</abbr
+                  >
                   <input type="checkbox" id="ca-active" name="ca-active" />
                 </label>
 
                 <label for="ca-dmg">
-                  CA+ACA dmg
+                  <abbr
+                    class="help"
+                    title="The damage multiplier, as listed in the current skill level&rsquo;s description, of Combo Attack. If you have Advanced Combo Attack, the percentage points listed in its description are added to those of Combo Attack (e.g. 220%&nbsp;+&nbsp;30%&nbsp;=&nbsp;250%). Expressed as a percentage."
+                    >CA+ACA dmg</abbr
+                  >
                   <input
                     type="number"
                     id="ca-dmg"
@@ -1161,7 +1281,9 @@
                 </label>
 
                 <label for="ca-level">
-                  CA level
+                  <abbr class="help" title="The skill level of Combo Attack."
+                    >CA level</abbr
+                  >
                   <input
                     type="number"
                     id="ca-level"
@@ -1173,7 +1295,11 @@
                 </label>
 
                 <label for="ca-orbs">
-                  Orbs
+                  <abbr
+                    class="help"
+                    title="The number of (Advanced) Combo Attack orbs that you currently have."
+                    >Orbs</abbr
+                  >
                   <input
                     type="number"
                     id="ca-orbs"
@@ -1190,7 +1316,11 @@
               <legend>Enemy</legend>
 
               <label for="enemy-wdef">
-                WDEF
+                <abbr
+                  class="help"
+                  title="The target monster&rsquo;s WDEF (weapon defence)."
+                  >WDEF</abbr
+                >
                 <input
                   type="number"
                   id="enemy-wdef"
@@ -1200,7 +1330,11 @@
               </label>
 
               <label for="enemy-mdef">
-                MDEF
+                <abbr
+                  class="help"
+                  title="The target monster&rsquo;s MDEF (magic defence)."
+                  >MDEF</abbr
+                >
                 <input
                   type="number"
                   id="enemy-mdef"
@@ -1210,7 +1344,11 @@
               </label>
 
               <label for="ele-sus">
-                Element susceptibility
+                <abbr
+                  class="help"
+                  title="How susceptible is the target monster to the element that you are currently using. This applies to magical attacks in the obvious ways. For physical attacks, only some physical attacks have elements; for example, Flamethrower is elementally fire, and Blast is elementally holy when used with Holy/Divine Charge."
+                  >Element susceptibility</abbr
+                >
                 <select name="ele-sus" id="ele-sus">
                   <option value="0">Immune</option>
                   <option value="0.5">Strong</option>
@@ -1220,7 +1358,9 @@
               </label>
 
               <label for="enemy-level">
-                Level
+                <abbr class="help" title="The level of the target monster."
+                  >Level</abbr
+                >
                 <input
                   type="number"
                   id="enemy-level"
@@ -1231,7 +1371,11 @@
               </label>
 
               <label for="enemy-count">
-                Count
+                <abbr
+                  class="help"
+                  title="How many enemy targets there are of this attack. This value can be greater than one, but note that this does not take into account the damage taken by any of said virtual enemies, except for one of them (you can choose exactly which one by modifying &ldquo;Ordinal # of hit&rdquo;). This value is only here for skills like Heal, which change their per-line damage based on the total number of targets. Note that when casting Heal (maximum of 6 targets), the caster counts as a target, thus lowering the maximum number of possible enemy targets from 6 to 5."
+                  >Count</abbr
+                >
                 <input
                   type="number"
                   id="enemy-count"
@@ -1243,7 +1387,11 @@
               </label>
 
               <label for="hit-ord">
-                Ordinal # of hit
+                <abbr
+                  class="help"
+                  title="The position/index of the particular damaging strike in question, within the ordering of all damaging strikes produced by the attack that you&rsquo;re using. For example, when using Iron Arrow, the first damaging strike (the one that damages the first monster struck by the arrow) has an ordinal # of 1, the next damaging strike an ordinal # of 2, and so on."
+                  >Ordinal # of hit</abbr
+                >
                 <input
                   type="number"
                   id="hit-ord"

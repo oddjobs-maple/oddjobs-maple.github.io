@@ -759,6 +759,10 @@ ul.nav-list > li.active {
     width: 1px;
 }
 
+.help {
+    cursor: help;
+}
+
 .plain-ul {
     list-style-type: disc;
 }
