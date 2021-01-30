@@ -9,7 +9,7 @@ cargo build
 
 ./target/debug/oddjobs_renderer "$2" > ./guides/index.html
 
-declare -a guide_slugs=("woodsman" "str-cleric" "magelet")
+declare -a guide_slugs=("woodsman" "str-cleric" "magelet" "swashbuckler")
 
 for s in "${guide_slugs[@]}"
 do
