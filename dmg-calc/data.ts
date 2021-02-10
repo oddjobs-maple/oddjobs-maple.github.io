@@ -496,8 +496,6 @@ export function attackPeriod(
                     return;
             }
         }
-        // Assuming (probably incorrectly) that all weapons use Somersault Kick
-        // at the same speed as knucklers.
         case Attack.SomersaultKick: {
             switch (speed) {
                 case Speed.Faster2:
@@ -509,15 +507,10 @@ export function attackPeriod(
                 case Speed.Fast5:
                     return 840;
                 case Speed.Normal:
-                    return 840;
+                    return 870;
                 default:
-                    // Again, same assumption.
-                    wepType = WeaponType.Knuckler;
-
-                    break;
+                    return;
             }
-
-            break;
         }
         case Attack.DoubleShot: {
             switch (speed) {
