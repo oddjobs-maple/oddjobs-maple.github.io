@@ -11,15 +11,23 @@ use std::{env, io, path::Path, process};
 
 fn main() {
     let mut input_filename = String::new();
+    let mut rankings = false;
 
     for (arg_i, arg) in env::args().enumerate() {
         match arg_i {
             0 => (),
             1 => input_filename = arg,
+            2 => {
+                if arg == "--rankings" {
+                    rankings = true;
+                } else {
+                    eprintln!("Unexpected argument: `{}`", arg);
+
+                    process::exit(1)
+                }
+            }
             _ => {
-                eprintln!(
-                    "Expected exactly one argument: the filename to read in",
-                );
+                eprintln!("Too many arguments");
 
                 process::exit(1)
             }
@@ -40,7 +48,7 @@ fn main() {
     } else if input_filename.ends_with(".md")
         || input_filename.ends_with(".markdown")
     {
-        guide::render(input_filename, &mut stdout);
+        guide::render(input_filename, rankings, &mut stdout);
     } else if input_filename.ends_with(".toml") {
         archive::render(input_filename, &mut stdout);
     } else if Path::new(&input_filename).is_dir() {

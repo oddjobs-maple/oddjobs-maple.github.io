@@ -84,6 +84,9 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="./archive/">Archive</a>
             </li>
             <li>
+              <a href="./rankings/">Rankings</a>
+            </li>
+            <li>
               <a href="./source.html" data-jslicense="1">Source</a>
             </li>
           </ul>

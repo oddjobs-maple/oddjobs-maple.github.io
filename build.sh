@@ -19,6 +19,8 @@ done
 
 ./target/debug/oddjobs_renderer "$3" > ./archive/index.html
 
+./target/debug/oddjobs_renderer "$4" --rankings > ./rankings/index.html
+
 cd ./dmg-calc/
 tsc
 cd ..

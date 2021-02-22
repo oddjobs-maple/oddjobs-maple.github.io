@@ -57,6 +57,9 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="../archive/">Archive</a>
             </li>
             <li>
+              <a href="../rankings/">Rankings</a>
+            </li>
+            <li>
               <a href="../source.html" data-jslicense="1">Source</a>
             </li>
           </ul>
@@ -140,6 +143,9 @@ static PREAMBLE1: &[u8] = br##"</title>
               <a href="../../archive/">Archive</a>
             </li>
             <li>
+              <a href="../../rankings/">Rankings</a>
+            </li>
+            <li>
               <a href="../../source.html" data-jslicense="1">Source</a>
             </li>
           </ul>
@@ -159,6 +165,77 @@ static POSTAMBLE: &[u8] = br##"
     </div>
   </body>
 </html>
+"##;
+
+static RANKINGS_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Oddjobs | Rankings</title>
+    <meta name="description" content="The guild for MapleStory odd-jobbers" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="icon" type="image/png" href="../img/favicon.png" />
+  </head>
+
+  <body>
+    <div id="nav-content-wrapper">
+      <nav id="main-nav">
+        <div id="main-nav-inner">
+          <div id="main-nav-pullout"><span>&#x25b6;</span></div>
+
+          <a href="../" class="nav-h"
+            >Oddjobs
+            <br />
+            <img
+              src="../img/logo.svg"
+              alt="Oddjobs logo | Due to Evan MacDonald of the Noun Project (CC BY 3.0)"
+              title="Oddjobs logo | Due to Evan MacDonald of the Noun Project (CC BY 3.0)"
+          /></a>
+
+          <ul class="nav-list">
+            <li>
+              <a href="../">Home</a>
+            </li>
+            <li>
+              <a href="../join-on-up.html">Join On Up</a>
+            </li>
+            <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://oddjobs.flarum.cloud/"
+                >Forum</a
+              >
+            </li>
+            <li>
+              <a href="../odd-jobs.html">Odd Jobs</a>
+            </li>
+            <li>
+              <a href="../guides/">Guides</a>
+            </li>
+            <li>
+              <a href="../dmg-calc/">Damage Calc</a>
+            </li>
+            <li>
+              <a href="../archive/">Archive</a>
+            </li>
+            <li class="active">
+              <a href="./">Rankings</a>
+            </li>
+            <li>
+              <a href="../source.html" data-jslicense="1">Source</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div id="content">
+        <header>
+          <!-- The HTML below this comment is automatically generated from a
+          Markdown file by guide.rs.  See: <https://codeberg.org/oddjobs/pages>
+          -->
 "##;
 
 pub fn render_index<P: AsRef<Path>, W: Write>(input_dir_path: P, out: &mut W) {
@@ -222,7 +299,11 @@ pub fn render_index<P: AsRef<Path>, W: Write>(input_dir_path: P, out: &mut W) {
     out.write_all(INDEX_POSTAMBLE).unwrap();
 }
 
-pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
+pub fn render<P: AsRef<Path>, W: Write>(
+    input_file_path: P,
+    rankings: bool,
+    out: &mut W,
+) {
     let mut input_file = File::open(input_file_path)
         .expect("Could not open input file for reading");
     let mut input_str = String::new();
@@ -230,7 +311,11 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
         .read_to_string(&mut input_str)
         .expect("Could not read input file into memory");
 
-    let title_slug = {
+    let title_slug = if rankings {
+        out.write_all(RANKINGS_PREAMBLE).unwrap();
+
+        String::new()
+    } else {
         out.write_all(PREAMBLE0).unwrap();
 
         let peek_parser = Parser::new(
@@ -398,13 +483,17 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     }
 
                     if level == 1 {
-                        out.write_all(
-                            br##"<a href="../"
+                        if rankings {
+                            out.write_all(br##"</header><main>"##).unwrap();
+                        } else {
+                            out.write_all(
+                                br##"<a href="../"
                                  class="go-back">&#x2190;&nbsp;Back to
                                  Guides&nbsp;&#x2190;</a></header><main>"##,
-                        )
-                        .unwrap();
-                    } else {
+                            )
+                            .unwrap();
+                        }
+                    } else if !rankings {
                         write!(
                             out,
                             r##"<a href="#{}" class="go-back"
