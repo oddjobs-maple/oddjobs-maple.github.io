@@ -790,6 +790,19 @@ export function isHolySpell(spell: Spell): boolean {
     }
 }
 
+export function isSummon(attack: Attack): boolean {
+    switch (attack) {
+        case Attack.Phoenix:
+        case Attack.Frostprey:
+        case Attack.Octopus:
+        case Attack.Gaviota:
+        case Attack.WrathOfTheOctopi:
+            return true;
+        default:
+            return false;
+    }
+}
+
 export function weaponTypeName(wepType: WeaponType): string {
     switch (wepType) {
         case WeaponType.None:

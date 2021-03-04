@@ -20,7 +20,7 @@
  * @licend  The above is the entire license notice for the JavaScript code in
  * this page.
  */
-import { ATTACK_LINES, ATTACK_REQS, attackIsElemental, attackName, attackPeriod, BAD_WEPS, chargeTypeFromValue, className, isHolySpell, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
+import { ATTACK_LINES, ATTACK_REQS, attackIsElemental, attackName, attackPeriod, BAD_WEPS, chargeTypeFromValue, className, isHolySpell, isSummon, JOB_LVL_REQS, magicAttackPeriod, primaryStat, secondaryStat, SPELL_LINES, SPELL_LVL_REQS, spellName, weaponTypeName, } from "./data.js";
 import { truncClampedExpectation, truncClampedVariance } from "./math.js";
 import { Attack, Class, InputData, Spell, Stats, WeaponType, } from "./types.js";
 import { indefinite } from "./util.js";
@@ -61,6 +61,8 @@ function main() {
     const caDmgInput = document.getElementById("ca-dmg");
     const caLevelInput = document.getElementById("ca-level");
     const caOrbsInput = document.getElementById("ca-orbs");
+    const zerkActiveInput = document.getElementById("zerk-active");
+    const zerkDmgInput = document.getElementById("zerk-dmg");
     const enemyWdefInput = document.getElementById("enemy-wdef");
     const enemyMdefInput = document.getElementById("enemy-mdef");
     const eleSusInput = document.getElementById("ele-sus");
@@ -256,6 +258,12 @@ function main() {
             caOrbs = 1;
         }
         caOrbsInput.value = "" + caOrbs;
+        const zerkActive = zerkActiveInput.checked;
+        let zerkDmg = Math.max(parseInt(zerkDmgInput.value, 10), 100);
+        if (!Number.isFinite(zerkDmg)) {
+            zerkDmg = 100;
+        }
+        zerkDmgInput.value = "" + zerkDmg;
         let enemyWdef = parseInt(enemyWdefInput.value, 10);
         if (!Number.isFinite(enemyWdef)) {
             enemyWdef = 0;
@@ -287,7 +295,7 @@ function main() {
             hitOrd = 1;
         }
         hitOrdInput.value = "" + hitOrd;
-        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, goodAnimProb / 100, attack, spell, speed, spellBooster, eleAmp / 100, eleBoost / 100, eleWep / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
+        return new InputData(new Stats(str, dex, int, luk), totalWatk, totalMatk, echo / 100, mastery / 100, skillDmgMulti / 100, skillBasicAtk, skillLines, critProb / 100, critDmg / 100, clazz, level, wepType, goodAnimProb / 100, attack, spell, speed, spellBooster, eleAmp / 100, eleBoost / 100, eleWep / 100, eleChargeType, eleChargeDmg / 100, eleChargeLevel, caActive, caDmg, caLevel, caOrbs, zerkActive, zerkDmg / 100, enemyWdef, enemyMdef, eleSus, enemyLevel, enemyCount, hitOrd);
     }
     function recalculate() {
         const inputData = readInputData();
@@ -319,8 +327,9 @@ function main() {
             }
         })();
         const badAnimProb = 1 - goodAnimProb;
-        const caMod = caModifier(inputData);
-        const eleChargeMod = eleChargeModifier(inputData);
+        const [caMod, eleChargeMod] = isSummon(inputData.attack)
+            ? [1, 1]
+            : [caModifier(inputData), eleChargeModifier(inputData)];
         const eleSus = attackEffectiveEleSus(inputData);
         const [minDmgPhysBad, maxDmgPhysGood] = [
             (() => {
@@ -535,19 +544,19 @@ function main() {
                     ]);
             }
         })();
-        const [dmgMultiNoCrit, dmgMultiCrit] = [
-            dmgMulti(inputData, false),
-            dmgMulti(inputData, inputData.attack !== Attack.HeavensHammerXiuz &&
-                inputData.attack !== Attack.HeavensHammerXiuzCorrected &&
-                inputData.attack !== Attack.Phoenix &&
-                inputData.attack !== Attack.Frostprey &&
-                inputData.attack !== Attack.Octopus &&
-                inputData.attack !== Attack.Gaviota &&
-                inputData.attack !== Attack.WrathOfTheOctopi &&
-                inputData.attack !== Attack.VenomousStar &&
-                inputData.attack !== Attack.VenomousStab),
-        ];
-        const afterModifier = afterModPhys(inputData);
+        const [dmgMultiNoCrit, dmgMultiCrit] = isSummon(inputData.attack)
+            ? [1, 1]
+            : [
+                dmgMulti(inputData, false),
+                dmgMulti(inputData, inputData.attack !== Attack.HeavensHammerXiuz &&
+                    inputData.attack !==
+                        Attack.HeavensHammerXiuzCorrected &&
+                    inputData.attack !== Attack.VenomousStar &&
+                    inputData.attack !== Attack.VenomousStab),
+            ];
+        const afterModifier = isSummon(inputData.attack)
+            ? 1
+            : afterModPhys(inputData);
         const [minDmgPhysBadNoCrit, maxDmgPhysGoodNoCrit, minDmgPhysGoodNoCrit, maxDmgPhysBadNoCrit,] = 
         // Massive hack to make Arrow Bomb easier to work with...
         inputData.attack === Attack.ArrowBombImpact ||
@@ -1262,6 +1271,16 @@ function main() {
                 warnings.push(`You\u{2019}re attacking with ${attackName(inputData.attack)}, but (Advanced) Combo Attack is inactive.`);
             }
         }
+        if (inputData.zerkActive) {
+            if (inputData.clazz !== Class.Warrior) {
+                warnings.push("You have Berserk active, but you\u{2019}re not a \
+                    warrior.");
+            }
+            if (inputData.level < 120) {
+                warnings.push("You have Berserk active, but you\u{2019}re not high \
+                    enough level to have access to that skill.");
+            }
+        }
         if (inputData.hitOrd > inputData.enemyCount) {
             warnings.push("The ordinal # of your hit is greater than the total number \
                 of enemies being targeted.");
@@ -1389,12 +1408,15 @@ function main() {
             }
         }
         switch (inputData.wepType) {
+            case WeaponType.OneHandedAxe:
+            case WeaponType.TwoHandedAxe:
+            case WeaponType.OneHandedMace:
+            case WeaponType.TwoHandedMace:
             case WeaponType.Polearm: {
                 if (inputData.goodAnimProb !== 60 / 100) {
-                    warnings.push("You\u{2019}re using a polearm, but your good \
-                        animation probability \u{2260}60%. It is currently \
-                        suspected that the actual probability is 60% in \
-                        pre-BB GMS.");
+                    warnings.push(`You\u{2019}re using ${indefinite(weaponTypeName(inputData.wepType))}, but your good animation probability \u{2260}60%. \
+                        It is currently suspected that the actual probability \
+                        is 60% in pre-BB GMS.`);
                 }
                 break;
             }
@@ -1413,22 +1435,6 @@ function main() {
                     warnings.push(`You\u{2019}re using ${indefinite(weaponTypeName(inputData.wepType))}, but your good animation probability \u{2260}100%.
                         It is currently suspected that the actual probability
                         is 100% in pre-BB GMS.`);
-                }
-                break;
-            }
-            case WeaponType.OneHandedAxe:
-            case WeaponType.TwoHandedAxe:
-            case WeaponType.OneHandedMace:
-            case WeaponType.TwoHandedMace: {
-                if (inputData.goodAnimProb <= 0) {
-                    warnings.push(`You\u{2019}re using ${indefinite(weaponTypeName(inputData.wepType))}, but your good animation probability is 0%. This \
-                        is known to not be the true probability in pre-BB \
-                        GMS.`);
-                }
-                if (inputData.goodAnimProb >= 1) {
-                    warnings.push(`You\u{2019}re using ${indefinite(weaponTypeName(inputData.wepType))}, but your good animation probability is 100%. This \
-                        is known to not be the true probability in pre-BB \
-                        GMS.`);
                 }
                 break;
             }
@@ -1495,6 +1501,8 @@ function main() {
         caDmgInput,
         caLevelInput,
         caOrbsInput,
+        zerkActiveInput,
+        zerkDmgInput,
         enemyWdefInput,
         enemyMdefInput,
         eleSusInput,
@@ -1538,16 +1546,21 @@ function minDmgPhys(inputData, goodAnim) {
         100);
 }
 function afterModPhys(inputData) {
-    switch (inputData.attack) {
-        case Attack.IronArrow:
-            return 0.9 ** (inputData.hitOrd - 1);
-        case Attack.PiercingArrow:
-            return 1.2 ** (inputData.hitOrd - 1);
-        case Attack.EnergyOrb:
-            return (2 / 3) ** (inputData.hitOrd - 1);
-        default:
-            return 1;
-    }
+    const hitOrdAfterMod = (() => {
+        switch (inputData.attack) {
+            case Attack.IronArrow:
+                return 0.9 ** (inputData.hitOrd - 1);
+            case Attack.PiercingArrow:
+                return 1.2 ** (inputData.hitOrd - 1);
+            case Attack.EnergyOrb:
+                return (2 / 3) ** (inputData.hitOrd - 1);
+            default:
+                return 1;
+        }
+    })();
+    return inputData.zerkActive
+        ? hitOrdAfterMod * inputData.zerkDmg
+        : hitOrdAfterMod;
 }
 function afterModBarrage(ord) {
     return 2 ** Math.max(ord - 4, 0);

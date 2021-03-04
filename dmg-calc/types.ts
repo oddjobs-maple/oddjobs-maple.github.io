@@ -194,6 +194,8 @@ export class InputData {
         public caDmg: number,
         public caLevel: number,
         public caOrbs: number,
+        public zerkActive: boolean,
+        public zerkDmg: number,
         public enemyWdef: number,
         public enemyMdef: number,
         public eleSus: number,

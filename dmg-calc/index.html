@@ -322,11 +322,11 @@
               </li>
               <li>
                 Axes: swings are good, stabs are bad. Good anim probability is
-                unknown.
+                suspected to be 60%.
               </li>
               <li>
                 Blunt weapons: swings are good, stabs are bad. Good anim
-                probability is unknown.
+                probability is suspected to be 60%.
               </li>
               <li>
                 Wands: swings are good, stabs are bad. Good anim probability is
@@ -524,7 +524,16 @@
                 speeds beyond the usual &minus;2 of maxed Spell Booster (all
                 the way to &minus;4, potentially). This is another artifact/bug
                 of early pirate implementations, and spellcasting speeds below
-                &minus;2 are not handled by this calculator.
+                &minus;2 are not handled by this calculator. Also note that in
+                these same versions (where Spell Booster is treated identically
+                to weapon Booster skills), Spell Booster <em>does</em> add
+                &minus;2 to the speed category of your equipped weapon. As a
+                result, these versions typically only allow Spell Booster to be
+                used when a wand or staff is equipped, so that the caster
+                cannot effectively have, for example, Sword Booster by simply
+                casting Spell Booster with a sword in hand. Instead, Spell
+                Booster in these versions acts as both a spell booster
+                <em>and</em> a &ldquo;Wand/Staff Booster&rdquo;.
               </p>
 
               <p>
@@ -1308,6 +1317,34 @@
                     max="10"
                     value="1"
                   />
+                </label>
+              </fieldset>
+            </details>
+
+            <details>
+              <summary>Berserk</summary>
+
+              <fieldset>
+                <legend>Berserk</legend>
+
+                <label for="zerk-active">
+                  <abbr class="help" title="Is Berserk active?">Active</abbr>
+                  <input type="checkbox" id="zerk-active" name="zerk-active" />
+                </label>
+
+                <label for="zerk-dmg">
+                  <abbr
+                    class="help"
+                    title="The damage multiplier, as listed in the current skill level&rsquo;s description, of Berserk. Expressed as a percentage."
+                    >Berserk dmg</abbr
+                  >
+                  <input
+                    type="number"
+                    id="zerk-dmg"
+                    name="zerk-dmg"
+                    min="100"
+                    value="100"
+                  />%
                 </label>
               </fieldset>
             </details>
