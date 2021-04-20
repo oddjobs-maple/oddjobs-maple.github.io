@@ -75,6 +75,9 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             <li>
               <a href="../dmg-calc/">Damage Calc</a>
             </li>
+            <li>
+              <a href="../gish-ap-calc/">Gish AP Calc</a>
+            </li>
             <li class="active">
               <a href="./">Archive</a>
             </li>
@@ -187,6 +190,9 @@ static PLURAL_PREAMBLE: &str = r##"<!DOCTYPE html>
             <li>
               <a href="../../dmg-calc/">Damage Calc</a>
             </li>
+            <li>
+              <a href="../../gish-ap-calc/">Gish AP Calc</a>
+            </li>
             <li class="active">
               <a href="../">Archive</a>
             </li>
@@ -283,6 +289,9 @@ static SINGULAR_PREAMBLE: &str = r##"<!DOCTYPE html>
             </li>
             <li>
               <a href="../../../dmg-calc/">Damage Calc</a>
+            </li>
+            <li>
+              <a href="../../../gish-ap-calc/">Gish AP Calc</a>
             </li>
             <li class="active">
               <a href="../../">Archive</a>

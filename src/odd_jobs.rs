@@ -81,6 +81,9 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="./dmg-calc/">Damage Calc</a>
             </li>
             <li>
+              <a href="./gish-ap-calc/">Gish AP Calc</a>
+            </li>
+            <li>
               <a href="./archive/">Archive</a>
             </li>
             <li>

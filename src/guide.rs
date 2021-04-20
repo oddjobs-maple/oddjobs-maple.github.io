@@ -54,6 +54,9 @@ static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
               <a href="../dmg-calc/">Damage Calc</a>
             </li>
             <li>
+              <a href="../gish-ap-calc/">Gish AP Calc</a>
+            </li>
+            <li>
               <a href="../archive/">Archive</a>
             </li>
             <li>
@@ -140,6 +143,9 @@ static PREAMBLE1: &[u8] = br##"</title>
               <a href="../../dmg-calc/">Damage Calc</a>
             </li>
             <li>
+              <a href="../../gish-ap-calc/">Gish AP Calc</a>
+            </li>
+            <li>
               <a href="../../archive/">Archive</a>
             </li>
             <li>
@@ -217,6 +223,9 @@ static RANKINGS_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             </li>
             <li>
               <a href="../dmg-calc/">Damage Calc</a>
+            </li>
+            <li>
+              <a href="../gish-ap-calc/">Gish AP Calc</a>
             </li>
             <li>
               <a href="../archive/">Archive</a>

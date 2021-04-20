@@ -24,3 +24,9 @@ done
 cd ./dmg-calc/
 tsc
 cd ..
+
+rm -rf ./gish-ap-calc/
+cp -dR "$5"/gish-ap-calc/ ./gish-ap-calc/
+cd ./gish-ap-calc/
+tsc
+cd ..
