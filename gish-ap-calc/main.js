@@ -116,7 +116,7 @@ function main() {
             }
             return t;
         })();
-        const spell = new Spell(handleIntInput(spellBasicAtkInput, 10, 1), handleIntInput(masteryInput, 15, 10, 90) / 100, spellT);
+        const spell = new Spell(handleIntInput(spellBasicAtkInput, 10, 1), handleIntInput(masteryInput, 15, 10, 90) / 100, spellT, handleIntInput(spellLinesInput, 1, 1));
         const totalWatk = handleIntInput(totalWatkInput, 1, 0);
         const rawMatk = handleIntInput(matkAdditionalInput, 0, 0);
         const rawWacc = handleIntInput(waccAdditionalInput, 0, 0);

@@ -81,7 +81,7 @@ export function mDps(stats, rawMatk, spell, monster, d) {
     const [rawSpellMin, rawSpellMax] = rawMDmg(tma, stats.int, spell.basicAtk, spell.mastery);
     const [spellMin, spellMax] = mDmgAfterDef(rawSpellMin, rawSpellMax, monster.mdef, d);
     const spellAvg = (spellMin + spellMax) / 2;
-    return (spellAvg / spell.period) * magicHitRate;
+    return (spellAvg / spell.period) * magicHitRate * spell.lines;
 }
 export function psm(wepType) {
     switch (wepType) {

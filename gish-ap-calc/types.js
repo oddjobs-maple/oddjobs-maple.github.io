@@ -29,10 +29,11 @@ export class Monster {
     }
 }
 export class Spell {
-    constructor(basicAtk, mastery, period) {
+    constructor(basicAtk, mastery, period, lines) {
         this.basicAtk = basicAtk;
         this.mastery = mastery;
         this.period = period;
+        this.lines = lines;
     }
 }
 export class Stats {
