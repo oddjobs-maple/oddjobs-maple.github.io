@@ -114,7 +114,9 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             buffs. APless, statless, and/or SPless builds are <em>always</em>
             odd jobs, but not all such builds are represented here (although
             some are, e.g. HP warrior is statless).
+          </p>
 
+          <p>
             The &ldquo;Notable equipment&rdquo; for each job intentionally
             excludes equipment items that are not particularly unique to the
             job. For example, many of the same weapons (those swords, axes,
