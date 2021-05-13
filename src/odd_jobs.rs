@@ -15,6 +15,7 @@ struct Oddjobs {
 #[derive(Deserialize, Debug)]
 struct Oddjob {
     name: String,
+    deprecated_names: Vec<String>,
     aliases: Vec<String>,
     progressions: Vec<Vec<u32>>,
     location: Option<String>,
@@ -110,7 +111,9 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
             could potentially be invented. Also note that the &ldquo;Stat
             constraints&rdquo; reference <em>base</em> stats/abilities; that
             is, the stats themselves without any bonuses from equipment or
-            buffs.
+            buffs. APless, statless, and/or SPless builds are <em>always</em>
+            odd jobs, but not all such builds are represented here (although
+            some are, e.g. HP warrior is statless).
 
             The &ldquo;Notable equipment&rdquo; for each job intentionally
             excludes equipment items that are not particularly unique to the
@@ -199,13 +202,23 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
 
     for oddjob in oddjobs {
         let slug = slugify(&oddjob.name);
+        let deprecated_slugs: Vec<_> =
+            oddjob.deprecated_names.iter().map(|s| slugify(s)).collect();
 
         write!(
             out,
-            r##"<a href="#{}" class="h-anchor"><h2 id="{}">{}</h2></a>"##,
-            slug, slug, oddjob.name,
+            r##"<a href="#{}" class="h-anchor"><h2 id="{}">"##,
+            slug, slug,
         )
         .unwrap();
+        for deprecated_slug in deprecated_slugs.iter() {
+            write!(out, r##"<span id="{}">"##, deprecated_slug).unwrap();
+        }
+        write!(out, r##"{}"##, oddjob.name).unwrap();
+        for _ in 0..deprecated_slugs.len() {
+            out.write_all(b"</span>").unwrap();
+        }
+        out.write_all(b"</h2></a>").unwrap();
 
         out.write_all(
             br##"<a href="#toc-list" class="go-back"
