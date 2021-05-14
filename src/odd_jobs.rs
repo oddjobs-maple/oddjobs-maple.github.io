@@ -108,12 +108,16 @@ static PREAMBLE: &[u8] = br##"<!DOCTYPE html>
         <main>
           <p>
             Note that this list is inherently incomplete, because new odd jobs
-            could potentially be invented. Also note that the &ldquo;Stat
-            constraints&rdquo; reference <em>base</em> stats/abilities; that
-            is, the stats themselves without any bonuses from equipment or
-            buffs. APless, statless, and/or SPless builds are <em>always</em>
-            odd jobs, but not all such builds are represented here (although
-            some are, e.g. HP warrior is statless).
+            could potentially be invented. APless, statless, and/or SPless
+            builds are <em>always</em> odd jobs, but not all such builds are
+            represented here (although some are, e.g. HP warriors are
+            statless).
+          </p>
+
+          <p>
+            Also note that the &ldquo;Stat constraints&rdquo; reference
+            <em>base</em> stats/abilities; that is, the stats themselves
+            without any bonuses from equipment nor buffs.
           </p>
 
           <p>
