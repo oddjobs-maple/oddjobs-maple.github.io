@@ -4,3 +4,6 @@ Cargo.lock
 
 # text editing stuff
 .vscode/
+.idea/
+*.swp
+*.bak

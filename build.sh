@@ -9,12 +9,12 @@ cargo build
 
 ./target/debug/oddjobs_renderer "$2" > ./guides/index.html
 
-declare -a guide_slugs=("woodsman" "str-cleric" "magelet" "swashbuckler")
+declare -a guide_slugs=("woodsman" "str-cleric" "magelet" "swashbuckler" "introduction-to-odd-jobs")
 
 for s in "${guide_slugs[@]}"
 do
     ./target/debug/oddjobs_renderer "$2"/"$s"/README.md > ./guides/"$s"/index.html
-    cp "$2"/"$s"/*.png ./guides/"$s"/
+    find "$2"/"$s"/ -type f \! \( -name '*.md' -o -name '*.bak' \) -exec cp "{}" ./guides/"$s"/ \;
 done
 
 ./target/debug/oddjobs_renderer "$3" > ./archive/index.html
