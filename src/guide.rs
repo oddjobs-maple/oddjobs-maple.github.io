@@ -1,6 +1,8 @@
 use crate::util::slugify;
 use pulldown_cmark::{Alignment, Event, Options, Parser, Tag};
-use std::{fs::File, io::prelude::*, path::Path, process};
+use std::{
+    collections::HashSet, fs::File, io::prelude::*, path::Path, process,
+};
 
 static INDEX_PREAMBLE: &[u8] = br##"<!DOCTYPE html>
 <html dir="ltr" lang="en">
@@ -366,11 +368,30 @@ pub fn render<P: AsRef<Path>, W: Write>(
     let mut in_img = false;
     let (mut wanting_p, mut wanting_close_p) = (false, true);
     let mut wanting_a: Option<pulldown_cmark::CowStr> = None;
+    let mut used_slugs = HashSet::new();
     for event in parser {
         if let Event::Text(_) = event {
         } else if !text.is_empty() {
             if in_heading != 0 {
-                let slug = slugify(&text);
+                let slug = {
+                    let mut s = slugify(&text);
+                    let mut i = 1usize;
+                    while used_slugs.contains(&s) {
+                        if i == 1 {
+                            s.push_str("-1");
+                        } else {
+                            s.truncate(
+                                s.trim_end_matches(char::is_numeric).len(),
+                            );
+                            s.push_str(&i.to_string());
+                        }
+
+                        i += 1;
+                    }
+
+                    s
+                };
+                used_slugs.insert(slug.clone());
 
                 if in_heading != 1 {
                     write!(out, r##"<a href="#{}" class="h-anchor">"##, slug)
