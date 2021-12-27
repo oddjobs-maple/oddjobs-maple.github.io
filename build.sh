@@ -22,11 +22,11 @@ done
 ./target/debug/oddjobs_renderer "$4" --rankings > ./rankings/index.html
 
 cd ./dmg-calc/
-tsc
+npx tsc
 cd ..
 
 rm -rf ./gish-ap-calc/
 cp -dR "$5"/gish-ap-calc/ ./gish-ap-calc/
 cd ./gish-ap-calc/
-tsc
+npx tsc
 cd ..
