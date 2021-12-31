@@ -374,9 +374,18 @@ pub fn render<P: AsRef<Path>, W: Write>(
 
     let parser = Parser::new_ext(&input_str, Options::ENABLE_TABLES);
 
+    enum NestedHeadingTag {
+        Em,
+        EmClose,
+    }
+    enum HeadingContent {
+        Text(String),
+        Nested(NestedHeadingTag),
+    }
+
     let mut seen_h1 = false;
     let mut in_heading = 0;
-    let mut text = String::new();
+    let mut heading_content = Vec::new();
     let mut table_alignments = Vec::new();
     let mut in_thead = false;
     let mut table_cell_ix = 0;
@@ -385,41 +394,77 @@ pub fn render<P: AsRef<Path>, W: Write>(
     let mut wanting_a: Option<pulldown_cmark::CowStr> = None;
     let mut used_slugs = HashSet::new();
     for event in parser {
-        if let Event::Text(_) = event {
-        } else if !text.is_empty() {
-            if in_heading != 0 {
-                let slug = {
-                    let mut s = slugify(&text);
-                    let mut i = 1usize;
-                    while used_slugs.contains(&s) {
-                        if i == 1 {
-                            s.push_str("-1");
-                        } else {
-                            s.truncate(
-                                s.trim_end_matches(char::is_numeric).len(),
-                            );
-                            s.push_str(&i.to_string());
+        match event {
+            Event::Text(_)
+            | Event::Start(Tag::Emphasis)
+            | Event::End(Tag::Emphasis) => (),
+            _ => {
+                if !heading_content.is_empty() {
+                    if in_heading != 0 {
+                        let slug = {
+                            let mut s = String::new();
+                            for hc in heading_content.iter() {
+                                match hc {
+                                    HeadingContent::Nested(_) => (),
+                                    HeadingContent::Text(text) => {
+                                        s.push_str(&slugify(text))
+                                    }
+                                }
+                            }
+
+                            let mut i = 1usize;
+                            while used_slugs.contains(&s) {
+                                if i == 1 {
+                                    s.push_str("-1");
+                                } else {
+                                    s.truncate(
+                                        s.trim_end_matches(char::is_numeric)
+                                            .len(),
+                                    );
+                                    s.push_str(&i.to_string());
+                                }
+
+                                i += 1;
+                            }
+
+                            s
+                        };
+                        used_slugs.insert(slug.clone());
+
+                        if in_heading != 1 {
+                            write!(
+                                out,
+                                r##"<a href="#{}" class="h-anchor">"##,
+                                slug
+                            )
+                            .unwrap();
                         }
 
-                        i += 1;
+                        write!(out, r##"<h{} id="{}">"##, in_heading, slug)
+                            .unwrap();
                     }
 
-                    s
-                };
-                used_slugs.insert(slug.clone());
+                    if !in_img {
+                        for hc in heading_content.iter() {
+                            match hc {
+                                HeadingContent::Nested(nht) => match nht {
+                                    NestedHeadingTag::Em => {
+                                        out.write_all(b"<em>").unwrap()
+                                    }
+                                    NestedHeadingTag::EmClose => {
+                                        out.write_all(b"</em>").unwrap()
+                                    }
+                                },
+                                HeadingContent::Text(s) => out
+                                    .write_all(html_esc(s).as_bytes())
+                                    .unwrap(),
+                            }
+                        }
+                    }
 
-                if in_heading != 1 {
-                    write!(out, r##"<a href="#{}" class="h-anchor">"##, slug)
-                        .unwrap();
+                    heading_content.truncate(0);
                 }
-
-                write!(out, r##"<h{} id="{}">"##, in_heading, slug).unwrap();
             }
-            if !in_img {
-                out.write_all(html_esc(&text).as_bytes()).unwrap();
-            }
-
-            text.truncate(0);
         }
 
         if wanting_p {
@@ -491,7 +536,11 @@ pub fn render<P: AsRef<Path>, W: Write>(
                     .unwrap();
                     table_cell_ix += 1;
                 }
-                Tag::Emphasis => out.write_all(b"<em>").unwrap(),
+                Tag::Emphasis => {
+                    //out.write_all(b"<em>").unwrap();
+                    heading_content
+                        .push(HeadingContent::Nested(NestedHeadingTag::Em));
+                }
                 Tag::Strong => out.write_all(b"<strong>").unwrap(),
                 Tag::Strikethrough => out.write_all(b"<del>").unwrap(),
                 Tag::Link(_, url, _) => {
@@ -569,7 +618,12 @@ pub fn render<P: AsRef<Path>, W: Write>(
                 Tag::TableCell => out
                     .write_all(if in_thead { b"</th>" } else { b"</td>" })
                     .unwrap(),
-                Tag::Emphasis => out.write_all(b"</em>").unwrap(),
+                Tag::Emphasis => {
+                    //out.write_all(b"</em>").unwrap();
+                    heading_content.push(HeadingContent::Nested(
+                        NestedHeadingTag::EmClose,
+                    ));
+                }
                 Tag::Strong => out.write_all(b"</strong>").unwrap(),
                 Tag::Strikethrough => out.write_all(b"</del>").unwrap(),
                 Tag::Link(_, _, _) => {
@@ -581,7 +635,9 @@ pub fn render<P: AsRef<Path>, W: Write>(
                     in_img = false;
                 }
             },
-            Event::Text(s) => text.push_str(&s),
+            Event::Text(s) => {
+                heading_content.push(HeadingContent::Text(s.into_string()))
+            }
             Event::Code(s) => {
                 write!(out, "<code>{}</code>", html_esc(&s)).unwrap();
             }
