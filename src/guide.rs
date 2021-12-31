@@ -262,7 +262,7 @@ pub fn render_index<P: AsRef<Path>, W: Write>(input_dir_path: P, out: &mut W) {
             dir_entry.file_name().into_string().expect("Bad `OsString`");
 
         if dir_entry.file_type().unwrap().is_dir()
-            && !dir_entry_name.starts_with(".")
+            && !dir_entry_name.starts_with('.')
         {
             write!(
                 out,
@@ -271,43 +271,127 @@ pub fn render_index<P: AsRef<Path>, W: Write>(input_dir_path: P, out: &mut W) {
             )
             .unwrap();
 
-            let mut readme_path = dir_entry.path();
-            readme_path.push("README.md");
+            let mut main_readme_path = dir_entry.path();
+            main_readme_path.push("README.md");
 
-            let mut input_file = File::open(&readme_path)
-                .expect("Could not open README.md file for reading");
-            let mut input_str = String::new();
-            input_file
-                .read_to_string(&mut input_str)
-                .expect("Could not read README.md file into memory");
+            write_title(out, &main_readme_path);
 
-            let peek_parser = Parser::new(
-                input_str.split('\n').next().expect("No newlines in file"),
-            );
-            for event in peek_parser {
-                match event {
-                    Event::Start(tag) => {
-                        if tag != Tag::Heading(1) {
-                            eprintln!(
-                                "Expected first element of {:?} to be a top-level heading",
-                                &readme_path,
-                            );
+            out.write_all(b"</a>").unwrap();
 
-                            process::exit(1)
-                        }
-                    }
-                    Event::Text(s) => {
-                        out.write_all(html_esc(&s).as_bytes()).unwrap();
-                    }
-                    _ => break,
+            let mut needs_sublist = true;
+            for subdir_entry in dir_entry
+                .path()
+                .read_dir()
+                .expect("Could not read subdir as a directory")
+            {
+                let subdir_entry = subdir_entry.unwrap();
+
+                if subdir_entry.file_type().unwrap().is_file()
+                    && subdir_entry
+                        .path()
+                        .extension()
+                        .map(|oss| oss.to_str().unwrap())
+                        == Some("md")
+                    && subdir_entry.file_name() != "README.md"
+                {
+                    let readme_path = subdir_entry.path();
+
+                    write!(
+                        out,
+                        r##"{}<li><a href="./{}/index.{}.html">"##,
+                        if needs_sublist { "<ul>" } else { "" },
+                        dir_entry_name,
+                        subdir_entry
+                            .file_name()
+                            .to_str()
+                            .expect("Filename is not UTF-8‽")
+                            .rsplit('.')
+                            .nth(1)
+                            .unwrap(),
+                    )
+                    .unwrap();
+                    needs_sublist = false;
+
+                    write_title(out, &readme_path);
+
+                    out.write_all(b"</a></li>\n").unwrap();
                 }
             }
+            if !needs_sublist {
+                out.write_all(b"</ul>").unwrap();
+            }
 
-            out.write_all(b"</a></li>\n").unwrap();
+            out.write_all(b"</li>\n").unwrap();
         }
     }
 
     out.write_all(INDEX_POSTAMBLE).unwrap();
+}
+
+fn write_title<W: Write, P: AsRef<Path>>(out: &mut W, readme_path: P) {
+    let mut input_file = File::open(&readme_path)
+        .expect("Could not open README*.md file for reading");
+    let mut input_str = String::new();
+    input_file
+        .read_to_string(&mut input_str)
+        .expect("Could not read README*.md file into memory");
+
+    let peek_parser = Parser::new(
+        input_str.split('\n').next().expect("No newlines in file"),
+    );
+    let mut first_event = true;
+    for event in peek_parser {
+        if first_event && event != Event::Start(Tag::Heading(1)) {
+            eprintln!(
+                "Expected first element of {:?} to be a top-level heading",
+                readme_path.as_ref(),
+            );
+
+            process::exit(1)
+        }
+        first_event = false;
+
+        match event {
+            Event::Start(tag) => match tag {
+                Tag::Heading(1) => (),
+                Tag::Emphasis => {
+                    out.write_all(b"<em>").unwrap();
+                }
+                Tag::Strong => {
+                    out.write_all(b"<strong>").unwrap();
+                }
+                Tag::Strikethrough => {
+                    out.write_all(b"<del>").unwrap();
+                }
+                _ => {
+                    eprintln!("Unexpected element in top-level heading");
+
+                    process::exit(1)
+                }
+            },
+            Event::Text(s) => {
+                out.write_all(s.as_bytes()).unwrap();
+            }
+            Event::Code(s) => {
+                out.write_all(b"<code>").unwrap();
+                out.write_all(s.as_bytes()).unwrap();
+                out.write_all(b"</code>").unwrap();
+            }
+            Event::End(tag) => match tag {
+                Tag::Emphasis => {
+                    out.write_all(b"</em>").unwrap();
+                }
+                Tag::Strong => {
+                    out.write_all(b"</strong>").unwrap();
+                }
+                Tag::Strikethrough => {
+                    out.write_all(b"</del>").unwrap();
+                }
+                _ => break,
+            },
+            _ => break,
+        }
+    }
 }
 
 pub fn render<P: AsRef<Path>, W: Write>(
@@ -375,7 +459,10 @@ pub fn render<P: AsRef<Path>, W: Write>(
                     out.write_all(s.as_bytes()).unwrap();
                     title_slug.push_str(&slugify(&s));
                 }
-                Event::Code(_) => (),
+                Event::Code(s) => {
+                    out.write_all(s.as_bytes()).unwrap();
+                    title_slug.push_str(&slugify(&s));
+                }
                 Event::End(tag) => match tag {
                     Tag::Emphasis | Tag::Strong | Tag::Strikethrough => (),
                     _ => break,
