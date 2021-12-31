@@ -13,8 +13,19 @@ declare -a guide_slugs=("woodsman" "str-cleric" "magelet" "swashbuckler" "introd
 
 for s in "${guide_slugs[@]}"
 do
-    ./target/debug/oddjobs_renderer "$2"/"$s"/README.md > ./guides/"$s"/index.html
-    find "$2"/"$s"/ -type f \! \( -name '*.md' -o -name '*.bak' \) -exec cp "{}" ./guides/"$s"/ \;
+    for md in "$2"/"${s}"/*.md
+    do
+        md_filename=$(basename -- "${md}")
+        lang=$(cut -d. -f2 <(echo -n "${md_filename}"))
+        if [[ "${lang}" = 'md' ]]
+        then
+            ./target/debug/oddjobs_renderer "${md}" > ./guides/"${s}"/index.html
+        else
+            ./target/debug/oddjobs_renderer "${md}" > ./guides/"${s}"/index."${lang}".html
+        fi
+    done
+
+    find "$2"/"${s}"/ -type f \! \( -name '*.md' -o -name '*.bak' \) -exec cp "{}" ./guides/"${s}"/ \;
 done
 
 ./target/debug/oddjobs_renderer "$3" > ./archive/index.html

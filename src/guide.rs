@@ -333,21 +333,36 @@ pub fn render<P: AsRef<Path>, W: Write>(
             input_str.split('\n').next().expect("No newlines in file"),
         );
         let mut title_slug = String::new();
+        let mut first_event = true;
         for event in peek_parser {
+            if first_event && event != Event::Start(Tag::Heading(1)) {
+                eprintln!("Expected first element to be a top-level heading");
+
+                process::exit(1)
+            }
+            first_event = false;
+
             match event {
-                Event::Start(tag) => {
-                    if tag != Tag::Heading(1) {
-                        eprintln!(
-                            "Expected first element to be a top-level heading",
-                        );
+                Event::Start(tag) => match tag {
+                    Tag::Heading(1)
+                    | Tag::Emphasis
+                    | Tag::Strong
+                    | Tag::Strikethrough => (),
+                    _ => {
+                        eprintln!("Unexpected element in top-level heading");
 
                         process::exit(1)
                     }
-                }
+                },
                 Event::Text(s) => {
                     out.write_all(s.as_bytes()).unwrap();
                     title_slug.push_str(&slugify(&s));
                 }
+                Event::Code(_) => (),
+                Event::End(tag) => match tag {
+                    Tag::Emphasis | Tag::Strong | Tag::Strikethrough => (),
+                    _ => break,
+                },
                 _ => break,
             }
         }
