@@ -91,8 +91,8 @@ static INDEX_POSTAMBLE: &[u8] = br##"          </ul>
 </html>
 "##;
 
-static PREAMBLE0: &[u8] = br##"<!DOCTYPE html>
-<html dir="ltr" lang="en">
+static PREAMBLE0: &str = r##"<!DOCTYPE html>
+<html dir="ltr" lang="{{ LANG }}">
   <head>
     <meta charset="UTF-8" />
     <title>Oddjobs | Guides | "##;
@@ -315,7 +315,7 @@ pub fn render<P: AsRef<Path>, W: Write>(
     rankings: bool,
     out: &mut W,
 ) {
-    let mut input_file = File::open(input_file_path)
+    let mut input_file = File::open(&input_file_path)
         .expect("Could not open input file for reading");
     let mut input_str = String::new();
     input_file
@@ -327,7 +327,24 @@ pub fn render<P: AsRef<Path>, W: Write>(
 
         String::new()
     } else {
-        out.write_all(PREAMBLE0).unwrap();
+        let lang: Vec<_> = input_file_path
+            .as_ref()
+            .file_name()
+            .expect("No filename…!")
+            .to_str()
+            .expect("Filename is not UTF-8‽")
+            .rsplit('.')
+            .collect();
+
+        out.write_all(
+            PREAMBLE0
+                .replace(
+                    "{{ LANG }}",
+                    if lang.len() == 2 { "en" } else { lang[1] },
+                )
+                .as_bytes(),
+        )
+        .unwrap();
 
         let peek_parser = Parser::new(
             input_str.split('\n').next().expect("No newlines in file"),
@@ -537,7 +554,6 @@ pub fn render<P: AsRef<Path>, W: Write>(
                     table_cell_ix += 1;
                 }
                 Tag::Emphasis => {
-                    //out.write_all(b"<em>").unwrap();
                     heading_content
                         .push(HeadingContent::Nested(NestedHeadingTag::Em));
                 }
@@ -619,7 +635,6 @@ pub fn render<P: AsRef<Path>, W: Write>(
                     .write_all(if in_thead { b"</th>" } else { b"</td>" })
                     .unwrap(),
                 Tag::Emphasis => {
-                    //out.write_all(b"</em>").unwrap();
                     heading_content.push(HeadingContent::Nested(
                         NestedHeadingTag::EmClose,
                     ));
