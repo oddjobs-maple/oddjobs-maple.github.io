@@ -126,42 +126,42 @@ export function meleePeriod(wepType, speed) {
         case WeaponType.TwoHandedAxe:
         case WeaponType.TwoHandedMace: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 0.6;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 0.66;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 0.72;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 0.75;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 0.81;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 0.87;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 0.9;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 0.93; // Not actually possible in-game.
             }
         }
         case WeaponType.Spear:
         case WeaponType.Polearm: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 0.57;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 0.63;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 0.66;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 0.72;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 0.75;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 0.81;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 0.87;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 0.9;
             }
         }
@@ -240,15 +240,15 @@ export function spellPeriod(spellBooster, spell, speed) {
             switch (spellBooster) {
                 case -2: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1.5;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1.56;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1.62;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1.68;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1.71;
                         default:
                             return;
@@ -256,15 +256,15 @@ export function spellPeriod(spellBooster, spell, speed) {
                 }
                 case -1: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1.62;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1.68;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1.74;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1.77;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1.83;
                         default:
                             return;
@@ -272,15 +272,15 @@ export function spellPeriod(spellBooster, spell, speed) {
                 }
                 case 0: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1.71;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1.77;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1.8;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1.86;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1.92;
                         default:
                             return;

@@ -228,7 +228,7 @@ function main() {
                 eleChargeInputs.forEach(inp => (inp.checked = false));
                 const noEleChargeInput = document.getElementById("no-ele-charge");
                 noEleChargeInput.checked = true;
-                return 0 /* None */;
+                return 0 /* ChargeType.None */;
             }
             return eleChargeType;
         })();
@@ -1115,7 +1115,7 @@ function main() {
         else if (inputData.level < spellLvlReq) {
             warnings.push(`You\u{2019}re casting ${spellName(inputData.spell)}, but your level <${spellLvlReq}.`);
         }
-        if (inputData.speed > 4 /* Fast4 */ &&
+        if (inputData.speed > 4 /* Speed.Fast4 */ &&
             inputData.wepType === WeaponType.None) {
             warnings.push("You have no weapon equipped, but your speed >4. Bare fists \
                 have speed 4 when unbuffed.");
@@ -1334,14 +1334,14 @@ function main() {
                 not exactly 4%.");
         }
         switch (inputData.eleChargeType) {
-            case 0 /* None */: {
+            case 0 /* ChargeType.None */: {
                 if (inputData.eleChargeDmg !== 1) {
                     warnings.push("You have no elemental charge, but your elemental \
                         charge damage \u{2260}100%.");
                 }
                 break;
             }
-            case 1 /* Holy */: {
+            case 1 /* ChargeType.Holy */: {
                 if (1 + (inputData.level - 120) * 3 <
                     inputData.eleChargeLevel) {
                     warnings.push(`You have level ${inputData.eleChargeLevel} \
@@ -1353,7 +1353,7 @@ function main() {
                 }
                 break;
             }
-            case 2 /* Other */: {
+            case 2 /* ChargeType.Other */: {
                 if (1 + (inputData.level - 70) * 3 <
                     inputData.eleChargeLevel) {
                     warnings.push(`You have a level ${inputData.eleChargeLevel} \
@@ -1364,7 +1364,7 @@ function main() {
                 break;
             }
         }
-        if (inputData.eleChargeType !== 0 /* None */) {
+        if (inputData.eleChargeType !== 0 /* ChargeType.None */) {
             if (inputData.clazz !== Class.Warrior) {
                 warnings.push("You have an elemental charge selected, but you\u{2019}re \
                     not a warrior.");
@@ -1581,9 +1581,9 @@ function caModifier(inputData) {
 }
 function eleChargeModifier(inputData) {
     switch (inputData.eleChargeType) {
-        case 0 /* None */:
+        case 0 /* ChargeType.None */:
             return 1;
-        case 1 /* Holy */: {
+        case 1 /* ChargeType.Holy */: {
             if (inputData.eleSus === 1) {
                 return inputData.eleChargeDmg;
             }
@@ -1599,7 +1599,7 @@ function eleChargeModifier(inputData) {
                 (120 + inputData.eleChargeLevel * 1.5)) /
                 100);
         }
-        case 2 /* Other */: {
+        case 2 /* ChargeType.Other */: {
             if (inputData.eleSus === 1) {
                 return inputData.eleChargeDmg;
             }

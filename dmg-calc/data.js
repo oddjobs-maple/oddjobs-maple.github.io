@@ -184,15 +184,15 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
             switch (spellBooster) {
                 case -2: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1500;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1560;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1620;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1680;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1710;
                         default:
                             return;
@@ -200,15 +200,15 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
                 }
                 case -1: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1620;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1680;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1740;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1770;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1830;
                         default:
                             return;
@@ -216,15 +216,15 @@ export function magicAttackPeriod(spellBooster, spell, speed) {
                 }
                 case 0: {
                     switch (speed) {
-                        case 4 /* Fast4 */:
+                        case 4 /* Speed.Fast4 */:
                             return 1710;
-                        case 5 /* Fast5 */:
+                        case 5 /* Speed.Fast5 */:
                             return 1770;
-                        case 6 /* Normal */:
+                        case 6 /* Speed.Normal */:
                             return 1800;
-                        case 7 /* Slow7 */:
+                        case 7 /* Speed.Slow7 */:
                             return 1860;
-                        case 8 /* Slow8 */:
+                        case 8 /* Speed.Slow8 */:
                             return 1920;
                         default:
                             return;
@@ -292,19 +292,19 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.Brandish:
         case Attack.Blast: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 630;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 690;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 750;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 810;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 840;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 900;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 960;
                 default:
                     return;
@@ -312,81 +312,81 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.CrusherHigh: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 810;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 870;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 930;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 990;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 1050;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 1140;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 1200;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 1260;
             }
         }
         case Attack.CrusherLow: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 690;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 750;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 810;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 870;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 900;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 960;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 1020;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 1080;
             }
         }
         case Attack.Fury: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 600;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 660;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 720;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 750;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 810;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 870;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 900;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 960;
             }
         }
         case Attack.DragonRoar: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 1140;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 1230;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 1320;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 1410;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 1500;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 1620;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 1710;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 1800;
             }
         }
@@ -398,15 +398,15 @@ export function attackPeriod(wepType, speed, attack) {
             return 3030;
         case Attack.Avenger: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 630;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 690;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 750;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 810;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 840;
                 default:
                     return;
@@ -414,13 +414,13 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.Assaulter: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 900;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 990;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 1050;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 1140;
                 default:
                     return;
@@ -434,13 +434,13 @@ export function attackPeriod(wepType, speed, attack) {
             return 1440;
         case Attack.SavageBlow: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 720;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 780;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 840;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 900;
                 default:
                     return;
@@ -451,15 +451,15 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.FlashFist:
         case Attack.EnergyDrain: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 450;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 510;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 540;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 570;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 600;
                 default:
                     return;
@@ -467,15 +467,15 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.SomersaultKick: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 660;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 720;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 780;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 840;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 870;
                 default:
                     return;
@@ -483,14 +483,14 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.DoubleShot: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 390;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 420;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 450;
-                case 5 /* Fast5 */:
-                case 6 /* Normal */:
+                case 5 /* Speed.Fast5 */:
+                case 6 /* Speed.Normal */:
                     return 480;
                 default:
                     return;
@@ -504,15 +504,15 @@ export function attackPeriod(wepType, speed, attack) {
             return 1140;
         case Attack.Shockwave: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 1500;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 1620;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 1740;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 1860;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 1980;
                 default:
                     return;
@@ -522,15 +522,15 @@ export function attackPeriod(wepType, speed, attack) {
             return 2250;
         case Attack.EnergyOrb: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 930;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 990;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 1050;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 1140;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 1200;
                 default:
                     return;
@@ -538,15 +538,15 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.Demolition: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 2340;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 2550;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 2730;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 2940;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 3120;
                 default:
                     return;
@@ -558,15 +558,15 @@ export function attackPeriod(wepType, speed, attack) {
             return 3240;
         case Attack.InvisibleShot: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 630;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 660;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 720;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 750;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 810;
                 default:
                     return;
@@ -575,15 +575,15 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.BlankShot:
         case Attack.BurstFire: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 660;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 690;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 750;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 810;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 840;
                 default:
                     return;
@@ -603,15 +603,15 @@ export function attackPeriod(wepType, speed, attack) {
         case Attack.HomingBeacon:
         case Attack.BattleshipTorpedo: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 720;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 780;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 840;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 900;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 960;
                 default:
                     return;
@@ -619,15 +619,15 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case Attack.BattleshipCannon: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 600;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 630;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 690;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 750;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 780;
                 default:
                     return;
@@ -652,19 +652,19 @@ export function attackPeriod(wepType, speed, attack) {
         case WeaponType.Claw:
         case WeaponType.Knuckler: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 600;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 660;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 720;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 750;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 810;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 870;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 900;
                 default:
                     return;
@@ -673,35 +673,35 @@ export function attackPeriod(wepType, speed, attack) {
         case WeaponType.Spear:
         case WeaponType.Polearm: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 570;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 630;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 660;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 720;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 750;
-                case 7 /* Slow7 */:
+                case 7 /* Speed.Slow7 */:
                     return 810;
-                case 8 /* Slow8 */:
+                case 8 /* Speed.Slow8 */:
                     return 870;
-                case 9 /* Slower */:
+                case 9 /* Speed.Slower */:
                     return 900;
             }
         }
         case WeaponType.Crossbow: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 630;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 690;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 720;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 780;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 870;
                 default:
                     return;
@@ -709,15 +709,15 @@ export function attackPeriod(wepType, speed, attack) {
         }
         case WeaponType.Gun: {
             switch (speed) {
-                case 2 /* Faster2 */:
+                case 2 /* Speed.Faster2 */:
                     return 630;
-                case 3 /* Faster3 */:
+                case 3 /* Speed.Faster3 */:
                     return 690;
-                case 4 /* Fast4 */:
+                case 4 /* Speed.Fast4 */:
                     return 750;
-                case 5 /* Fast5 */:
+                case 5 /* Speed.Fast5 */:
                     return 780;
-                case 6 /* Normal */:
+                case 6 /* Speed.Normal */:
                     return 810;
                 default:
                     return;
@@ -995,11 +995,11 @@ export function spellName(spell) {
 export function chargeTypeFromValue(val) {
     switch (val) {
         case "no-ele-charge":
-            return 0 /* None */;
+            return 0 /* ChargeType.None */;
         case "holy-ele-charge":
-            return 1 /* Holy */;
+            return 1 /* ChargeType.Holy */;
         case "other-ele-charge":
-            return 2 /* Other */;
+            return 2 /* ChargeType.Other */;
         default:
             return;
     }
