@@ -377,7 +377,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                         r##"<li><img loading="lazy" src="./img/items/{}.png"
                             alt="Icon for {}" title="Icon for {}" /> <a
                             target="_blank" rel="noopener noreferrer"
-                            href="https://maplelegends.com/lib/equip?id={:08}"
+                            href="https://maplelegends.com/lib/equip?id={}"
                             >{}</a></li>"##,
                         allowed_wep,
                         equip_name,
@@ -413,7 +413,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     r##"<img loading="lazy" src="./img/skills/{}.png"
                         alt="Icon for {}" title="Icon for {}" /> <a
                         target="_blank" rel="noopener noreferrer"
-                        href="https://maplelegends.com/lib/skill?id={:07}"
+                        href="https://maplelegends.com/lib/skill?id={}"
                         >{}</a></li>"##,
                     attack, attack_name, attack_name, attack, attack_name,
                 )
@@ -440,7 +440,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     r##"<li><img loading="lazy" src="./img/skills/{}.png"
                         alt="Icon for {}" title="Icon for {}" /> <a
                         target="_blank" rel="noopener noreferrer"
-                        href="https://maplelegends.com/lib/skill?id={:07}"
+                        href="https://maplelegends.com/lib/skill?id={}"
                         >{}</a></li>"##,
                     skill, sk_name, sk_name, skill, sk_name,
                 )
@@ -468,7 +468,7 @@ pub fn render<P: AsRef<Path>, W: Write>(input_file_path: P, out: &mut W) {
                     r##"<li><img loading="lazy" src="./img/items/{}.png"
                         alt="Icon for {}" title="Icon for {}" /> <a
                         target="_blank" rel="noopener noreferrer"
-                        href="https://maplelegends.com/lib/equip?id={:08}"
+                        href="https://maplelegends.com/lib/equip?id={}"
                         >{}</a></li>"##,
                     equip, equip_name, equip_name, equip, equip_name,
                 )
